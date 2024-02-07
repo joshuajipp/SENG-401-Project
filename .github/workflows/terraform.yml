@@ -24,8 +24,10 @@ jobs:
       
       - name: Terraform Init and Apply
         run: |
+          export TERRAFORM_CONFIG="${HOME}/.terraformrc"
+          echo "credentials \"app.terraform.io\" { token = \"${{ secrets.TFE_TOKEN }}\" }" > ${TERRAFORM_CONFIG}
           terraform init
           terraform apply -auto-approve
         env:
-          TFE_TOKEN: ${{secrets.TFE_TOKEN}}
+          TFE_TOKEN: ${{ secrets.TFE_TOKEN }}
         working-directory: ./infra
