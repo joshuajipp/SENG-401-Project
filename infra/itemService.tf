@@ -21,7 +21,7 @@ provider "aws" {
 data "archive_file" "create_item_zip" {
   type        = "zip"
   source_dir  = "../backend/itemService/createItem"
-  output_path = "${process.env['RUNNER_TEMP']}/lambda_function.zip"
+  output_path = "${path.temp}/lambda_function.zip"
 }
 
 resource "aws_iam_role" "lambda_role" {
@@ -41,13 +41,13 @@ resource "aws_iam_role" "lambda_role" {
 }
 
 resource "aws_lambda_function" "create_item_lambda" {
-  filename         = "${path.module}/lambda_function.zip"
+  filename         = "${path.temp}/lambda_function.zip"
   function_name    = "create-item-30144999"
   role             = aws_iam_role.lambda_role.arn
   handler          = "main.handler"
   runtime          = "python3.9"
   timeout = 300
-  source_code_hash = filebase64sha256("${process.env['RUNNER_TEMP']}/lambda_function.zip")
+  source_code_hash = filebase64sha256("${path.temp}/lambda_function.zip")
 }
 
 resource "aws_dynamodb_table" "items_dynamodb_table" {
