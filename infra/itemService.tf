@@ -18,11 +18,6 @@ provider "aws" {
   region = "ca-central-1"
 }
 
-data "archive_file" "create_item_zip" {
-  type        = "zip"
-  source_dir  = "../backend/itemService/createItem"
-  output_path = "/tmp/lambda_function.zip"
-}
 
 resource "aws_iam_role" "lambda_role" {
   name               = "iam-role-lambda-obituaries"
@@ -41,13 +36,13 @@ resource "aws_iam_role" "lambda_role" {
 }
 
 resource "aws_lambda_function" "create_item_lambda" {
-  filename         = "/tmp/lambda_function.zip"
+  filename         = "../createItem.zip"
   function_name    = "create-item-30144999"
   role             = aws_iam_role.lambda_role.arn
   handler          = "main.handler"
   runtime          = "python3.9"
   timeout = 300
-  source_code_hash = filebase64sha256("/tmp/lambda_function.zip")
+  source_code_hash = filebase64sha256("../createItem.zip")
 }
 
 resource "aws_dynamodb_table" "items_dynamodb_table" {
