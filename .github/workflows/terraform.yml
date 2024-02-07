@@ -22,7 +22,7 @@ jobs:
           aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           aws-region: ca-central-1
       - name: Zip create item function
-        run: zip -r createItem.zip ./backend/itemService/createItem
+        run: zip -r ./infra/createItem.zip ./backend/itemService/createItem
 
       - name: ls
         run: ls
