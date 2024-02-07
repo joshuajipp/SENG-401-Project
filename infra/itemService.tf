@@ -13,6 +13,9 @@ terraform {
     }
   }
 }
+provider "aws" {
+  region = "ca-central-1"
+}
 
 
 resource "aws_iam_role" "lambda_role" {
