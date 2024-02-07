@@ -28,3 +28,4 @@ jobs:
           terraform apply -auto-approve
         env:
           TFE_TOKEN: ${{ secrets.TFE_TOKEN }}
+        working-directory: ./infra
