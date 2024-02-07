@@ -9,6 +9,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: List directory contents 1
+        run: ls -la
       - name: Checkout code
         uses: actions/checkout@v2
         
