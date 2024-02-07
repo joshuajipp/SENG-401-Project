@@ -11,9 +11,12 @@ jobs:
     steps:
       - name: List directory contents 1
         run: ls -la
+      - name: pwd1
+        run: pwd
       - name: Checkout code
         uses: actions/checkout@v2
-        
+      - name: pwd2
+        run: pwd
       - name: List directory contents
         run: ls -la
       - name: change dir
