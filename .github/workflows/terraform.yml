@@ -9,21 +9,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: List directory contents 1
-        run: ls -la
-      - name: pwd1
-        run: pwd
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: pwd2
-        run: pwd
-      - name: List directory contents
-        run: ls -la
-      - name: change dir
-        run: cd ..
-      
-      - name: List directory contents 2
-        run: ls -la
       
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
@@ -34,6 +21,12 @@ jobs:
           aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
           aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           aws-region: ca-central-1
+      - name: Zip create item function
+        run: zip -r createItem.zip ./backend/itemService/createItem
+
+      - name: ls
+        run: ls
+
       
       - name: Terraform Init and Apply
         run: |
