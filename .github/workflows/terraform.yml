@@ -21,15 +21,18 @@ jobs:
           
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
-      
-      - name: debug
-        run: echo ${{secrets.AWS_ACCESS_KEY_ID}}
+        
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install Python dependencies
+        run: |
+          pip3 install -r ./backend/itemService/createItem/requirements.txt -t ./backend/itemService/createItem/
           
       - name: Zip create item function
         run: zip -r ./infra/createItem.zip ./backend/itemService/createItem
-
-      - name: ls
-        run: ls
 
       
       - name: Terraform Init and Apply
