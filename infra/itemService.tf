@@ -96,7 +96,7 @@ resource "aws_iam_policy" "dynamodb_policy" {
 }
 
 resource "aws_iam_policy" "parameter_store_policy" {
-  name = "parameter_store_policy"
+  name = "parameter_store_policy_toolshed"
 
   policy = jsonencode({
     Version = "2012-10-17"
