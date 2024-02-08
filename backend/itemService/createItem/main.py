@@ -1,5 +1,9 @@
+import requests
+import json
+
 def handler(event, context):
-  return {
-    "statusCode": 200,
-    "body": "Test3"
-  }
+    response = requests.get('https://httpbin.org/get')
+    return {
+        'statusCode': 200,
+        'body': json.dumps(response.json())
+    }
