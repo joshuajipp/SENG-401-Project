@@ -91,41 +91,117 @@ jobs:
         
       - name: Install Python dependencies createAccount
         run: |
-          pip3 install -r ./backend/accountService/createAccount/requirements.txt -t ./backend/accountService/createAccount/
+          pip3 install -r ./backend/accountname: Python application test
+
+          on:
+            pull_request:
+              branches:
+                - main
+          
+          jobs:
+            test:
+              runs-on: ubuntu-latest
+              
+              steps:
+              - uses: actions/checkout@v4
+          
+          
+              - name: Set up Python
+                uses: actions/setup-python@v4
+                with:
+                  python-version: '3.9'
+          
+              - name: Install dependencies
+                run: |
+                  cd ./backend/itemService/createItem/
+                  pip3 install -r requirements.txt
+                  pip3 install pytest
+          
+              - name: Run pytest createItem
+                run: |
+                  cd ./backend/itemService/createItem/
+                  python3 -m pytest
+          
+              - name: Run pytest deleteItem
+                run: |
+                  cd ./backend/itemService/deleteItem/
+                  python3 -m pytest
+          
+              - name: Run pytest borrowItem
+                run: |
+                  cd ./backend/itemService/borrowItem/
+                  python3 -m pytest
+                
+              - name: Run pytest getItem
+                run: |
+                  cd ./backend/itemService/getItem/
+                  python3 -m pytest
+              
+              - name: Run pytest returnItem
+                run: |
+                  cd ./backend/itemService/returnItem/
+                  python3 -m pytest
+                
+              - name: Run pytest updateItem
+                run: |
+                  cd ./backend/itemService/updateItem/
+                  python3 -m pytest
+                
+              - name: Run pytest createAccount
+                run: |
+                  cd ./backend/userService/createAccount/
+                  python3 -m pytest
+                
+              - name: Run pytest deleteAccount
+                run: |
+                  cd ./backend/userService/deleteAccount/
+                  python3 -m pytest
+          
+              - name: Run pytest getAccount
+                run: |
+                  cd ./backend/userService/getAccount/
+                  python3 -m pytest
+              
+              - name: Run pytest updateAccount
+                run: |
+                  cd ./backend/userService/updateAccount/
+                  python3 -m pytest
+          
+          Service/createAccount/requirements.txt -t ./backend/userService/createAccount/
         
       - name: Zip create createAccount function
         run: |
-          cd ./backend/accountService/createAccount
+          cd ./backend/userService/createAccount
           zip -r ../../../infra/createAccount.zip .
           cd -
           
       - name: Install Python dependencies deleteAccount
         run: |
-          pip3 install -r ./backend/accountService/deleteAccount/requirements.txt -t ./backend/accountService/deleteAccount/
+          pip3 install -r ./backend/userService/deleteAccount/requirements.txt -t ./backend/userService/deleteAccount/
         
       - name: Zip create deleteAccount function
         run: |
-          cd ./backend/accountService/deleteAccount
+          cd ./backend/userService/deleteAccount
           zip -r ../../../infra/deleteAccount.zip .
           cd -
 
       - name: Install Python dependencies getAccount
         run: |
-          pip3 install -r ./backend/accountService/getAccount/requirements.txt -t ./backend/accountService/getAccount/
+          pip3 install -r ./backend/userService/getAccount/requirements.txt -t ./backend/userService/getAccount/
 
       - name: Zip create getAccount function
         run: |
-          cd ./backend/accountService/getAccount
+          cd ./backend/userService/getAccount
           zip -r ../../../infra/getAccount.zip .
           cd -
           
       - name: Install Python dependencies updateAccount
         run: |
-          pip3 install -r ./backend/accountService/updateAccount/requirements.txt -t ./backend/accountService/updateAccount/
+          pip3 install -r ./backend/userService/updateAccount/requirements.txt -t ./backend/userService/updateAccount/
 
       - name: Zip create updateAccount function
         run: |
-          cd ./backend/accountService/updateAccount
+          cd ./backend/userService/updateAccount
           zip -r ../../../infra/updateAccount.zip .
           cd -
 
