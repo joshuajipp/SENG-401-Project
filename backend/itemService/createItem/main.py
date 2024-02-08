@@ -9,6 +9,6 @@ def handler(event, context):
         'body': json.dumps(response.json())
     }
 
-
+# new test for credentials
 def add(a, b):
     return a + b
