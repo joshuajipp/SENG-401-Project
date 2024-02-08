@@ -18,6 +18,8 @@ provider "aws" {
   access_key = var.aws_access_key_id
   secret_key = var.aws_secret_access_key
 }
+variable "aws_access_key" {}
+variable "aws_secret_key" {}
 
 
 resource "aws_iam_role" "lambda_role" {
