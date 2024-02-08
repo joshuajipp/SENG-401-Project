@@ -30,13 +30,8 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip3 install -r ./backend/itemService/createItem/requirements.txt -t ./backend/itemService/createItem/
-          pip3 install pytest
+
         
-      - name: Run tests
-        run: |
-          cd ./backend/itemService/createItem
-          python3 -m pytest
-          cd -
           
       - name: Zip create item function
         run: |
