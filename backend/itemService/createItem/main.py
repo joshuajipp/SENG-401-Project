@@ -8,3 +8,6 @@ def handler(event, context):
         'statusCode': 200,
         'body': json.dumps(response.json())
     }
+
+def add(a, b):
+    return a + b
