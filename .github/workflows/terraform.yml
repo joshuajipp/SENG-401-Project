@@ -91,7 +91,7 @@ jobs:
         
       - name: Install Python dependencies createAccount
         run: |
-          pip3 install -r ./backend/accountname: Python application test
+          pip3 install -r ./backend/userService/createAccount/requirements.txt -t ./backend/userService/createAccount/
 
         
       - name: Zip create createAccount function
