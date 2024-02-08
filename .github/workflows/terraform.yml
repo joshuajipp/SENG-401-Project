@@ -32,7 +32,10 @@ jobs:
           pip3 install -r ./backend/itemService/createItem/requirements.txt -t ./backend/itemService/createItem/
           
       - name: Zip create item function
-        run: zip -r ./infra/createItem.zip ./backend/itemService/createItem
+        run: |
+          cd ./backend/itemService/createItem
+          zip -r ../../../../infra/createItem.zip .
+          cd -
 
       
       - name: Terraform Init and Apply
