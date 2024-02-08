@@ -19,8 +19,8 @@ variable "aws_secret_key" {}
 
 provider "aws" {
   region = "ca-central-1"
-  access_key = var.aws_access_key_id
-  secret_key = var.aws_secret_access_key
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
 }
 
 resource "aws_iam_role" "lambda_role" {
