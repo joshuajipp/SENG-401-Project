@@ -22,7 +22,7 @@ jobs:
       run: |
         cd ./backend/itemService/createItem/
         pip3 install -r requirements.txt
-        pip3 install pytest  # Ensure pytest is installed
+        pip3 install pytest
 
     - name: Run pytest
       run: |
