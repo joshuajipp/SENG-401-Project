@@ -34,7 +34,7 @@ jobs:
       - name: Zip create item function
         run: |
           cd ./backend/itemService/createItem
-          zip -r ../../../../infra/createItem.zip .
+          zip -r ../../../infra/createItem.zip .
           cd -
 
       
