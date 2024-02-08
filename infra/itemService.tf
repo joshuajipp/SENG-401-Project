@@ -24,7 +24,7 @@ provider "aws" {
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name               = "iam-role-lambda-obituaries"
+  name               = "iam-role-lambda-toolshed"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -70,7 +70,7 @@ resource "aws_dynamodb_table" "items_dynamodb_table" {
 }
 
 resource "aws_iam_policy" "dynamodb_policy" {
-  name        = "dynamodb-policy-the-last-show"
+  name        = "dynamodb-policy-toolshed"
   policy      = jsonencode({
     Version = "2012-10-17"
     Statement = [
