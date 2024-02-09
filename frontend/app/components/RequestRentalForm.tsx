@@ -3,89 +3,48 @@ import React from "react";
 export default function RequestRentalForm() {
   return (
     <>
-      <div className="w-96 h-96 rounded-2xl justify-start items-start inline-flex">
-        <div className="h-96 flex-col justify-center items-center inline-flex">
-          <div className="self-stretch grow shrink basis-0 px-6 pt-6 bg-white rounded-2xl flex-col justify-start items-center inline-flex">
-            <div className="w-56 h-44 pb-px justify-center items-center inline-flex">
-              <img
-                className="w-56 h-44 relative"
-                src="https://via.placeholder.com/221x170"
+      <form className=" mx-auto bg-white dark:bg-slate-800 p-8 rounded-lg">
+        <div className="flex flex-col gap-8">
+          <h1 className=" font-bold text-2xl">Request Item Rental</h1>
+          <div className=" w-full ">
+            <label
+              htmlFor="return-date"
+              className="block text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Return Date *
+            </label>
+            <div className="w-full p-2 bg-stone-50 rounded border border-zinc-300 justify-start items-center">
+              <input
+                type="date"
+                id="return-date"
+                className="block w-full text-sm text-neutral-500 bg-transparent border-gray-300 dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600"
+                required
               />
             </div>
-            <div className="self-stretch h-56 p-7 flex-col justify-start items-center gap-3.5 flex">
-              <div className="w-40 text-center text-neutral-500 text-sm font-normal font-['Montserrat'] leading-tight tracking-tight">
-                Sturdy hammer that is made of wood!!!{" "}
-              </div>
-              <div className="px-6 justify-center items-center gap-1 inline-flex">
-                <div className="text-center text-slate-800 text-base font-bold font-['Montserrat'] leading-normal tracking-tight">
-                  Hammer -{" "}
-                </div>
-                <div className="text-center text-purple-800 text-sm font-bold font-['Montserrat'] leading-normal tracking-tight">
-                  Tools
-                </div>
-              </div>
-              <div className="h-20 relative">
-                <div className="w-36 h-9 left-0 top-0 absolute">
-                  <div className="w-24 h-4 left-[58px] top-[8.56px] absolute text-black text-xs font-normal font-['Poppins'] leading-normal">
-                    Joseph Stalin
-                  </div>
-                  <img
-                    className="w-10 h-9 left-0 top-0 absolute rounded-full"
-                    src="https://via.placeholder.com/41x36"
-                  />
-                </div>
-                <div className="w-32 h-6 left-[8.97px] top-[50.55px] absolute justify-start items-start gap-1 inline-flex">
-                  <div className="w-6 h-6 p-0.5 justify-center items-center flex" />
-                  <div className="w-6 h-6 px-0.5 py-0.5 justify-center items-center flex" />
-                  <div className="w-6 h-6 px-0.5 py-0.5 justify-center items-center flex" />
-                  <div className="w-6 h-6 px-0.5 py-0.5 justify-center items-center flex" />
-                  <div className="w-6 h-6 px-0.5 py-0.5 justify-center items-center flex" />
-                </div>
-              </div>
-            </div>
           </div>
+          <div className="w-full">
+            <label
+              htmlFor="message"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Custom Message
+            </label>
+            <textarea
+              id="message"
+              rows={5}
+              className="block p-2.5 w-full text-sm text-gray-900 bg-stone-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Leave a comment..."
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            className="text-white bg-brand hover:opacity-90 focus:ring-4 focus:outline-none focus:ring-brand-light rounded-lg w-full px-5 py-2.5 text-center"
+          >
+            Rent Item
+          </button>
         </div>
-        <div className="w-96 px-12 py-10 bg-white flex-col justify-start items-center gap-10 inline-flex">
-          <div className="text-center text-slate-800 text-2xl font-bold font-['Montserrat'] leading-loose tracking-tight">
-            Request Item Rental
-          </div>
-          <div className="self-stretch h-44 bg-white rounded-sm flex-col justify-start items-start gap-2.5 flex">
-            <div className="h-20 flex-col justify-center items-start gap-2.5 flex">
-              <div className="text-slate-800 text-sm font-bold font-['Montserrat'] leading-normal tracking-tight">
-                Return Date *
-              </div>
-              <div className="self-stretch h-12 justify-center items-center inline-flex">
-                <div className="grow shrink basis-0 self-stretch justify-center items-center inline-flex">
-                  <div className="grow shrink basis-0 self-stretch pl-4 pr-7 py-2.5 bg-stone-50 rounded border border-zinc-300 justify-start items-center gap-80 inline-flex">
-                    <div className="text-neutral-500 text-sm font-normal font-['Montserrat'] leading-7 tracking-tight">
-                      February 28, 2024
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="h-20 flex-col justify-center items-start gap-2.5 flex">
-              <div className="text-slate-800 text-sm font-bold font-['Montserrat'] leading-normal tracking-tight">
-                Custom Message
-              </div>
-              <div className="self-stretch h-12 justify-center items-center inline-flex">
-                <div className="grow shrink basis-0 self-stretch justify-center items-center inline-flex">
-                  <div className="grow shrink basis-0 self-stretch pl-4 pr-96 py-2.5 bg-stone-50 rounded border border-zinc-300 justify-start items-center inline-flex">
-                    <div className="text-neutral-500 text-sm font-normal font-['Montserrat'] leading-7 tracking-tight">
-                      Message
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="self-stretch h-12 px-10 py-3.5 bg-purple-800 rounded flex-col justify-start items-center gap-2.5 flex">
-            <div className="text-center text-white text-sm font-bold font-['Montserrat'] leading-snug tracking-tight">
-              Rent Item
-            </div>
-          </div>
-        </div>
-      </div>
+      </form>
     </>
   );
 }
