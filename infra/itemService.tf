@@ -246,3 +246,69 @@ resource "aws_lambda_function_url" "url_create_item" {
     expose_headers    = ["keep-alive", "date"]
   }
 }
+
+resource "aws_lambda_function_url" "url_borrow_item" {
+  function_name      = aws_lambda_function.borrow_item_lambda.function_name
+  authorization_type = "NONE"
+  
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["PUT"] 
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
+
+resource "aws_lambda_function_url" "url_delete_item" {
+  function_name      = aws_lambda_function.delete_item_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["DELETE"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+
+}
+
+resource "aws_lambda_function_url" "url_get_item" {
+  function_name      = aws_lambda_function.get_item_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["GET"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
+
+resource "aws_lambda_function_url" "url_return_item" {
+  function_name      = aws_lambda_function.return_item_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["PUT"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
+
+resource "aws_lambda_function_url" "url_update_item" {
+  function_name      = aws_lambda_function.update_item_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["PUT"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
