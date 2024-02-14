@@ -33,7 +33,8 @@ def insert_item_in_table(table, itemID, data):
         Key={
             'itemID': itemID
         },
-        Item=item
+        Item=item,
+        ReturnValues="CREATED_NEW"
     )
     return response
 
@@ -132,7 +133,3 @@ def handler(event, context):
             'statusCode': 500,
             'body': json.dumps(str(e))
         }
-
-# test function
-def add(a, b):
-    return a + b
