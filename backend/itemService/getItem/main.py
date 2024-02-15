@@ -27,9 +27,9 @@ def fetch_items_after_itemID(table_name, last_itemID, pageCount):
 
 def handler(event, context):
     try:
-        body = parse_event_body(event['body'])
-        last_itemID = body.get('lastItemID', '')
-        pageCount = int(body['pageCount'])  
+        header = event["headers"]
+        last_itemID = header.get('lastItemID', '')
+        pageCount = int(header['pageCount'])  
         table_name = 'items-30144999'  
         
         items = fetch_items_after_itemID(table_name, last_itemID, pageCount)
