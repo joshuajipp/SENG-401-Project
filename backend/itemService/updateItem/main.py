@@ -16,23 +16,11 @@ def parse_event_body(event_body):
         return json.loads(event_body)
     return event_body
 
-# This is probably wrong?
-def update_item_in_table(table, itemID, newInfo):
+def update_item_in_table(table, newData):
     """Update an item in the DynamoDB table."""
-    response = table.update_item(
-        Key={
-            'itemID': itemID
-        },
-        UpdateExpression="set itemName = :itemName, set description = :description, \
-        set maxBorrowDays = :maxBorrowDays, set imageURL = :imageURL, set imageHash = :imageHash",
-        ExpressionAttributeValues={
-            ':itemName': newInfo["itemName"],
-            ':description': newInfo["description"],
-            ':maxBorrowDays': newInfo["maxBorrowDays"],
-            ':imageURL': newInfo["image_url"],
-            ':imageHash': newInfo["image_hash"]
-        },
-        ReturnValues="UPDATED_NEW"
+    response = table.put_item(
+        Item=newData,
+        ReturnValues='ALL_OLD'
     )
     return response
 
@@ -94,6 +82,7 @@ def handler(event, context):
         body = parse_event_body(event["body"])
     
         itemID = body["itemID"]
+        lenderID = body['lenderID']
         itemName = body["name"]
         description = body["description"]
         maxBorrowDays = body["max_borrow_days"]
@@ -108,18 +97,20 @@ def handler(event, context):
             image_url = response["secure_url"]
             image_hash = new_image_hash
         else:
-            image_url = table.get_item(Key={"itemID": itemID})["Item"]["imageURL"]
+            image_url = table.get_item(Key={"itemID": itemID})["Item"]["image"]
             image_hash = old_image_hash
 
         newInfo = {
+            'itemID': itemID,
+            'lenderID': lenderID,
             'itemName': itemName,
             'description': description,
             'maxBorrowDays': maxBorrowDays,
-            'image_url': image_url,
-            'image_hash': image_hash
+            'image': image_url,
+            'imageHash': image_hash
         }
 
-        response = update_item_in_table(table, itemID, newInfo)
+        response = update_item_in_table(table, newInfo)
         
         return {
             'statusCode': 200,
