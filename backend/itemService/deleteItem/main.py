@@ -23,7 +23,7 @@ def handler(event, context):
         table_name = 'items-30144999'
         table = get_dynamodb_table(table_name)
         headers = event.get("headers", {})
-        itemID = headers.get("itemID", {})
+        itemID = headers.get("itemid", "")
         
         response = remove_item(table, itemID)
         
