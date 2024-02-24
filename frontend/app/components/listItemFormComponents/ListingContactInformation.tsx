@@ -1,7 +1,11 @@
+import { authOptions } from "@/app/utils/authOptions";
 import { Label, TextInput } from "flowbite-react";
+import { getServerSession } from "next-auth/next";
 import { FaPhone, FaInbox } from "react-icons/fa";
 
-export default function ListingContactInformation() {
+export default async function ListingContactInformation() {
+  const session = await getServerSession(authOptions);
+
   return (
     <div className="flex flex-col gap-4 border p-4 rounded shadow justify-between">
       <div className=" flex flex-row place-items-center gap-4">
@@ -41,6 +45,8 @@ export default function ListingContactInformation() {
             minLength={8}
             maxLength={50}
             helperText="Your email will show up on your listing"
+            disabled
+            value={session?.user?.email || ""}
           />
         </div>
       </div>
