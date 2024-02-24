@@ -2,20 +2,13 @@ import { authOptions } from "@/app/utils/authOptions";
 import { Label, TextInput } from "flowbite-react";
 import { getServerSession } from "next-auth/next";
 import { FaPhone, FaInbox } from "react-icons/fa";
+import ListItemFormTemplate from "./ListItemFormTemplate";
 
 export default async function ListingContactInformation() {
   const session = await getServerSession(authOptions);
 
   return (
-    <div className="flex flex-col gap-4 border p-4 rounded shadow justify-between">
-      <div className=" flex flex-row place-items-center gap-4">
-        <div className=" rounded-lg bg-gray-200 p-2 size-8 justify-center items-center flex">
-          4
-        </div>
-        <div className=" text-xl font-medium text-black ">
-          Contact Information
-        </div>
-      </div>
+    <ListItemFormTemplate formNumber={4} formHeader={"Contact information"}>
       <div>
         <div className="mb-2 block font-bold">
           <Label htmlFor="phoneNumber" value="Phone Number: (optional)" />
@@ -50,6 +43,6 @@ export default async function ListingContactInformation() {
           />
         </div>
       </div>
-    </div>
+    </ListItemFormTemplate>
   );
 }
