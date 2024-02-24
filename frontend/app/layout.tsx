@@ -28,7 +28,6 @@ export default function RootLayout({
         <Flowbite theme={{ theme: customTheme }}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Header />
-
             <ThemeSwitcher />
             <div className="flex min-h-screen flex-col items-center justify-between p-24">
               {children}

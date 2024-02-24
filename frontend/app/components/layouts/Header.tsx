@@ -50,8 +50,8 @@ function UserProfile({
       label={
         <Image
           src={imageSrc}
-          width={50}
-          height={50}
+          width={45}
+          height={45}
           alt="profile image"
           className="rounded-full"
         />
