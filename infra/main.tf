@@ -126,25 +126,37 @@ resource "aws_dynamodb_table" "items_dynamodb_table" {
   name         = "items-30144999"
   billing_mode = "PROVISIONED"
 
-  # up to 8KB read per second (eventually consistent)
   read_capacity = 1
-
-  # up to 1KB per second
   write_capacity = 1
 
   hash_key = "itemID"
-  range_key = "timestamp"  # Sort key
 
   attribute {
     name = "itemID"
     type = "S"
   }
+
+  attribute {
+    name = "location"
+    type = "S"
+  }
+
   attribute {
     name = "timestamp"
     type = "N"
   }
 
+  # Define a new Global Secondary Index for location and timestamp
+  global_secondary_index {
+    name               = "LocationTimestampIndex"
+    hash_key           = "location"
+    range_key          = "timestamp"
+    projection_type    = "ALL"
+    read_capacity      = 1
+    write_capacity     = 1
+  }
 }
+
 
 resource "aws_lambda_function" "create_account_lambda" {
   filename         = "./createAccount.zip"
