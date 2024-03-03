@@ -19,7 +19,7 @@ variable "aws_secret_key" {}
 
 provider "aws" {
   region = "ca-central-1"
-  access_key = var.aws_access_key
+  access_key = var.aws_access_keyc
   secret_key = var.aws_secret_key
 }
 
@@ -65,7 +65,7 @@ resource "aws_lambda_function" "create_item_lambda" {
   filename         = "./createItem.zip"
   function_name    = "create-item-30144999"
   role             = aws_iam_role.lambda_role.arn
-  handler          = "main.handler"
+  handler          = "create_item.handler"
   runtime          = "python3.9"
   timeout = 300
   source_code_hash = filebase64sha256("./createItem.zip")
