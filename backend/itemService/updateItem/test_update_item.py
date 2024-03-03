@@ -1,5 +1,5 @@
 from moto import mock_aws
-from main import *
+from backend.itemService.updateItem.update_item import *
 import os
 import pytest
 
