@@ -17,21 +17,6 @@ def parse_event_body(event_body):
   else:
     return event_body
 
-# Create the update expression string as well as the expression attribute values for values that changed
-def create_table_query(old_entry, new_values):
-  update_expression = "SET "
-  expression_attribute_values = {}
-
-  # Create update expression and expression attribute values
-  for feature, value in new_values.items():
-    if value != old_entry[f'{feature}']:
-      update_expression += f'{feature} = :{feature}, '
-      expression_attribute_values[f':{feature}'] = value
-    
-  # Clean up update expression string
-  update_expression = update_expression.rstrip(", ")
-  return update_expression, expression_attribute_values
-
 # ----------------------------------------------------------------------------------------------------------------- #
 
 # Cloudinary stuff
@@ -87,10 +72,28 @@ def sort_dict(dict, exclude):
 
 # ----------------------------------------------------------------------------------------------------------------- #
 
+# Create the update expression string as well as the expression attribute values for values that changed
+def create_table_query(old_entry, new_values):
+  update_expression = "SET "
+  expression_attribute_values = {}
+  expression_attribute_names = {}
+
+  # Create update expression and expression attribute values
+  for feature, value in new_values.items():
+    if value != old_entry[feature]:
+      update_expression += f'#{feature} = :{feature}, '
+      expression_attribute_values[f':{feature}'] = value
+      expression_attribute_names[f'#{feature}'] = feature
+      
+    
+  # Clean up update expression string
+  update_expression = update_expression.rstrip(", ")
+  return update_expression, expression_attribute_values, expression_attribute_names
+
 # Update Account
 def update_account(table, userID, old_entry, new_info):
     # Get update expression and expression attribute values
-    update_expression, expression_attribute_values = create_table_query(old_entry, new_info)
+    update_expression, expression_attribute_values, expression_attribute_names = create_table_query(old_entry, new_info)
 
     # Update the account entry in DynamoDB
     response = table.update_item(
@@ -99,6 +102,7 @@ def update_account(table, userID, old_entry, new_info):
       },
       UpdateExpression=update_expression,
       ExpressionAttributeValues=expression_attribute_values,
+      ExpressionAttributeNames=expression_attribute_names,
       ReturnValues="UPDATED_NEW"
     )
     
