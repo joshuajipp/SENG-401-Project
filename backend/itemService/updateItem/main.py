@@ -82,6 +82,12 @@ def handler(event, context):
         table = get_dynamodb_table(table_name)
         item = table.get_item(Key={"itemID": itemID})["Item"]
         
+        if item is None:
+            return {
+                'statusCode': 404,
+                'body': json.dumps("Item not found")
+            }
+
         old_image_hashes = item["imageHashes"]
         timestamp = item["timestamp"]
         lenderID = item["lenderID"]
@@ -95,7 +101,7 @@ def handler(event, context):
         description = body["description"]
         condition = body["condition"]
         location = body["location"]
-        tags = body["tags"]
+        category = body["category"]
 
         # Get the image and hashes
         raw_images = body["images"]
@@ -128,7 +134,7 @@ def handler(event, context):
             'itemName': itemName,
             'condition': condition,
             'description': description,
-            'tags': tags,
+            'category': category,
             'location': location,
             'images': image_urls,
             'imageHashes': image_hashes,

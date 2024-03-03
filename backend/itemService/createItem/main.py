@@ -92,7 +92,7 @@ def handler(event, context):
         description = body['description']
         condition = body['condition']
         location = body['location']
-        tags = body['tags']
+        category = body['category']
 
         # Create a unique item ID
         itemID = str(uuid.uuid4())
@@ -116,7 +116,7 @@ def handler(event, context):
             image_hashes.append(image_hash)
 
         # Get the current time
-        time = str(int(time.time()))
+        timestamp = str(int(time.time()))
 
         # Prepare the data to be inserted into the table
         data = {
@@ -124,12 +124,12 @@ def handler(event, context):
             'itemName': itemName,
             'condition': condition,
             'description': description,
-            'tags': tags,
+            'category': category,
             'location': location,
             'images': image_urls,
             'imageHashes': image_hashes,
             'lenderID': lenderID,
-            'timestamp': time,
+            'timestamp': timestamp,
             'borrowerID': None
         }
 
@@ -143,6 +143,14 @@ def handler(event, context):
             'body': json.dumps(response)
         }
     
+    except KeyError as ke:
+        return {
+            "statusCode": 400,
+            "body": json.dumps({
+                "message": f"Missing required field: {str(ke)}"
+            })
+        }
+
     except Exception as e:
         return {
             'statusCode': 500,
