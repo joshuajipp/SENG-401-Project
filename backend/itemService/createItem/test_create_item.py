@@ -1,5 +1,5 @@
 import pytest
-from backend.itemService.createItem.create_item import *
+from create_item import *
 from moto import mock_aws
 import boto3
 import os
