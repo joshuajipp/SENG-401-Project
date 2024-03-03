@@ -3,7 +3,7 @@ import json
 
 def get_dynamodb_table(table_name):
     """Initialize a DynamoDB resource and get the table."""
-    dynamodb = boto3.resource('dynamodb')
+    dynamodb = boto3.resource('dynamodb', region_name='ca-central-1')
     table = dynamodb.Table(table_name)
     return table
 
@@ -13,16 +13,20 @@ def parse_event_body(event_body):
         return json.loads(event_body)
     return event_body
 
-def remove_borrowerID_from_item(table, itemID):
-    """Remove or nullify the borrowerID for an item in the DynamoDB table."""
+def update_borrowerID_to_null_in_item(table, itemID):
+    """Set the borrowerID to null for an item in the DynamoDB table."""
     response = table.update_item(
         Key={
             'itemID': itemID
         },
-        UpdateExpression="REMOVE borrowerID", # Use REMOVE to delete the attribute
+        UpdateExpression="SET borrowerID = :val",
+        ExpressionAttributeValues={
+            ':val': None
+        },
         ReturnValues="UPDATED_NEW"
     )
     return response
+
 
 def handler(event, context):
     try:
@@ -31,7 +35,7 @@ def handler(event, context):
         body = parse_event_body(event["body"])
         itemID = body["itemID"]
         
-        response = remove_borrowerID_from_item(table, itemID)
+        response = update_borrowerID_to_null_in_item(table, itemID)
         
         
         return {
