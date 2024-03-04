@@ -80,14 +80,15 @@ def handler(event, context):
         exclusiveStartKey = headers.get('lastitem', '')
         location = headers.get('location', '')
         pageCount = headers.get('pagecount', '10')
-        pageCount = int(pageCount) 
+        pageCount = int(pageCount)
+        search = headers.get('search')
         table_name = 'items-30144999'
         if exclusiveStartKey != '':
             exclusiveStartKey = parse_event_body(exclusiveStartKey)
             exclusiveStartKey['timestamp'] = Decimal(str(exclusiveStartKey['timestamp']))
         
         items, last_evaluated_key = fetch_items_without_borrowerID_with_pagination(
-            table_name, location, exclusiveStartKey, pageCount
+            table_name, location, exclusiveStartKey, pageCount, search
         )
         
         return {
