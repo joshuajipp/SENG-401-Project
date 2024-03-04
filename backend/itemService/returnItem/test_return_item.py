@@ -71,8 +71,8 @@ def test_remove_borrowerID_from_item(items_table):
     }
     table = items_table
     table.put_item(Item=item)
-    response = update_borrowerID_to_null_in_item(table, '1')
-    assert response['Attributes']['borrowerID'] == None
+    response = remove_borrowerID_from_item(table, '1')
+    assert response['Attributes'].get('borrowerID') == None
 
 def test_handler(items_table):
     item = {
@@ -88,5 +88,5 @@ def test_handler(items_table):
     }
     response = handler(event, None)
     assert response['statusCode'] == 200
-    assert json.loads(response['body'])['Attributes']['borrowerID'] == None
+    assert json.loads(response['body'])['Attributes'].get('borrowerID') == None
 
