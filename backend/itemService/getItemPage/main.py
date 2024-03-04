@@ -1,5 +1,6 @@
 import boto3
 import json
+from decimal import Decimal
 
 def get_dynamodb_table(table_name):
     """Initialize a DynamoDB resource and get the table."""
@@ -13,35 +14,52 @@ def parse_event_body(event_body):
         return json.loads(event_body)
     return event_body
 
-def fetch_items_after_itemID(table_name, last_itemID, pageCount):
-    table = get_dynamodb_table(table_name)
-    scan_kwargs = {
-        'Limit': pageCount
-    }
+def decimal_default(obj):
+    """Convert Decimal objects to float. Can be passed as the 'default' parameter to json.dumps()."""
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError
 
-    if last_itemID != '':
-        scan_kwargs['ExclusiveStartKey'] = {'itemID': last_itemID}
+def fetch_items_after_itemID(table_name, location, exclusiveStartKey, pageCount):
+    table = get_dynamodb_table(table_name)
+    query_kwargs = {
+        'IndexName': 'LocationTimestampIndex',
+        'KeyConditionExpression': 'location = :value',
+        'ExpressionAttributeValues': {
+            ':value': location
+        },
+        'Limit': pageCount,
+        'ScanIndexForward': False
+    }
+    if exclusiveStartKey != '':
+        query_kwargs['ExclusiveStartKey'] = exclusiveStartKey
     
-    response = table.scan(**scan_kwargs)
-    return response.get('Items', [])
+    response = table.query(**query_kwargs)
+    return response
+
+
 
 def handler(event, context):
     try:
         headers = event.get("headers", {})
         
-        last_itemID = headers.get('lastitemid', '')
+        exclusiveStartKey = headers.get('lastitem', '')
+        location = headers.get('location', '')
         pageCount = headers.get('pagecount', '10')
         pageCount = int(pageCount) 
         table_name = 'items-30144999'
+        if exclusiveStartKey != '':
+            exclusiveStartKey = parse_event_body(exclusiveStartKey)
+            exclusiveStartKey['timestamp'] = Decimal(str(exclusiveStartKey['timestamp']))
         
-        items = fetch_items_after_itemID(table_name, last_itemID, pageCount)
+        items = fetch_items_after_itemID(table_name, location, exclusiveStartKey, pageCount)
         
         return {
             'statusCode': 200,
-            'body': json.dumps({'items': items})
+            'body': json.dumps(items, default=decimal_default)
         }
     except Exception as e:
         return {
             'statusCode': 500,
-            'body': json.dumps({'error': str(e)})
+            'body': json.dumps({'error': str(e)}, default=decimal_default)
         }

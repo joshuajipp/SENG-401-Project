@@ -59,34 +59,274 @@ def test_parse_event_body():
     assert parse_event_body({"key": "value"}) == {"key": "value"}
 
 
-def test_fetch_items_after_itemID_no_lastItemID(items_table):
-    items_table.put_item(Item={'itemID': '1'})
-    items_table.put_item(Item={'itemID': '2'})
-    items = fetch_items_after_itemID('items-30144999', '', 1)
-    assert len(items) == 1
 
 
-def test_handler_with_lastItemID(dynamodb_mock, items_table):
-    items_table.put_item(Item={'itemID': '1'})
-    items_table.put_item(Item={'itemID': '2'})
-    event = {
-        'headers': {'lastItemID': '1', 'pagecount': 1}
-    }
-    response = handler(event, None)
+def test_fetch_items_after_itemID(items_table):
+    items_table.put_item(Item={
+        'itemID': '1',
+        'location': 'Vancouver',
+        'timestamp': 1
+    })
+    items_table.put_item(Item={
+        'itemID': '2',
+        'location': 'Vancouver',
+        'timestamp': 2
+    })
+    items_table.put_item(Item={
+        'itemID': '3',
+        'location': 'Vancouver',
+        'timestamp': 3
+    })
+    items_table.put_item(Item={
+        'itemID': '4',
+        'location': 'Vancouver',
+        'timestamp': 4
+    })
+    items_table.put_item(Item={
+        'itemID': '5',
+        'location': 'Vancouver',
+        'timestamp': 5
+    })
+    items_table.put_item(Item={
+        'itemID': '6',
+        'location': 'Vancouver',
+        'timestamp': 6
+    })
+    items_table.put_item(Item={
+        'itemID': '7',
+        'location': 'Vancouver',
+        'timestamp': 7
+    })
+    items_table.put_item(Item={
+        'itemID': '8',
+        'location': 'Vancouver',
+        'timestamp': 8
+    })
+    items_table.put_item(Item={
+        'itemID': '9',
+        'location': 'Vancouver',
+        'timestamp': 9
+    })
+    items_table.put_item(Item={
+        'itemID': '10',
+        'location': 'Vancouver',
+        'timestamp': 10
+    })
+    items_table.put_item(Item={
+        'itemID': '11',
+        'location': 'Vancouver',
+        'timestamp': 11
+    })
+    items_table.put_item(Item={
+        'itemID': '12',
+        'location': 'Vancouver',
+        'timestamp': 12
+    })
+    items_table.put_item(Item={
+        'itemID': '13',
+        'location': 'Vancouver',
+        'timestamp': 13
+    })
+    items_table.put_item(Item={
+        'itemID': '14',
+        'location': 'Vancouver',
+        'timestamp': 14
+    })
+    items_table.put_item(Item={
+        'itemID': '15',
+        'location': 'Vancouver',
+        'timestamp': 15
+    })
+
+    response = fetch_items_after_itemID('items-30144999', 'Vancouver', '', 10)
+    assert response['Items'] == [
+        {
+            'itemID': '15',
+            'location': 'Vancouver',
+            'timestamp': 15
+        },
+        {
+            'itemID': '14',
+            'location': 'Vancouver',
+            'timestamp': 14
+        },
+        {
+            'itemID': '13',
+            'location': 'Vancouver',
+            'timestamp': 13
+        },
+        {
+            'itemID': '12',
+            'location': 'Vancouver',
+            'timestamp': 12
+        },
+        {
+            'itemID': '11',
+            'location': 'Vancouver',
+            'timestamp': 11
+        },
+        {
+            'itemID': '10',
+            'location': 'Vancouver',
+            'timestamp': 10
+        },
+        {
+            'itemID': '9',
+            'location': 'Vancouver',
+            'timestamp': 9
+        },
+        {
+            'itemID': '8',
+            'location': 'Vancouver',
+            'timestamp': 8
+        },
+        {
+            'itemID': '7',
+            'location': 'Vancouver',
+            'timestamp': 7
+        },
+        {
+            'itemID': '6',
+            'location': 'Vancouver',
+            'timestamp': 6
+        }
+    ]
+
+    response = fetch_items_after_itemID('items-30144999', 'Vancouver', response['LastEvaluatedKey'], 10)
+
+    assert response['Items'] == [
+        {
+            'itemID': '5',
+            'location': 'Vancouver',
+            'timestamp': 5
+        },
+        {
+            'itemID': '4',
+            'location': 'Vancouver',
+            'timestamp': 4
+        },
+        {
+            'itemID': '3',
+            'location': 'Vancouver',
+            'timestamp': 3
+        },
+        {
+            'itemID': '2',
+            'location': 'Vancouver',
+            'timestamp': 2
+        },
+        {
+            'itemID': '1',
+            'location': 'Vancouver',
+            'timestamp': 1
+        }
+    ]
+
+
+def test_handler(items_table):
+    items_table.put_item(Item={
+        'itemID': '1',
+        'location': 'Vancouver',
+        'timestamp': 1
+    })
+    items_table.put_item(Item={
+        'itemID': '2',
+        'location': 'Vancouver',
+        'timestamp': 2
+    })
+    items_table.put_item(Item={
+        'itemID': '3',
+        'location': 'Vancouver',
+        'timestamp': 3
+    })
+    items_table.put_item(Item={
+        'itemID': '4',
+        'location': 'Vancouver',
+        'timestamp': 4
+    })
+    items_table.put_item(Item={
+        'itemID': '5',
+        'location': 'Vancouver',
+        'timestamp': 5
+    })
+    items_table.put_item(Item={
+        'itemID': '6',
+        'location': 'Vancouver',
+        'timestamp': 6
+    })
+    items_table.put_item(Item={
+        'itemID': '7',
+        'location': 'Vancouver',
+        'timestamp': 7
+    })
+    items_table.put_item(Item={
+        'itemID': '8',
+        'location': 'Vancouver',
+        'timestamp': 8
+    })
+    items_table.put_item(Item={
+        'itemID': '9',
+        'location': 'Vancouver',
+        'timestamp': 9
+    })
+    items_table.put_item(Item={
+        'itemID': '10',
+        'location': 'Vancouver',
+        'timestamp': 10
+    })
+    items_table.put_item(Item={
+        'itemID': '11',
+        'location': 'Vancouver',
+        'timestamp': 11
+    })
+    items_table.put_item(Item={
+        'itemID': '12',
+        'location': 'Vancouver',
+        'timestamp': 12
+    })
+    items_table.put_item(Item={
+        'itemID': '13',
+        'location': 'Vancouver',
+        'timestamp': 13
+    })
+    items_table.put_item(Item={
+        'itemID': '14',
+        'location': 'Vancouver',
+        'timestamp': 14
+    })
+    items_table.put_item(Item={
+        'itemID': '15',
+        'location': 'Vancouver',
+        'timestamp': 15
+    })
+
+    response = handler({
+        "headers": {
+            "location": "Vancouver",
+            "pagecount": "10"
+        }
+    }, None)
+
     assert response['statusCode'] == 200
-    items = json.loads(response['body'])['items']
-    assert len(items) == 1
-    assert items[0]['itemID'] == '2'
+    items = response['body']
+    assert len(json.loads(items)['Items']) == 10
+    assert json.loads(items)['Items'][0]['itemID'] == '15'
+    assert json.loads(items)['Items'][9]['itemID'] == '6'
+    assert 'LastEvaluatedKey' in json.loads(items)
+    assert json.loads(items)['LastEvaluatedKey']['itemID'] == '6'
 
-def test_handler_no_lastItemID(dynamodb_mock, items_table):
-    items_table.put_item(Item={'itemID': '1'})
-    items_table.put_item(Item={'itemID': '2'})
-    event = {
-        'headers': {'pagecount': 2}
-    }
-    response = handler(event, None)
+    response = handler({
+        "headers": {
+            "location": "Vancouver",
+            "pagecount": "10",
+            "lastitem": json.loads(items)['LastEvaluatedKey']
+        }
+    }, None)
+
+
     assert response['statusCode'] == 200
-    print(response)
-    items = json.loads(response['body'])['items']
-    assert len(items) == 2
-
+    items = response['body']
+    assert len(json.loads(items)['Items']) == 5
+    assert json.loads(items)['Items'][0]['itemID'] == '5'
+    assert json.loads(items)['Items'][4]['itemID'] == '1'
+    assert 'LastEvaluatedKey' not in json.loads(items)
