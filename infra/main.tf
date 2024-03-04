@@ -181,6 +181,11 @@ resource "aws_dynamodb_table" "items_dynamodb_table" {
     type = "S"
   }
 
+  attribute {
+    name = "borrowerID"
+    type = "S"
+  }
+
   # Define a new Global Secondary Index for location and timestamp
   global_secondary_index {
     name               = "LocationTimestampIndex"
@@ -195,7 +200,16 @@ resource "aws_dynamodb_table" "items_dynamodb_table" {
   global_secondary_index {
     name               = "LenderIDIndex"
     hash_key           = "lenderID"
-    range_key = "itemID"
+    range_key          = "itemID"
+    projection_type    = "ALL"
+    read_capacity      = 1
+    write_capacity     = 1
+  }
+
+  global_secondary_index {
+    name               = "BorrowerIDIndex"
+    hash_key           = "borrowerID"
+    range_key          = "itemID"
     projection_type    = "ALL"
     read_capacity      = 1
     write_capacity     = 1
