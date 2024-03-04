@@ -129,6 +129,8 @@ def populate_large_table(table, num_items, num_borrowed_items):
             'itemID': str(i),
             'location': 'loc1',
             'timestamp': i,
+            'itemName': 'item' + str(i),
+            'description': 'description' + str(i),
         }
         if i in borrowed_indices:
             item['borrowerID'] = 'borrower' + str(i)
