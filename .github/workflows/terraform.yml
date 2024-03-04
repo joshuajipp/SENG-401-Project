@@ -59,14 +59,14 @@ jobs:
           zip -r ../../../infra/deleteItem.zip .
           cd -
       
-      - name: Install Python dependencies getItem
+      - name: Install Python dependencies getItemPage
         run: |
-          pip3 install -r ./backend/itemService/getItem/requirements.txt -t ./backend/itemService/getItem/
+          pip3 install -r ./backend/itemService/getItemPage/requirements.txt -t ./backend/itemService/getItemPage/
         
-      - name: Zip create getItem function
+      - name: Zip create getItemPage function
         run: |
-          cd ./backend/itemService/getItem
-          zip -r ../../../infra/getItem.zip .
+          cd ./backend/itemService/getItemPage
+          zip -r ../../../infra/getItemPage.zip .
           cd -
       
       - name: Install Python dependencies returnItem

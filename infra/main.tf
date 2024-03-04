@@ -91,14 +91,14 @@ resource "aws_lambda_function" "delete_item_lambda" {
   source_code_hash = filebase64sha256("./deleteItem.zip")
 }
 
-resource "aws_lambda_function" "get_item_lambda" {
-  filename         = "./getItem.zip"
-  function_name    = "get-item-30144999"
+resource "aws_lambda_function" "get_item_page_lambda" {
+  filename         = "./getItemPage.zip"
+  function_name    = "get-item-page-30144999"
   role             = aws_iam_role.lambda_role.arn
   handler          = "main.handler"
   runtime          = "python3.9"
   timeout = 300
-  source_code_hash = filebase64sha256("./getItem.zip")
+  source_code_hash = filebase64sha256("./getItemPage.zip")
 }
 
 resource "aws_lambda_function" "return_item_lambda" {
