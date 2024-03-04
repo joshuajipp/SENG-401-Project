@@ -3,6 +3,7 @@ from moto import mock_aws
 import boto3
 import json
 from main import *
+import random
 
 @pytest.fixture
 def aws_credentials():
@@ -61,272 +62,128 @@ def test_parse_event_body():
 
 
 
-def test_fetch_items_after_itemID(items_table):
-    items_table.put_item(Item={
-        'itemID': '1',
-        'location': 'Vancouver',
-        'timestamp': 1
-    })
-    items_table.put_item(Item={
-        'itemID': '2',
-        'location': 'Vancouver',
-        'timestamp': 2
-    })
-    items_table.put_item(Item={
-        'itemID': '3',
-        'location': 'Vancouver',
-        'timestamp': 3
-    })
-    items_table.put_item(Item={
-        'itemID': '4',
-        'location': 'Vancouver',
-        'timestamp': 4
-    })
-    items_table.put_item(Item={
-        'itemID': '5',
-        'location': 'Vancouver',
-        'timestamp': 5
-    })
-    items_table.put_item(Item={
-        'itemID': '6',
-        'location': 'Vancouver',
-        'timestamp': 6
-    })
-    items_table.put_item(Item={
-        'itemID': '7',
-        'location': 'Vancouver',
-        'timestamp': 7
-    })
-    items_table.put_item(Item={
-        'itemID': '8',
-        'location': 'Vancouver',
-        'timestamp': 8
-    })
-    items_table.put_item(Item={
-        'itemID': '9',
-        'location': 'Vancouver',
-        'timestamp': 9
-    })
-    items_table.put_item(Item={
-        'itemID': '10',
-        'location': 'Vancouver',
-        'timestamp': 10
-    })
-    items_table.put_item(Item={
-        'itemID': '11',
-        'location': 'Vancouver',
-        'timestamp': 11
-    })
-    items_table.put_item(Item={
-        'itemID': '12',
-        'location': 'Vancouver',
-        'timestamp': 12
-    })
-    items_table.put_item(Item={
-        'itemID': '13',
-        'location': 'Vancouver',
-        'timestamp': 13
-    })
-    items_table.put_item(Item={
-        'itemID': '14',
-        'location': 'Vancouver',
-        'timestamp': 14
-    })
-    items_table.put_item(Item={
-        'itemID': '15',
-        'location': 'Vancouver',
-        'timestamp': 15
-    })
-
-    response = fetch_items_after_itemID('items-30144999', 'Vancouver', '', 10)
-    assert response['Items'] == [
-        {
-            'itemID': '15',
-            'location': 'Vancouver',
-            'timestamp': 15
-        },
-        {
-            'itemID': '14',
-            'location': 'Vancouver',
-            'timestamp': 14
-        },
-        {
-            'itemID': '13',
-            'location': 'Vancouver',
-            'timestamp': 13
-        },
-        {
-            'itemID': '12',
-            'location': 'Vancouver',
-            'timestamp': 12
-        },
-        {
-            'itemID': '11',
-            'location': 'Vancouver',
-            'timestamp': 11
-        },
-        {
-            'itemID': '10',
-            'location': 'Vancouver',
-            'timestamp': 10
-        },
-        {
-            'itemID': '9',
-            'location': 'Vancouver',
-            'timestamp': 9
-        },
-        {
-            'itemID': '8',
-            'location': 'Vancouver',
-            'timestamp': 8
-        },
-        {
-            'itemID': '7',
-            'location': 'Vancouver',
-            'timestamp': 7
-        },
-        {
-            'itemID': '6',
-            'location': 'Vancouver',
-            'timestamp': 6
-        }
+def populate_table_with_items(table):
+    """Helper function to populate table with a mix of items."""
+    items = [
+        {'itemID': '1', 'location': 'loc1', 'timestamp': 123, 'borrowerID': 'borrower1'},
+        {'itemID': '2', 'location': 'loc1', 'timestamp': 124},  # No borrowerID
+        {'itemID': '3', 'location': 'loc1', 'timestamp': 125, 'borrowerID': 'borrower2'},
+        {'itemID': '4', 'location': 'loc1', 'timestamp': 126},  # No borrowerID
+        {'itemID': '5', 'location': 'loc1', 'timestamp': 127}   # No borrowerID
     ]
+    for item in items:
+        table.put_item(Item=item)
 
-    response = fetch_items_after_itemID('items-30144999', 'Vancouver', response['LastEvaluatedKey'], 10)
+def test_pagination_with_exact_page_size(items_table):
+    """Test fetching items where the number of items exactly matches the page size."""
+    populate_table_with_items(items_table)
+    # Assuming populate_table_with_items adds 3 items without borrowerID
+    fetched_items, last_evaluated_key = fetch_items_without_borrowerID_with_pagination(
+        'items-30144999', 'loc1', None, 3
+    )
+    assert len(fetched_items) == 3, "Should fetch exactly 3 items"
+    assert last_evaluated_key is None, "There should not be a next page"
 
-    assert response['Items'] == [
-        {
-            'itemID': '5',
-            'location': 'Vancouver',
-            'timestamp': 5
-        },
-        {
-            'itemID': '4',
-            'location': 'Vancouver',
-            'timestamp': 4
-        },
-        {
-            'itemID': '3',
-            'location': 'Vancouver',
-            'timestamp': 3
-        },
-        {
-            'itemID': '2',
-            'location': 'Vancouver',
-            'timestamp': 2
-        },
-        {
-            'itemID': '1',
-            'location': 'Vancouver',
-            'timestamp': 1
+def test_pagination_with_additional_queries_needed(items_table):
+    """Test fetching items where additional queries are needed due to filtered items."""
+    populate_table_with_items(items_table)
+    # Request 2 items, but since items with borrowerID are skipped, it might need more queries
+    fetched_items, last_evaluated_key = fetch_items_without_borrowerID_with_pagination(
+        'items-30144999', 'loc1', None, 2
+    )
+    assert len(fetched_items) == 2, "Should fetch exactly 2 items"
+    assert last_evaluated_key is not None, "There should be more items available"
+
+def test_pagination_last_page_with_fewer_items(items_table):
+    """Test fetching the last page of items when there are fewer items than the page size."""
+    populate_table_with_items(items_table)
+    # First, fetch 2 items to simulate partial consumption
+    _, last_evaluated_key = fetch_items_without_borrowerID_with_pagination(
+        'items-30144999', 'loc1', None, 2
+    )
+    # Now, fetch with the last_evaluated_key to get the last page
+    fetched_items, last_evaluated_key_next = fetch_items_without_borrowerID_with_pagination(
+        'items-30144999', 'loc1', last_evaluated_key, 2
+    )
+    # Assuming there was 1 item left without borrowerID
+    assert len(fetched_items) == 1, "Should fetch exactly 1 remaining item"
+    assert last_evaluated_key_next is None, "There should not be more items available"
+
+def test_pagination_with_no_matching_items(items_table):
+    """Test fetching items when none match the filter criteria."""
+    populate_table_with_items(items_table)
+    # Fetch with a location that doesn't match any items
+    fetched_items, last_evaluated_key = fetch_items_without_borrowerID_with_pagination(
+        'items-30144999', 'loc2', None, 3  # Assuming 'loc2' items don't exist
+    )
+    assert len(fetched_items) == 0, "Should not fetch any items"
+    assert last_evaluated_key is None, "There should not be a next page"
+
+def populate_large_table(table, num_items, num_borrowed_items):
+    """Helper function to populate table with a large number of items. Some items are borrowed at random indices."""
+    # Populate a set of num_borrowed_items that are less than num_items
+    borrowed_indices = random.sample(range(num_items), num_borrowed_items)
+    print(borrowed_indices)
+    for i in range(num_items):
+        item = {
+            'itemID': str(i),
+            'location': 'loc1',
+            'timestamp': i,
         }
-    ]
+        if i in borrowed_indices:
+            item['borrowerID'] = 'borrower' + str(i)
+        table.put_item(Item=item)
 
+def test_pagination_without_duplicates(items_table):
+    """Test fetching multiple pages without duplicating items across pages."""
+    populate_large_table(items_table, 21, 10)
 
-def test_handler(items_table):
-    items_table.put_item(Item={
-        'itemID': '1',
-        'location': 'Vancouver',
-        'timestamp': 1
-    })
-    items_table.put_item(Item={
-        'itemID': '2',
-        'location': 'Vancouver',
-        'timestamp': 2
-    })
-    items_table.put_item(Item={
-        'itemID': '3',
-        'location': 'Vancouver',
-        'timestamp': 3
-    })
-    items_table.put_item(Item={
-        'itemID': '4',
-        'location': 'Vancouver',
-        'timestamp': 4
-    })
-    items_table.put_item(Item={
-        'itemID': '5',
-        'location': 'Vancouver',
-        'timestamp': 5
-    })
-    items_table.put_item(Item={
-        'itemID': '6',
-        'location': 'Vancouver',
-        'timestamp': 6
-    })
-    items_table.put_item(Item={
-        'itemID': '7',
-        'location': 'Vancouver',
-        'timestamp': 7
-    })
-    items_table.put_item(Item={
-        'itemID': '8',
-        'location': 'Vancouver',
-        'timestamp': 8
-    })
-    items_table.put_item(Item={
-        'itemID': '9',
-        'location': 'Vancouver',
-        'timestamp': 9
-    })
-    items_table.put_item(Item={
-        'itemID': '10',
-        'location': 'Vancouver',
-        'timestamp': 10
-    })
-    items_table.put_item(Item={
-        'itemID': '11',
-        'location': 'Vancouver',
-        'timestamp': 11
-    })
-    items_table.put_item(Item={
-        'itemID': '12',
-        'location': 'Vancouver',
-        'timestamp': 12
-    })
-    items_table.put_item(Item={
-        'itemID': '13',
-        'location': 'Vancouver',
-        'timestamp': 13
-    })
-    items_table.put_item(Item={
-        'itemID': '14',
-        'location': 'Vancouver',
-        'timestamp': 14
-    })
-    items_table.put_item(Item={
-        'itemID': '15',
-        'location': 'Vancouver',
-        'timestamp': 15
-    })
+    # Fetch the first page with 10 items
+    first_page_items, last_evaluated_key = fetch_items_without_borrowerID_with_pagination(
+        'items-30144999', 'loc1', None, 10
+    )
+    assert len(first_page_items) == 10, "First page should contain exactly 10 items"
 
-    response = handler({
+    # Use the LastEvaluatedKey to fetch the next page
+    second_page_items, _ = fetch_items_without_borrowerID_with_pagination(
+        'items-30144999', 'loc1', last_evaluated_key, 10
+    )
+    assert len(second_page_items) == 1, "Second page should contain 1 item"
+
+    # Verify no duplicates between first page and second page
+    first_page_ids = {item['itemID'] for item in first_page_items}
+    second_page_ids = {item['itemID'] for item in second_page_items}
+    assert first_page_ids.isdisjoint(second_page_ids), "No item should appear on both the first and second pages"
+
+def test_handler_with_valid_location_and_pagecount(items_table):
+    """Test handler with valid location and pagecount."""
+    populate_large_table(items_table, 30, 20)
+    event = {
         "headers": {
-            "location": "Vancouver",
-            "pagecount": "10"
+            "location": "loc1",
+            "pagecount": "5"
         }
-    }, None)
+    }
 
-    assert response['statusCode'] == 200
-    items = response['body']
-    assert len(json.loads(items)['Items']) == 10
-    assert json.loads(items)['Items'][0]['itemID'] == '15'
-    assert json.loads(items)['Items'][9]['itemID'] == '6'
-    assert 'LastEvaluatedKey' in json.loads(items)
-    assert json.loads(items)['LastEvaluatedKey']['itemID'] == '6'
+    response = handler(event, None)
+    body = json.loads(response['body'])
+    items = body['items']
+    last_evaluated_key = body['last_evaluated_key']
+    assert response['statusCode'] == 200, "Should return a 200 status code"
+    assert len(items) == 5, "Should return 5 items"
+    assert last_evaluated_key is not None, "Should return a last_evaluated_key"
 
-    response = handler({
+    event = {
         "headers": {
-            "location": "Vancouver",
-            "pagecount": "10",
-            "lastitem": json.loads(items)['LastEvaluatedKey']
+            "location": "loc1",
+            "pagecount": "5",
+            "lastitem": json.dumps(last_evaluated_key)
         }
-    }, None)
+    }
+    response = handler(event, None)
+    body = json.loads(response['body'])
+    items = body['items']
+    last_evaluated_key = body['last_evaluated_key']
+    assert response['statusCode'] == 200, "Should return a 200 status code"
+    assert len(items) == 5, "Should return 5 items"
 
-
-    assert response['statusCode'] == 200
-    items = response['body']
-    assert len(json.loads(items)['Items']) == 5
-    assert json.loads(items)['Items'][0]['itemID'] == '5'
-    assert json.loads(items)['Items'][4]['itemID'] == '1'
-    assert 'LastEvaluatedKey' not in json.loads(items)

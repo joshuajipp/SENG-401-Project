@@ -20,22 +20,38 @@ def decimal_default(obj):
         return float(obj)
     raise TypeError
 
-def fetch_items_after_itemID(table_name, location, exclusiveStartKey, pageCount):
+def fetch_items_without_borrowerID_with_pagination(table_name, location, exclusiveStartKey, pageCount):
     table = get_dynamodb_table(table_name)
-    query_kwargs = {
-        'IndexName': 'LocationTimestampIndex',
-        'KeyConditionExpression': 'location = :value',
-        'ExpressionAttributeValues': {
-            ':value': location
-        },
-        'Limit': pageCount,
-        'ScanIndexForward': False
-    }
-    if exclusiveStartKey != '':
-        query_kwargs['ExclusiveStartKey'] = exclusiveStartKey
+    fetched_items = []
+    last_evaluated_key = exclusiveStartKey or None
+
+    while len(fetched_items) < pageCount:
+        query_kwargs = {
+            'IndexName': 'LocationTimestampIndex',
+            'KeyConditionExpression': 'location = :value',
+            'ExpressionAttributeValues': {
+                ':value': location
+            },
+            'FilterExpression': 'attribute_not_exists(borrowerID)',
+            'Limit': pageCount, 
+            'ScanIndexForward': False
+        }
+
+        if last_evaluated_key:
+            query_kwargs['ExclusiveStartKey'] = last_evaluated_key
+
+        response = table.query(**query_kwargs)
+        fetched_items.extend(response.get('Items', []))
+
+        last_evaluated_key = response.get('LastEvaluatedKey')
+        if not last_evaluated_key:
+            break  # No more items to fetch
     
-    response = table.query(**query_kwargs)
-    return response
+    if len(fetched_items) > pageCount:
+        last_evaluated_key = fetched_items[pageCount - 1]
+    # If we fetched more items than needed due to the final query call, trim the list
+    return fetched_items[:pageCount], last_evaluated_key
+
 
 
 
@@ -52,11 +68,16 @@ def handler(event, context):
             exclusiveStartKey = parse_event_body(exclusiveStartKey)
             exclusiveStartKey['timestamp'] = Decimal(str(exclusiveStartKey['timestamp']))
         
-        items = fetch_items_after_itemID(table_name, location, exclusiveStartKey, pageCount)
+        items, last_evaluated_key = fetch_items_without_borrowerID_with_pagination(
+            table_name, location, exclusiveStartKey, pageCount
+        )
         
         return {
             'statusCode': 200,
-            'body': json.dumps(items, default=decimal_default)
+            'body': json.dumps({
+                'items': items,
+                'last_evaluated_key': last_evaluated_key
+            }, default=decimal_default)
         }
     except Exception as e:
         return {
