@@ -353,7 +353,7 @@ resource "aws_lambda_function_url" "url_delete_item" {
 }
 
 resource "aws_lambda_function_url" "url_get_item" {
-  function_name      = aws_lambda_function.get_item_lambda.function_name
+  function_name      = aws_lambda_function.get_item_page_lambda.function_name
   authorization_type = "NONE"
 
   cors {
