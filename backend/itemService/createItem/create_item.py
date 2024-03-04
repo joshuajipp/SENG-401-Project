@@ -4,7 +4,6 @@ import json
 import uuid
 import hashlib
 import base64
-import os
 import time
 
 def get_dynamodb_table(table_name):
@@ -108,9 +107,7 @@ def handler(event, context):
             image_hash = hashlib.sha256(image_bytes).hexdigest()
 
             # Save the image to a temp file
-            filename = "./tmp/img.png"
-            if not os.path.exists('./tmp'):
-                os.makedirs('./tmp')
+            filename = "./temp.png"
             
             with open(filename, "wb") as f:
                 f.write(image_bytes)
