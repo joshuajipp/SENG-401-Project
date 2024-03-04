@@ -20,7 +20,7 @@ def decimal_default(obj):
         return float(obj)
     raise TypeError
 
-def fetch_items_without_borrowerID_with_pagination(table_name, location, exclusiveStartKey, pageCount, search=None):
+def fetch_items_without_borrowerID_with_pagination(table_name, location, exclusiveStartKey, pageCount, search=None, category=None):
     table = get_dynamodb_table(table_name)
     fetched_items = []
     last_evaluated_key = exclusiveStartKey or None
@@ -40,6 +40,13 @@ def fetch_items_without_borrowerID_with_pagination(table_name, location, exclusi
         expression_attribute_values[':search'] = search
         expression_attribute_names['#itemName'] = 'itemName'
         expression_attribute_names['#description'] = 'description'
+    
+    expression_attribute_names = {}
+    if category:
+        filter_expressions.append("category = :category")
+        expression_attribute_values[':category'] = category
+        expression_attribute_names['#category'] = 'category'
+
 
     while len(fetched_items) < pageCount:
         query_kwargs = {
@@ -82,13 +89,14 @@ def handler(event, context):
         pageCount = headers.get('pagecount', '10')
         pageCount = int(pageCount)
         search = headers.get('search')
+        category = headers.get('category')
         table_name = 'items-30144999'
         if exclusiveStartKey != '':
             exclusiveStartKey = parse_event_body(exclusiveStartKey)
             exclusiveStartKey['timestamp'] = Decimal(str(exclusiveStartKey['timestamp']))
         
         items, last_evaluated_key = fetch_items_without_borrowerID_with_pagination(
-            table_name, location, exclusiveStartKey, pageCount, search
+            table_name, location, exclusiveStartKey, pageCount, search, category
         )
         
         return {
