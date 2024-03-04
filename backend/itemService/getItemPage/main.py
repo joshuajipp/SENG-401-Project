@@ -41,9 +41,8 @@ def fetch_items_without_borrowerID_with_pagination(table_name, location, exclusi
         expression_attribute_names['#itemName'] = 'itemName'
         expression_attribute_names['#description'] = 'description'
     
-    expression_attribute_names = {}
     if category:
-        filter_expressions.append("category = :category")
+        filter_expressions.append("(category = :category)")
         expression_attribute_values[':category'] = category
         expression_attribute_names['#category'] = 'category'
 
@@ -61,6 +60,8 @@ def fetch_items_without_borrowerID_with_pagination(table_name, location, exclusi
         # Add expression attribute names if search is used
         if search:
             query_kwargs['ExpressionAttributeNames'] = expression_attribute_names
+        
+            
 
         if last_evaluated_key:
             query_kwargs['ExclusiveStartKey'] = last_evaluated_key

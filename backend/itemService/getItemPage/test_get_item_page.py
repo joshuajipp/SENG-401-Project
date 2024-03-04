@@ -194,7 +194,60 @@ def test_pagination_with_search(items_table):
     assert len(fetched_items) == 2, "Should fetch exactly 2 items"
     assert fetched_items[0]['itemName'] == 'New thing', "Should fetch the correct items"
     assert fetched_items[1]['itemName'] == 'Used hammer', "Should fetch the correct items"
-    
+
+
+# test fetch_items_without_borrowerID_with_pagination with search = None and category = Adventure
+def test_pagination_with_category(items_table):
+    """Test fetching items with a category query."""
+    items_table.put_item(
+        Item={
+            'itemID': '1',
+            'location': 'loc1',
+            'timestamp': 123,
+            'itemName': 'item1',
+            'description': 'description1',
+            'category': 'Adventure'
+        }
+    )
+    items_table.put_item(
+        Item={
+            'itemID': '2',
+            'location': 'loc1',
+            'timestamp': 124,
+            'itemName': 'item2',
+            'description': 'description2',
+            'category': 'Adventure'
+        }
+    )
+    items_table.put_item(
+        Item={
+            'itemID': '3',
+            'location': 'loc1',
+            'timestamp': 125,
+            'itemName': 'item3',
+            'description': 'description3',
+            'category': 'Adventure'
+        },
+   )
+    items_table.put_item(
+        Item={
+            'itemID': '4',
+            'location': 'loc1',
+            'timestamp': 126,
+            'itemName': 'item4',
+            'description': 'description4',
+            'category': 'Adult'
+        }
+    )
+
+    # Fetch items with a category query
+    fetched_items, _ = fetch_items_without_borrowerID_with_pagination(
+        'items-30144999', 'loc1', None, 10, None, 'Adventure'
+    )
+    assert len(fetched_items) == 3, "Should fetch exactly 3 items"
+    assert fetched_items[0]['itemName'] == 'item3', "Should fetch the correct items"
+    assert fetched_items[1]['itemName'] == 'item2', "Should fetch the correct items"
+    assert fetched_items[2]['itemName'] == 'item1', "Should fetch the correct items"
 
 def test_handler_with_valid_location_and_pagecount(items_table):
     """Test handler with valid location and pagecount."""
