@@ -26,7 +26,7 @@ def insert_item_in_table(table, data):
     )
     return response
 
-def post_image(image):
+def post_image(image, timestamp):
     # Get the credentials from AWS Parameter Store
     ssm = boto3.client('ssm')
     parameter_names = []
@@ -47,6 +47,7 @@ def post_image(image):
     # Set up the payload
     payload = {
         'api_key': api_key,
+        'timestamp': timestamp
     }
     file = {
         'file': image
@@ -98,6 +99,9 @@ def handler(event, context):
         # Create a unique item ID
         itemID = str(uuid.uuid4())
 
+        # Get the current time
+        timestamp = str(int(time.time()))
+
         # Image handling
         raw_images = body['images']
         image_urls = []
@@ -114,11 +118,8 @@ def handler(event, context):
                 f.write(image_bytes)
 
             # Upload the image to Cloudinary
-            image_urls.append(post_image(filename)["secure_url"])
+            image_urls.append(post_image(filename, timestamp)["secure_url"])
             image_hashes.append(image_hash)
-
-        # Get the current time
-        timestamp = str(int(time.time()))
 
         # Prepare the data to be inserted into the table
         data = {
