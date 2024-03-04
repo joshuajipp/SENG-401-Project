@@ -100,7 +100,8 @@ def handler(event, context):
         itemID = str(uuid.uuid4())
 
         # Get the current time
-        timestamp = str(int(time.time()))
+        timestamp = int(time.time())
+        stringtime = str(timestamp)
 
         # Image handling
         raw_images = body['images']
@@ -119,7 +120,7 @@ def handler(event, context):
 
             # Upload the image to Cloudinary
             with open(filename, "rb") as f:
-                image_urls.append(post_image(f, timestamp)["secure_url"])
+                image_urls.append(post_image(f, stringtime)["secure_url"])
                 image_hashes.append(image_hash)
 
         # Prepare the data to be inserted into the table
