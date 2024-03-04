@@ -9,7 +9,9 @@ def get_dynamodb_table(table_name):
     return table
 
 def get_items_by_borrower_id(table, borrowerID, gsi_name):
-    """Retrieve all items from the DynamoDB table for a given lenderID using a GSI."""
+    """Retrieve all items from the DynamoDB table for a given borrowerID using a GSI."""
+    if borrowerID == '':
+        return []
     response = table.query(
         IndexName=gsi_name,
         KeyConditionExpression='borrowerID = :borrowerID',
@@ -32,7 +34,13 @@ def handler(event, context):
         table = get_dynamodb_table(table_name)
         headers = event.get("headers", {})
         borrowerID = headers.get('borrowerid', '')
-        
+        if borrowerID == '':
+            return {
+                'statusCode': 400,
+                'body': json.dumps({
+                    'error': 'No borrowerID provided'
+                })
+            }
         items = get_items_by_borrower_id(table, borrowerID, gsi_name)
         
         items_converted = json.loads(json.dumps(items, default=decimal_default))
