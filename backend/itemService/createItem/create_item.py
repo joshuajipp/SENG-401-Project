@@ -5,6 +5,7 @@ import uuid
 import hashlib
 import base64
 import time
+from decimal import Decimal
 
 def get_dynamodb_table(table_name):
     """Initialize a DynamoDB resource and get the table."""
@@ -100,7 +101,7 @@ def handler(event, context):
         itemID = str(uuid.uuid4())
 
         # Get the current time
-        timestamp = int(time.time())
+        timestamp = Decimal(time.time())
         stringtime = str(timestamp)
 
         # Image handling
