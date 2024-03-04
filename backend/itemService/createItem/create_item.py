@@ -57,6 +57,7 @@ def post_image(image):
 
     # Post the image to Cloudinary
     res = requests.post(url, files=file, data=payload)
+    print(res.json())
     return res.json()
 
 def create_signature(body, api_secret):
