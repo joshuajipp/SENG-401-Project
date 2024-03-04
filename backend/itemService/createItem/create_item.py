@@ -118,8 +118,9 @@ def handler(event, context):
                 f.write(image_bytes)
 
             # Upload the image to Cloudinary
-            image_urls.append(post_image(filename, timestamp)["secure_url"])
-            image_hashes.append(image_hash)
+            with open(filename, "rb") as f:
+                image_urls.append(post_image(f, timestamp)["secure_url"])
+                image_hashes.append(image_hash)
 
         # Prepare the data to be inserted into the table
         data = {
