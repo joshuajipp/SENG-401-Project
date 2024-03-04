@@ -157,6 +157,45 @@ def test_pagination_without_duplicates(items_table):
     second_page_ids = {item['itemID'] for item in second_page_items}
     assert first_page_ids.isdisjoint(second_page_ids), "No item should appear on both the first and second pages"
 
+def test_pagination_with_search(items_table):
+    """Test fetching items with a search query."""
+    items_table.put_item(
+        Item={
+            'itemID': '1',
+            'location': 'loc1',
+            'timestamp': 123,
+            'itemName': 'Used hammer',
+            'description': 'the thing is great'
+        }
+    )
+    items_table.put_item(
+        Item={
+            'itemID': '2',
+            'location': 'loc1',
+            'timestamp': 124,
+            'itemName': 'New thing',
+            'description': 'the hammer is great'
+        }
+    )
+    items_table.put_item(
+        Item={
+            'itemID': '3',
+            'location': 'loc1',
+            'timestamp': 125,
+            'itemName': 'Used thing',
+            'description': 'the thing is great'
+        }
+    )
+
+    # Fetch items with a search query
+    fetched_items, _ = fetch_items_without_borrowerID_with_pagination(
+        'items-30144999', 'loc1', None, 10, 'hammer'
+    )
+    assert len(fetched_items) == 2, "Should fetch exactly 2 items"
+    assert fetched_items[0]['itemName'] == 'New thing', "Should fetch the correct items"
+    assert fetched_items[1]['itemName'] == 'Used hammer', "Should fetch the correct items"
+    
+
 def test_handler_with_valid_location_and_pagecount(items_table):
     """Test handler with valid location and pagecount."""
     populate_large_table(items_table, 30, 20)

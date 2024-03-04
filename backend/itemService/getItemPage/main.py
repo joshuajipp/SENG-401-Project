@@ -35,11 +35,11 @@ def fetch_items_without_borrowerID_with_pagination(table_name, location, exclusi
     # If search parameter is provided, add conditions for itemName and itemDescription
     if search:
         # Dynamically generate expression attribute names to avoid conflicts
-        search_expression = "(contains(#itemName, :search) OR contains(#itemDescription, :search))"
+        search_expression = "(contains(#itemName, :search) OR contains(#description, :search))"
         filter_expressions.append(search_expression)
         expression_attribute_values[':search'] = search
         expression_attribute_names['#itemName'] = 'itemName'
-        expression_attribute_names['#itemDescription'] = 'itemDescription'
+        expression_attribute_names['#description'] = 'description'
 
     while len(fetched_items) < pageCount:
         query_kwargs = {
@@ -66,7 +66,7 @@ def fetch_items_without_borrowerID_with_pagination(table_name, location, exclusi
             break  # No more items to fetch
     
     if len(fetched_items) > pageCount:
-        last_evaluated_key = fetched_items[pageCount - 1]['itemID']  # Ensure this is the correct key attribute
+        last_evaluated_key = fetched_items[pageCount - 1]
     # If we fetched more items than needed due to the final query call, trim the list
     return fetched_items[:pageCount], last_evaluated_key
 
