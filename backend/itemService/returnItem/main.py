@@ -13,19 +13,17 @@ def parse_event_body(event_body):
         return json.loads(event_body)
     return event_body
 
-def update_borrowerID_to_null_in_item(table, itemID):
-    """Set the borrowerID to null for an item in the DynamoDB table."""
+def remove_borrowerID_from_item(table, itemID):
+    """Remove the borrowerID attribute from an item in the DynamoDB table."""
     response = table.update_item(
         Key={
             'itemID': itemID
         },
-        UpdateExpression="SET borrowerID = :val",
-        ExpressionAttributeValues={
-            ':val': None
-        },
+        UpdateExpression="REMOVE borrowerID",
         ReturnValues="UPDATED_NEW"
     )
     return response
+
 
 
 def handler(event, context):
@@ -35,7 +33,7 @@ def handler(event, context):
         body = parse_event_body(event["body"])
         itemID = body["itemID"]
         
-        response = update_borrowerID_to_null_in_item(table, itemID)
+        response = remove_borrowerID_from_item(table, itemID)
         
         
         return {
