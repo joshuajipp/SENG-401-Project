@@ -107,7 +107,7 @@ def handler(event, context):
             image_hash = hashlib.sha256(image_bytes).hexdigest()
 
             # Save the image to a temp file
-            filename = "./temp.png"
+            filename = "/tmp/img.png"
             
             with open(filename, "wb") as f:
                 f.write(image_bytes)
