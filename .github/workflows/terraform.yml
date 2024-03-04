@@ -149,7 +149,16 @@ jobs:
           cd ./backend/itemService/getLenderItems
           zip -r ../../../infra/getLenderItems.zip .
           cd -
-
+          
+      - name: Install Python dependencies getBorrowedItems
+        run: |
+          pip3 install -r ./backend/itemService/getBorrowedItems/requirements.txt -t ./backend/itemService/getBorrowedItems/
+        
+      - name: Zip create getBorrowedItems function
+        run: |
+          cd ./backend/itemService/getBorrowedItems
+          zip -r ../../../infra/getBorrowedItems.zip .
+          cd -
       
       - name: Terraform Init and Apply
         run: |

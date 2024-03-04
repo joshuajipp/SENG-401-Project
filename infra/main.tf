@@ -141,6 +141,16 @@ resource "aws_lambda_function" "get_lender_items_lambda" {
   source_code_hash = filebase64sha256("./getLenderItems.zip")
 }
 
+resource "aws_lambda_function" "get_borrowed_items_lambda" {
+  filename         = "./getBorrowedItems.zip"
+  function_name    = "get-borrowed-items-30144999"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "main.handler"
+  runtime          = "python3.9"
+  timeout = 300
+  source_code_hash = filebase64sha256("./getBorrowedItems.zip")
+}
+
 
 resource "aws_dynamodb_table" "items_dynamodb_table" {
   name         = "items-30144999"
@@ -171,6 +181,11 @@ resource "aws_dynamodb_table" "items_dynamodb_table" {
     type = "S"
   }
 
+  attribute {
+    name = "borrowerID"
+    type = "S"
+  }
+
   # Define a new Global Secondary Index for location and timestamp
   global_secondary_index {
     name               = "LocationTimestampIndex"
@@ -185,7 +200,16 @@ resource "aws_dynamodb_table" "items_dynamodb_table" {
   global_secondary_index {
     name               = "LenderIDIndex"
     hash_key           = "lenderID"
-    range_key = "itemID"
+    range_key          = "itemID"
+    projection_type    = "ALL"
+    read_capacity      = 1
+    write_capacity     = 1
+  }
+
+  global_secondary_index {
+    name               = "BorrowerIDIndex"
+    hash_key           = "borrowerID"
+    range_key          = "itemID"
     projection_type    = "ALL"
     read_capacity      = 1
     write_capacity     = 1
@@ -459,6 +483,19 @@ resource "aws_lambda_function_url" "url_request_item" {
 
 resource "aws_lambda_function_url" "url_get_lender_items" {
   function_name      = aws_lambda_function.get_lender_items_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["GET"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
+
+resource "aws_lambda_function_url" "url_get_borrowed_items" {
+  function_name      = aws_lambda_function.get_borrowed_items_lambda.function_name
   authorization_type = "NONE"
 
   cors {
