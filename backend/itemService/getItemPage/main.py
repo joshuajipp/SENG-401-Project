@@ -31,6 +31,7 @@ def fetch_items_without_borrowerID_with_pagination(table_name, location, exclusi
         ':value': location,
     }
     expression_attribute_names = {}
+    expression_attribute_names['#loc'] = 'location'
 
     # If search parameter is provided, add conditions for itemName and itemDescription
     if search:
@@ -50,7 +51,7 @@ def fetch_items_without_borrowerID_with_pagination(table_name, location, exclusi
     while len(fetched_items) < pageCount:
         query_kwargs = {
             'IndexName': 'LocationTimestampIndex',
-            'KeyConditionExpression': 'location = :value',
+            'KeyConditionExpression': '#loc = :value',  # Updated to use alias
             'ExpressionAttributeValues': expression_attribute_values,
             'FilterExpression': " AND ".join(filter_expressions),
             'Limit': pageCount,
