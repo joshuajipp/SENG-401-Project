@@ -53,17 +53,13 @@ def fetch_items_without_borrowerID_with_pagination(table_name, location, exclusi
             'IndexName': 'LocationTimestampIndex',
             'KeyConditionExpression': '#loc = :value',  # Updated to use alias
             'ExpressionAttributeValues': expression_attribute_values,
+            'ExpressionAttributeNames': expression_attribute_names,  # Include this line
             'FilterExpression': " AND ".join(filter_expressions),
             'Limit': pageCount,
             'ScanIndexForward': False
         }
-
-        # Add expression attribute names if search is used
-        if search:
-            query_kwargs['ExpressionAttributeNames'] = expression_attribute_names
         
             
-
         if last_evaluated_key:
             query_kwargs['ExclusiveStartKey'] = last_evaluated_key
 
