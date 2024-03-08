@@ -273,6 +273,11 @@ resource "aws_dynamodb_table" "users_dynamodb_table" {
     name = "userID"
     type = "S"
   }
+  
+  attribute {
+    name = "email"
+    type = "S"
+  }
 
   global_secondary_index {
     name               = "EmailIndex"
