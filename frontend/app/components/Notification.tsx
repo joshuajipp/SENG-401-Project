@@ -6,6 +6,7 @@ export default function Notification() {
     <div className="flex bg-brand p-4 w-full mx-auto relative">
       <div className="flex">
         <Dropdown
+          inline
           label={
             <Avatar
               alt="User settings"
@@ -30,8 +31,8 @@ export default function Notification() {
           </button>
         </div>
       </div>
-      <div className="absolute top-0 text-gray-400 text-sm mt-5 mr-2 right-0">
-        Calgary | 1 day ago
+      <div className="absolute top-0 right-0 text-gray-300 text-sm mt-5 mr-3">
+        Calgary | 1 hour ago
       </div>
     </div>
   );
