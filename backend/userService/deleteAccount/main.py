@@ -32,8 +32,17 @@ def handler(event, context):
       # Retrieve userID and attempt to delete account
       body = parse_event_body(event_body=event['body'])
       userID = body['userID']
-      response = delete_account(table, userID)
       
+      # Check if user exists
+      response = table.get_item(Key={'userID': userID})
+      if 'Item' not in response:
+        return {
+          'statusCode': 404,
+          'body': json.dumps({'error': 'Item not found'})
+        }
+
+      # If user exists then proceed to delete
+      response = delete_account(table, userID)
       return {
           'statusCode': 200,
           'body': json.dumps(response)
