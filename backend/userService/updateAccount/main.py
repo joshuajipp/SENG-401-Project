@@ -122,11 +122,10 @@ def handler(event, context):
     # Get old entry if it exists otherwise return 404
     response = table.get_item(Key={'userID': userID})
     if 'Item' not in response:
-      # Item not found
-      print("Item not found")
+      # User not found
       return {
           'statusCode': 404,
-          'body': 'Item not found'
+          'body': 'User not found'
       }
     old_entry = response['Item']
     
