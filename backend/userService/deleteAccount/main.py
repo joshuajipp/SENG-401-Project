@@ -24,7 +24,7 @@ def handler(event, context):
       table = get_dynamodb_table(table_name)
       
       # Retrieve userID and attempt to delete account
-      userID = event['header']['userID']
+      userID = event['body']['userID']
       response = delete_account(table, userID)
       
       return {
