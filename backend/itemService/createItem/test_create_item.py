@@ -1,5 +1,5 @@
 import pytest
-from main import *
+from create_item import *
 from moto import mock_aws
 import boto3
 import os

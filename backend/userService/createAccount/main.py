@@ -13,6 +13,19 @@ def handler(event, context, table=None):
     data = json.loads(event["body"])
 
     try:
+        # check if email already exists
+        response = table.query(
+            IndexName='EmailIndex',  
+            KeyConditionExpression=boto3.dynamodb.conditions.Key("email").eq(data["email"])
+        )
+        if response["Count"] > 0:
+            return {
+                "statusCode": 400,
+                "body": json.dumps({
+                    "message": "Email already exists"
+                })
+            }
+        # if email doesn't exist, create new user
         item={
             "userID": str(uuid.uuid4()),
             "name": data["name"],

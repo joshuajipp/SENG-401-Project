@@ -5,6 +5,7 @@ import uuid
 import hashlib
 import base64
 import time
+from decimal import Decimal
 
 def get_dynamodb_table(table_name):
     """Initialize a DynamoDB resource and get the table."""
@@ -26,7 +27,7 @@ def insert_item_in_table(table, data):
     )
     return response
 
-def post_image(image):
+def post_image(image, timestamp):
     # Get the credentials from AWS Parameter Store
     ssm = boto3.client('ssm')
     parameter_names = []
@@ -47,6 +48,7 @@ def post_image(image):
     # Set up the payload
     payload = {
         'api_key': api_key,
+        'timestamp': timestamp
     }
     file = {
         'file': image
@@ -57,6 +59,7 @@ def post_image(image):
 
     # Post the image to Cloudinary
     res = requests.post(url, files=file, data=payload)
+    print(res.json())
     return res.json()
 
 def create_signature(body, api_secret):
@@ -97,6 +100,10 @@ def handler(event, context):
         # Create a unique item ID
         itemID = str(uuid.uuid4())
 
+        # Get the current time
+        timestamp = Decimal(time.time())
+        stringtime = str(timestamp)
+
         # Image handling
         raw_images = body['images']
         image_urls = []
@@ -107,16 +114,15 @@ def handler(event, context):
             image_hash = hashlib.sha256(image_bytes).hexdigest()
 
             # Save the image to a temp file
-            filename = "./tmp/img.png"
+            filename = "/tmp/img.png"
+            
             with open(filename, "wb") as f:
                 f.write(image_bytes)
 
             # Upload the image to Cloudinary
-            image_urls.append(post_image(filename)["secure_url"])
-            image_hashes.append(image_hash)
-
-        # Get the current time
-        timestamp = str(int(time.time()))
+            with open(filename, "rb") as f:
+                image_urls.append(post_image(f, stringtime)["secure_url"])
+                image_hashes.append(image_hash)
 
         # Prepare the data to be inserted into the table
         data = {

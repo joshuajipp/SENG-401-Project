@@ -67,7 +67,6 @@ def test_update_item_in_table(items_table):
     items_table.put_item(
         Item={
             'itemID': '1',
-            'borrowerID': None,
             'timestamp': 1234567890,
             'location': 'Vancouver',
 
