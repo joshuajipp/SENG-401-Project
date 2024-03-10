@@ -113,7 +113,7 @@ def handler(event, context):
   try:
     # setup connection to dynamodb table
     # and parse event body
-    table = get_dynamodb_table(table_name="users_dynamodb_table")
+    table = get_dynamodb_table(table_name="users-30144999")
     body = parse_event_body(event_body=event['body'])
 
     # Retrieve userID
@@ -122,11 +122,10 @@ def handler(event, context):
     # Get old entry if it exists otherwise return 404
     response = table.get_item(Key={'userID': userID})
     if 'Item' not in response:
-      # Item not found
-      print("Item not found")
+      # User not found
       return {
           'statusCode': 404,
-          'body': 'Item not found'
+          'body': 'User not found'
       }
     old_entry = response['Item']
     
@@ -142,19 +141,20 @@ def handler(event, context):
     
     # Get old entry
     old_entry = dict(table.get_item(Key={'userID': userID}))
-    
+
     # Check if image is different from old one
     raw_image = body['image']
     image_bytes = base64.b64decode(raw_image)
     new_image_hash = hashlib.sha256(image_bytes).hexdigest()
     
     # Add image hash to new info if its different
-    if (new_image_hash != old_entry['imageHash']):
+    (new_image_hash != old_entry['imageHash'])
+    
+    if ("imageHash" not in old_entry) or (new_image_hash != old_entry['imageHash']):
       response = post_image(image_bytes)
       new_info['profilePicture'] = response["secure_url"]
       new_info['imageHash'] = new_image_hash
-    
-    
+
     # Update the account
     response = update_account(table, userID, old_entry, new_info)
 
