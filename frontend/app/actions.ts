@@ -37,7 +37,6 @@ export const getUser = async (email: string) => {
   const body = {
     email: email,
   };
-  console.log(body);
   const response = await fetch(GET_USER_URL, {
     method: "POST",
     headers: {
@@ -45,22 +44,21 @@ export const getUser = async (email: string) => {
     },
     body: JSON.stringify(body),
   });
-  console.log(response.json());
-  return response.json();
+  return response;
 };
 
 export const authenticateUser = async (session: Session) => {
-  const user = await getUser(session.user?.email || "");
-  if (user) {
-    return user;
+  const res = await getUser(session.user?.email || "");
+  if (res.ok) {
+    return res;
   } else {
     if (session.user?.name && session.user?.email) {
-      return createUser(session.user.name, session.user.email);
+      const newRes = await createUser(session.user.name, session.user.email);
+      return newRes;
     }
   }
 };
 export const requestItem = async (formData: FormData) => {
-  // const user = await authenticateUser(session);
   const rawFormData = Object.fromEntries(formData.entries());
   console.log(rawFormData);
   // send to API endpoint

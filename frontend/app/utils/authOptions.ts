@@ -11,13 +11,12 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     async session({ session, token }) {
-      // WAITING ON BACKEND TO COMPLETE THIS FUNCTIONALITY
-      // const userData = await authenticateUser(session);
-      // const userData = await getUser(session.user?.email || "");
-      // const newSession = { userData, ...session };
-      // console.log(newSession);
-      // return newSession;
-      return session;
+      const res = await authenticateUser(session);
+      // session.accessToken = "token.accessToken";
+      // session.user.id = "token.id";
+      const userData = await res.json();
+      const newSession = { userData, ...session };
+      return newSession;
     },
   },
 };
