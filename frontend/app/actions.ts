@@ -59,3 +59,10 @@ export const authenticateUser = async (session: Session) => {
     }
   }
 };
+export const requestItem = async (formData: FormData) => {
+  // const user = await authenticateUser(session);
+  const rawFormData = Object.fromEntries(formData.entries());
+  console.log(rawFormData);
+  // send to API endpoint
+  redirect("/");
+};

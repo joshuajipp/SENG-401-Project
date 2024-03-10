@@ -42,6 +42,12 @@ export default async function ListingContactInformation() {
             value={session?.user?.email || ""}
           />
         </div>
+        <input
+          className="hidden"
+          name="email"
+          value={session?.user?.email || ""}
+          readOnly
+        />
       </div>
     </ListItemFormTemplate>
   );
