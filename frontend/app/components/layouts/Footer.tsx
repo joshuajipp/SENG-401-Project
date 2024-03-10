@@ -5,7 +5,7 @@ import Image from "next/image";
 export default function Footer() {
 
   const handleLinkClick = () => {
-    window.open("https://youtu.be/dQw4w9WgXcQ?si=za_T96B4cY80JrCf", '_blank');
+    // will open associated footer links, if any are actually implemented
   };
 
   return (
