@@ -136,7 +136,7 @@ def handler(event, context):
             'imageHashes': image_hashes,
             'lenderID': lenderID,
             'timestamp': timestamp,
-            'borrowerID': None
+            'borrowerID': "null"
         }
 
         # Insert the item into the table
