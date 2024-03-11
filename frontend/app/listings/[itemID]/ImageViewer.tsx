@@ -27,7 +27,7 @@ export default function ImageViewer() {
   };
   return (
     <>
-      <div className=" bg-slate-200 gap-1 grid grid-cols-3 px-2">
+      <div className=" bg-white rounded-lg dark:bg-slate-800 gap-1 grid grid-cols-3 px-2">
         <div className=" col-span-2 self-center flex justify-center items-center">
           <LargeImageElement />
         </div>

@@ -20,7 +20,9 @@ export default async function RequestRentalForm() {
             value={session?.user?.email || ""}
             readOnly
           />
-          <h1 className=" font-bold text-2xl">Request Item Rental</h1>
+          <h1 className=" font-bold text-2xl dark:text-white">
+            Request Item Rental
+          </h1>
           <div className=" w-full ">
             <label
               htmlFor="return-date"
@@ -49,6 +51,7 @@ export default async function RequestRentalForm() {
             pending="Requesting item..."
             success="Request has been made successfully!"
             error="Error requesting item. Please try again later."
+            title="Request Item"
           />
         </div>
       </form>
