@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Button } from "flowbite-react";
 import { FaTimes } from "react-icons/fa";

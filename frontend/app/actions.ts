@@ -8,6 +8,8 @@ const CREATE_USER_URL =
 const GET_USER_URL =
   "https://v5ezikbdjg4hadx5mqmundbaxq0zjdnj.lambda-url.ca-central-1.on.aws/";
 
+const CREATE_LISTING_URL =
+  "https://evieebr3t3elnuixwsaa32lp7m0fbfre.lambda-url.ca-central-1.on.aws/ ";
 export const createListing = async (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
   //   parse and Send to API endpoint
