@@ -140,7 +140,6 @@ def handler(event, context):
             'imageHashes': image_hashes,
             'lenderID': lenderID,
             'timestamp': timestamp,
-            'borrowerID': None
         }
 
 
