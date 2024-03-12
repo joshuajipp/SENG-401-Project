@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button, Select, Label, TextInput, Textarea } from "flowbite-react";
 import { FaSearch } from "react-icons/fa";
 import { useListItem } from "@/app/context/ListItemContext";
-import { Condition } from "@/app/interfaces/ListItemI";
+import { Category, Condition } from "@/app/interfaces/ListItemI";
 import ListItemFormTemplate from "./ListItemFormTemplate";
 export default function ListingDetails() {
   const { tags, setTags } = useListItem();
@@ -23,12 +23,24 @@ export default function ListingDetails() {
 
   return (
     <ListItemFormTemplate formNumber={1} formHeader={"ListingDetails"}>
-      <div className=" inline-flex flex-row justify-start items-center gap-2.5 whitespace-nowrap text-sm cursor-pointer">
+      {/* <div className=" inline-flex flex-row justify-start items-center gap-2.5 whitespace-nowrap text-sm cursor-pointer">
         <p className="text-brand font-medium">Select Category:</p>
         <p className="text-brand font-bold ">
           Buy and Sell {">"} Sporting Goods & Exercise {">"} Ski
         </p>
         <p className="text-blue-500 font-bold ">Change category</p>
+      </div> */}
+      <div>
+        <div className="mb-2 block font-bold">
+          <Label htmlFor="category" value="Category: " />
+        </div>
+        <Select id="category" name="category">
+          {Object.values(Category).map((cond) => (
+            <option key={cond} value={cond}>
+              {cond}
+            </option>
+          ))}
+        </Select>
       </div>
       <div>
         <div className="mb-2 block font-bold">
