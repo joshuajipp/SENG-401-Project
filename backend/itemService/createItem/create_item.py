@@ -109,20 +109,21 @@ def handler(event, context):
         image_urls = []
         image_hashes = []
         for raw_image in raw_images:
-            # Decode the image and hash it
-            image_bytes = base64.b64decode(raw_image)
-            image_hash = hashlib.sha256(image_bytes).hexdigest()
+            if raw_image is not "null":
+                # Decode the image and hash it
+                image_bytes = base64.b64decode(raw_image)
+                image_hash = hashlib.sha256(image_bytes).hexdigest()
 
-            # Save the image to a temp file
-            filename = "/tmp/img.png"
-            
-            with open(filename, "wb") as f:
-                f.write(image_bytes)
+                # Save the image to a temp file
+                filename = "/tmp/img.png"
+                
+                with open(filename, "wb") as f:
+                    f.write(image_bytes)
 
-            # Upload the image to Cloudinary
-            with open(filename, "rb") as f:
-                image_urls.append(post_image(f, stringtime)["secure_url"])
-                image_hashes.append(image_hash)
+                # Upload the image to Cloudinary
+                with open(filename, "rb") as f:
+                    image_urls.append(post_image(f, stringtime)["secure_url"])
+                    image_hashes.append(image_hash)
 
         # Prepare the data to be inserted into the table
         data = {
