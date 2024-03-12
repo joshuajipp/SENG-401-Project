@@ -12,8 +12,6 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async session({ session, token }) {
       const res = await authenticateUser(session);
-      // session.accessToken = "token.accessToken";
-      // session.user.id = "token.id";
       const userData = await res.json();
       const newSession = { userData, ...session };
       return newSession;

@@ -9,12 +9,31 @@ const GET_USER_URL =
   "https://v5ezikbdjg4hadx5mqmundbaxq0zjdnj.lambda-url.ca-central-1.on.aws/";
 
 const CREATE_LISTING_URL =
-  "https://evieebr3t3elnuixwsaa32lp7m0fbfre.lambda-url.ca-central-1.on.aws/ ";
+  "https://evieebr3t3elnuixwsaa32lp7m0fbfre.lambda-url.ca-central-1.on.aws/";
 export const createListing = async (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
+  // const rawFormData = {
+  //   category: "Other",
+  //   condition: "New",
+  //   listingTitle: "test",
+  //   description: "asd",
+  //   tags: "[]",
+  //   images: "",
+  //   location: "Calgary, AB T3A 7V4",
+  //   lenderID: "536b23e7-6546-4c53-8b0b-6a48ea3ad6b6",
+  // };
   //   parse and Send to API endpoint
   console.log(rawFormData);
-  redirect("/");
+  const response = await fetch(CREATE_LISTING_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(rawFormData),
+  });
+  console.log(await response.json());
+  // return response.json();
+  // redirect("/");
 };
 
 export const createUser = async (name: string, email: string) => {
@@ -24,6 +43,7 @@ export const createUser = async (name: string, email: string) => {
     rating: null,
     bio: null,
     location: null,
+    phoneNumber: null,
   };
   const response = await fetch(CREATE_USER_URL, {
     method: "POST",

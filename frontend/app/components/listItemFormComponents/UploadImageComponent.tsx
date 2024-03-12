@@ -96,7 +96,7 @@ export default function UploadImageComponent() {
     <div className="flex flex-row flex-wrap gap-2">
       <input
         className="hidden"
-        name="imageURLs"
+        name="images"
         readOnly
         value={JSON.stringify(imageURLs)}
       />
