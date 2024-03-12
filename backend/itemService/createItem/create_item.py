@@ -109,7 +109,7 @@ def handler(event, context):
         image_urls = []
         image_hashes = []
         for raw_image in raw_images:
-            if raw_image is not "null":
+            if raw_image != "null":
                 # Decode the image and hash it
                 image_bytes = base64.b64decode(raw_image)
                 image_hash = hashlib.sha256(image_bytes).hexdigest()
