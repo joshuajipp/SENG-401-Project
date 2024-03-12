@@ -12,6 +12,7 @@ export default function ListingMedia() {
           You can upload a maximum of 8 photos that are at least 300px wide or
           tall (we recommend at least 1000px.)
         </h3>
+        <h3>Max image size is: 5 MB </h3>
         <h3>Click on a frame to upload an image.</h3>
       </div>
       <UploadImageComponent />
