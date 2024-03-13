@@ -131,7 +131,6 @@ def handler(event, context):
     
     # Retrieve new table entry info turn it to a dictionary
     new_info = {
-      'userID': userID,
       'name': body['name'],
       'email': body['email'],
       'rating': body['rating'],
