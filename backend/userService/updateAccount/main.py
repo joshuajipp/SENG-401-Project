@@ -110,15 +110,19 @@ def update_account(table, userID, old_entry, new_info):
 
 # ----------------------------------------------------------------------------------------------------------------- #
 def handler(event, context):
+  i = 0
   try:
     # setup connection to dynamodb table
     # and parse event body
     table = get_dynamodb_table(table_name="users-30144999")
-    body = event.get("body", {})
+    body = parse_event_body(event['body'])
 
+    i = i + 1
     # Retrieve userID
-    userID = body.get("userid", "")
-    
+
+    userID = body['userID'] 
+    i = i + 1
+
     # Get old entry if it exists otherwise return 404
     response = table.get_item(Key={'userID': userID})
     if 'Item' not in response:
@@ -128,18 +132,21 @@ def handler(event, context):
           'body': 'User not found'
       }
     old_entry = response['Item']
+    i = i + 1
     
     # Retrieve new table entry info turn it to a dictionary
     new_info = {
-      'name': body.get('name', ""),
-      'email': body.get('email', ""),
-      'rating': body.get('rating', ""),
-      'bio': body.get('bio', ""),
-      'location': body.get('location', "")
+      'name': body['name'],
+      'email': body['email'],
+      'rating': body['rating'],
+      'bio': body['bio'],
+      'location': body['location']
     }
+    i = i + 1
     
     # Get old entry
     old_entry = dict(table.get_item(Key={'userID': userID}))
+    i = i + 1
 
     # # Check if image is different from old one
     # raw_image = body['image']
@@ -156,6 +163,7 @@ def handler(event, context):
 
     # Update the account
     response = update_account(table, userID, old_entry, new_info)
+    i = i + 1
 
     return {
       'statuscode': 200,
@@ -167,6 +175,6 @@ def handler(event, context):
     print(f"exception: {e}")
     return {
       'statusCode': 500,
-      'body': json.dumps(f'Error updating account: {str(e)}')
+      'body': json.dumps(f'Error updating account: {str(e): codeError: {i}}')
     }
   
