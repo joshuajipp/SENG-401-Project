@@ -14,28 +14,27 @@ export default function Notification({
 }: NotificationProps) {
   const [borrowerDetails, setBorrowerDetails] = useState(null);
 
-  useEffect(() => {
-    const fetchUserDetails = async () => {
-      const body = {
-        userID: borrowerID,
-      };
-      const response = await fetch(
-        "https://v5ezikbdjg4hadx5mqmundbaxq0zjdnj.lambda-url.ca-central-1.on.aws/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(body),
-        }
-      );
-      const userData = await response.json();
-      setBorrowerDetails(userData);
-    };
+  // useEffect(() => {
+  //   const fetchUserDetails = async () => {
+  //     const body = {
+  //       userID: borrowerID,
+  //     };
+  //     const response = await fetch(
+  //       "https://v5ezikbdjg4hadx5mqmundbaxq0zjdnj.lambda-url.ca-central-1.on.aws/",
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(body),
+  //       }
+  //     );
+  //     const userData = await response.json();
+  //     setBorrowerDetails(userData);
+  //   };
 
-    // Call fetch function
-    fetchUserDetails();
-  }, []);
+  //   fetchUserDetails();
+  // }, []);
 
   return (
     <div className="flex bg-brand p-4 border border-gray-700 w-full mx-auto relative">
