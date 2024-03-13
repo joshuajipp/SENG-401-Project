@@ -2,32 +2,15 @@
 import { Session } from "next-auth";
 import { redirect } from "next/navigation";
 
-const CREATE_USER_URL =
-  "https://gporbws4heru7rlgqtgbfegx4a0svrhp.lambda-url.ca-central-1.on.aws/";
-
-const GET_USER_URL =
-  "https://v5ezikbdjg4hadx5mqmundbaxq0zjdnj.lambda-url.ca-central-1.on.aws/";
-
-const CREATE_LISTING_URL =
-  "https://evieebr3t3elnuixwsaa32lp7m0fbfre.lambda-url.ca-central-1.on.aws/";
-
-const GET_BORROWED_ITEMS_URL = 
-  "https://tot5q6oh7lsjo3xgfzsu4rtbhy0zznxz.lambda-url.ca-central-1.on.aws/";
-
-const GET_LENDER_ITEMS_URL =
-  "https://iat6gyr54ckeyk532ukyqqqx6m0blqpr.lambda-url.ca-central-1.on.aws/";
-
-const DELETE_ITEM_URL =
-  "https://42klw4pzml6aqrxcaufnk2d5gq0ivpml.lambda-url.ca-central-1.on.aws/";
-
-const BORROW_ITEM_URL = 
-  "https://kjqor37l3b7q6yymuewr7enudy0dvgef.lambda-url.ca-central-1.on.aws/";
-
-const RETURN_ITEM_URL =
-  "https://gpd2zooxjwtnoqjxgsaxwvgjni0lfpkn.lambda-url.ca-central-1.on.aws/";
-
-const GET_ITEM_PAGE_URL = 
-  "https://hb6atawovzyta4acaj4bkd4rxa0pmhvp.lambda-url.ca-central-1.on.aws/";
+const CREATE_USER_URL = process.env.CREATE_USER_URL as string;
+const GET_USER_URL = process.env.GET_USER_URL as string;
+const CREATE_LISTING_URL = process.env.CREATE_LISTING_URL as string;
+const GET_BORROWED_ITEMS_URL = process.env.GET_BORROWED_ITEMS_URL as string;
+const GET_LENDER_ITEMS_URL = process.env.GET_LENDER_ITEMS_URL as string;
+const DELETE_ITEM_URL = process.env.DELETE_ITEM_URL as string;
+const BORROW_ITEM_URL = process.env.BORROW_ITEM_URL as string;
+const RETURN_ITEM_URL = process.env.RETURN_ITEM_URL as string;
+const GET_ITEM_PAGE_URL = process.env.GET_ITEM_PAGE_URL as string;
 
 export const createListing = async (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
@@ -75,21 +58,21 @@ export const createUser = async (name: string, email: string) => {
 };
 
 export const getUser = async (email: string) => {
-  const body = {
-    email: email,
-  };
   const response = await fetch(GET_USER_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      email: email,
     },
-    body: JSON.stringify(body),
   });
   return response;
 };
 
 export const authenticateUser = async (session: Session) => {
-  const res = await getUser(session.user?.email || "");
+  if (!session.user?.email) {
+    return;
+  }
+  const res = await getUser(session.user?.email);
   if (res.ok) {
     return res;
   } else {
@@ -111,12 +94,12 @@ export const getBorrowedItems = async (borrowerID: string) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "borrowerID": borrowerID,
+      borrowerID: borrowerID,
     },
   });
 
   if (response.status !== 200) {
-    throw new Error('Failed to return item. Status code: ' + response.status);
+    throw new Error("Failed to return item. Status code: " + response.status);
   }
 
   const borrowedItems = await response.json();
@@ -128,12 +111,12 @@ export const getLenderItems = async (lenderID: string) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "lenderID": lenderID,
+      lenderID: lenderID,
     },
   });
 
   if (response.status !== 200) {
-    throw new Error('Failed to return item. Status code: ' + response.status);
+    throw new Error("Failed to return item. Status code: " + response.status);
   }
 
   const lenderItems = await response.json();
@@ -145,12 +128,12 @@ export const deleteItem = async (itemID: string) => {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      "itemID": itemID,
+      itemID: itemID,
     },
   });
 
   if (response.status !== 200) {
-    throw new Error('Failed to return item. Status code: ' + response.status);
+    throw new Error("Failed to return item. Status code: " + response.status);
   }
 
   return response;
@@ -165,16 +148,16 @@ export const borrowItem = async (itemID: string, borrowerID: string) => {
     body: JSON.stringify({
       itemID: itemID,
       borrowerID: borrowerID,
-    })
+    }),
   });
 
   if (response.status !== 200) {
-    throw new Error('Failed to return item. Status code: ' + response.status);
+    throw new Error("Failed to return item. Status code: " + response.status);
   }
 
   return response;
-}
-  
+};
+
 export const returnItem = async (itemID: string) => {
   const response = await fetch(RETURN_ITEM_URL, {
     method: "POST",
@@ -183,37 +166,37 @@ export const returnItem = async (itemID: string) => {
     },
     body: JSON.stringify({
       itemID: itemID,
-    })
+    }),
   });
 
   if (response.status !== 200) {
-    throw new Error('Failed to return item. Status code: ' + response.status);
+    throw new Error("Failed to return item. Status code: " + response.status);
   }
 
   return response;
-}
+};
 
 export const getItemPage = async (
-  location: string, 
-  pageCount: string = '10', 
-  category: string = '', 
-  lastItem: string = '', 
-  search: string = ''
+  location: string,
+  pageCount: string = "10",
+  category: string = "",
+  lastItem: string = "",
+  search: string = ""
 ) => {
   const response = await fetch(GET_ITEM_PAGE_URL, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "location": location,
-      "pageCount": pageCount,
-      "category": category,
-      "lastItem": lastItem,
-      "search": search,
+      location: location,
+      pageCount: pageCount,
+      category: category,
+      lastItem: lastItem,
+      search: search,
     },
   });
 
   if (response.status !== 200) {
-    throw new Error('Failed to return item. Status code: ' + response.status);
+    throw new Error("Failed to return item. Status code: " + response.status);
   }
 
   const itemPage = await response.json();

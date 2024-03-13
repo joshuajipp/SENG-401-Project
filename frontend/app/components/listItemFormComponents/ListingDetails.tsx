@@ -10,9 +10,9 @@ export default function ListingDetails() {
           <Label htmlFor="category" value="Category: " />
         </div>
         <Select id="category" name="category">
-          {Object.values(Category).map((cond) => (
-            <option key={cond} value={cond}>
-              {cond}
+          {Object.values(Category).map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
             </option>
           ))}
         </Select>
