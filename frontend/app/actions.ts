@@ -12,7 +12,11 @@ const CREATE_LISTING_URL =
   "https://evieebr3t3elnuixwsaa32lp7m0fbfre.lambda-url.ca-central-1.on.aws/";
 
 const GET_BORROWED_ITEMS_URL = 
-  "https://tot5q6oh7lsjo3xgfzsu4rtbhy0zznxz.lambda-url.ca-central-1.on.aws/"
+  "https://tot5q6oh7lsjo3xgfzsu4rtbhy0zznxz.lambda-url.ca-central-1.on.aws/";
+
+const GET_LENDER_ITEMS_URL =
+  "https://iat6gyr54ckeyk532ukyqqqx6m0blqpr.lambda-url.ca-central-1.on.aws/";
+
 export const createListing = async (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
   // const rawFormData = {
@@ -95,7 +99,7 @@ export const getBorrowedItems = async (borrowerID: string) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "borrowerID": borrowerID, // Custom header to pass the borrowerID
+      "borrowerID": borrowerID,
     },
   });
 
@@ -105,4 +109,21 @@ export const getBorrowedItems = async (borrowerID: string) => {
 
   const borrowedItems = await response.json();
   return borrowedItems;
+};
+
+export const getLenderItems = async (lenderID: string) => {
+  const response = await fetch(GET_LENDER_ITEMS_URL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "lenderID": lenderID,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch lender items');
+  }
+
+  const lenderItems = await response.json();
+  return lenderItems;
 };
