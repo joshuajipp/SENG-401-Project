@@ -2,6 +2,7 @@
 import { Session, getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "./utils/authOptions";
+import { LocationInfo } from "./interfaces/LocationI";
 
 const CREATE_USER_URL = process.env.CREATE_USER_URL as string;
 const GET_USER_URL = process.env.GET_USER_URL as string;
@@ -12,6 +13,9 @@ const DELETE_ITEM_URL = process.env.DELETE_ITEM_URL as string;
 const BORROW_ITEM_URL = process.env.BORROW_ITEM_URL as string;
 const RETURN_ITEM_URL = process.env.RETURN_ITEM_URL as string;
 const GET_ITEM_PAGE_URL = process.env.GET_ITEM_PAGE_URL as string;
+
+// currently unimplemented
+const UPDATE_USER_URL = process.env.UPDATE_USER_URL as string;
 
 export const createListing = async (formData: FormData) => {
   const session = await getServerSession(authOptions);
@@ -44,13 +48,31 @@ export const createListing = async (formData: FormData) => {
   // redirect("/");
 };
 
+export const updateUser = async (newLocation: LocationInfo) => {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    console.log("No session found");
+    return;
+  }
+  // @ts-ignore
+  const body = { newLocation: newLocation, email: session.userData.userID };
+  const response = await fetch(UPDATE_USER_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  return response.json();
+};
+
 export const createUser = async (name: string, email: string) => {
   const body = {
     name: name,
     email: email,
     rating: null,
     bio: null,
-    location: null,
+    location: { city: null, province: null, country: null },
     phoneNumber: null,
   };
   const response = await fetch(CREATE_USER_URL, {
@@ -242,4 +264,12 @@ export const getItemPage = async (
 
   const itemPage = await response.json();
   return itemPage;
+};
+
+export const getAddress = async (latitude: number, longitude: number) => {
+  const response = await fetch(
+    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.GOOGLE_MAPS_API_KEY}`
+  );
+  const data = await response.json();
+  return data;
 };
