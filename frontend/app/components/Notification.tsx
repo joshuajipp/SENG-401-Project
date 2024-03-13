@@ -1,14 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar, Dropdown, DropdownItem } from "flowbite-react";
-import { AppProps } from 'next/app';
 
 interface NotificationProps {
   itemName: string;
-  userName: string;
+  borrowerID: string;
   location: string;
 }
 
-export default function Notification({ itemName, userName, location }: NotificationProps) {
+export default function Notification({
+  itemName,
+  borrowerID,
+  location,
+}: NotificationProps) {
+  const [borrowerDetails, setBorrowerDetails] = useState(null);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      const body = {
+        userID: borrowerID,
+      };
+      const response = await fetch(
+        "https://v5ezikbdjg4hadx5mqmundbaxq0zjdnj.lambda-url.ca-central-1.on.aws/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+      const userData = await response.json();
+      setBorrowerDetails(userData);
+    };
+
+    // Call fetch function
+    fetchUserDetails();
+  }, []);
+
   return (
     <div className="flex bg-brand p-4 border border-gray-700 w-full mx-auto relative">
       <div className="flex">
@@ -27,7 +55,7 @@ export default function Notification({ itemName, userName, location }: Notificat
       </div>
       <div className="flex-col flex-grow ml-4">
         <p className="text-white text-lg mb-4 pr-4">
-          {userName} has Requested your {itemName}!
+          {borrowerID} has Requested your {itemName}!
         </p>
         <div className="flex">
           <button className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-md mr-2">

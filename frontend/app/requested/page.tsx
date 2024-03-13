@@ -30,7 +30,7 @@ export default function page() {
           headers: {
             "Content-Type": "application/json",
             lenderID: "663b6585-2f65-4088-a346-9fe2ec9a9000",
-          },
+          }
         }
       );
       if (res.status == 200) {
@@ -54,9 +54,9 @@ export default function page() {
           {requestedItems.map((item, index) =>
             item.borrowRequests.map((request, requestIndex) => (
               <Notification
-                key={`${index}-${requestIndex}`} // Use a unique key for each Notification component
+                key={`${index}-${requestIndex}`}
                 itemName={item.itemName}
-                userName="Joseph"
+                borrowerID={request}
                 location="Calgary"
               ></Notification>
             ))
