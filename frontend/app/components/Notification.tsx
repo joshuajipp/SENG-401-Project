@@ -10,7 +10,7 @@ interface NotificationProps {
 
 export default function Notification({ itemName, userName, location }: NotificationProps) {
   return (
-    <div className="flex bg-brand p-4 w-full mx-auto relative">
+    <div className="flex bg-brand p-4 border border-gray-700 w-full mx-auto relative">
       <div className="flex">
         <Dropdown
           inline
