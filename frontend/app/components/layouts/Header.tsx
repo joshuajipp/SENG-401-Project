@@ -97,14 +97,14 @@ export default async function Header() {
     <Navbar fluid rounded>
       <Logo />
 
-      <div className="flex order-2 md:order-none gap-4 place-items-center justify-center items-center">
+      <div className="flex dark:text-white order-2 md:order-none gap-4 place-items-center justify-center items-center">
         <TextInput
           type="text"
           icon={FaSearch}
           placeholder="What are you looking for?"
           addon={
             <Link href={"/" + searchValue}>
-              <button className="bg-transparent text-brand hover:opacity-85">
+              <button className="bg-transparent hover:opacity-85">
                 Search
               </button>
             </Link>
@@ -120,7 +120,7 @@ export default async function Header() {
           <div className="rounded-full opacity-80 p-2 bg-brand">
             <FaLocationDot />
           </div>
-          <div className=" text-sm">{location}</div>
+          <div className=" text-sm text-black dark:text-white">{location}</div>
         </div>
       </div>
       <div className="flex flex-row gap-4 place-items-center place-content-center">
