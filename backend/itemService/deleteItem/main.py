@@ -4,7 +4,7 @@ import json
 
 def get_dynamodb_table(table_name):
     """Initialize a DynamoDB resource and get the table."""
-    dynamodb = boto3.resource('dynamodb')
+    dynamodb = boto3.resource('dynamodb', region_name='ca-central-1')
     table = dynamodb.Table(table_name)
     return table
 
@@ -23,7 +23,7 @@ def handler(event, context):
         table_name = 'items-30144999'
         table = get_dynamodb_table(table_name)
         headers = event.get("headers", {})
-        itemID = headers.get("itemID", {})
+        itemID = headers.get("itemid", "")
         
         response = remove_item(table, itemID)
         
