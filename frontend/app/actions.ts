@@ -20,6 +20,9 @@ const GET_LENDER_ITEMS_URL =
 const DELETE_ITEM_URL =
   "https://42klw4pzml6aqrxcaufnk2d5gq0ivpml.lambda-url.ca-central-1.on.aws/";
 
+const BORROW_ITEM_URL = 
+  "https://kjqor37l3b7q6yymuewr7enudy0dvgef.lambda-url.ca-central-1.on.aws/";
+
 export const createListing = async (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
   // const rawFormData = {
@@ -146,3 +149,23 @@ export const deleteItem = async (itemID: string) => {
 
   return response;
 };
+
+export const borrowItem = async (itemID: string, borrowerID: string) => {
+  const response = await fetch(BORROW_ITEM_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      itemID: itemID,
+      borrowerID: borrowerID,
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to borrow item');
+  }
+
+  return response;
+}
+  
