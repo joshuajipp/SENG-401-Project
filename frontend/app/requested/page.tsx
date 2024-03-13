@@ -51,11 +51,14 @@ export default function page() {
         <p>Empty</p>
       ) : (
         <div>
-          <Notification
-            itemName="Hammer"
-            userName="Joseph"
-            location="Edmonton"
-          ></Notification>
+          {requestedItems.map((item, index) => (
+            <Notification
+              key={index}
+              itemName={item["itemName"]}
+              userName="Joseph"       // fetch requesting user
+              location={item["location"]}   //
+            ></Notification>
+          ))}
         </div>
       )}
     </div>
