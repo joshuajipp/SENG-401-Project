@@ -1,6 +1,7 @@
 "use server";
-import { Session } from "next-auth";
+import { Session, getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { authOptions } from "./utils/authOptions";
 
 const CREATE_USER_URL = process.env.CREATE_USER_URL as string;
 const GET_USER_URL = process.env.GET_USER_URL as string;
@@ -13,6 +14,11 @@ const RETURN_ITEM_URL = process.env.RETURN_ITEM_URL as string;
 const GET_ITEM_PAGE_URL = process.env.GET_ITEM_PAGE_URL as string;
 
 export const createListing = async (formData: FormData) => {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    console.log("No session found");
+    return;
+  }
   const rawFormData = Object.fromEntries(formData.entries());
   // const rawFormData = {
   //   category: "Other",
@@ -83,6 +89,11 @@ export const authenticateUser = async (session: Session) => {
   }
 };
 export const requestItem = async (formData: FormData) => {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    console.log("No session found");
+    return;
+  }
   const rawFormData = Object.fromEntries(formData.entries());
   console.log(rawFormData);
   // send to API endpoint
@@ -90,6 +101,11 @@ export const requestItem = async (formData: FormData) => {
 };
 
 export const getBorrowedItems = async (borrowerID: string) => {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    console.log("No session found");
+    return;
+  }
   const response = await fetch(GET_BORROWED_ITEMS_URL, {
     method: "GET",
     headers: {
@@ -107,6 +123,11 @@ export const getBorrowedItems = async (borrowerID: string) => {
 };
 
 export const getLenderItems = async (lenderID: string) => {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    console.log("No session found");
+    return;
+  }
   const response = await fetch(GET_LENDER_ITEMS_URL, {
     method: "GET",
     headers: {
@@ -124,6 +145,11 @@ export const getLenderItems = async (lenderID: string) => {
 };
 
 export const deleteItem = async (itemID: string) => {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    console.log("No session found");
+    return;
+  }
   const response = await fetch(DELETE_ITEM_URL, {
     method: "DELETE",
     headers: {
@@ -140,6 +166,11 @@ export const deleteItem = async (itemID: string) => {
 };
 
 export const borrowItem = async (itemID: string, borrowerID: string) => {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    console.log("No session found");
+    return;
+  }
   const response = await fetch(BORROW_ITEM_URL, {
     method: "POST",
     headers: {
@@ -159,6 +190,11 @@ export const borrowItem = async (itemID: string, borrowerID: string) => {
 };
 
 export const returnItem = async (itemID: string) => {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    console.log("No session found");
+    return;
+  }
   const response = await fetch(RETURN_ITEM_URL, {
     method: "POST",
     headers: {
@@ -183,6 +219,11 @@ export const getItemPage = async (
   lastItem: string = "",
   search: string = ""
 ) => {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    console.log("No session found");
+    return;
+  }
   const response = await fetch(GET_ITEM_PAGE_URL, {
     method: "GET",
     headers: {
