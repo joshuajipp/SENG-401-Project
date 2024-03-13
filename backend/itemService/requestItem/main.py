@@ -1,5 +1,6 @@
 import boto3
 import json
+import time
 
 def get_dynamodb_table(table_name):
     """Initialize a DynamoDB resource and get the table."""
@@ -13,7 +14,7 @@ def parse_event_body(event_body):
         return json.loads(event_body)
     return event_body
 
-def append_borrower_to_borrow_requests(table, itemID, borrowerID):
+def append_borrower_to_borrow_requests(table, itemID, data):
     """Append a borrowerID to the borrowRequests array in the DynamoDB table."""
     response = table.update_item(
         Key={
@@ -21,7 +22,7 @@ def append_borrower_to_borrow_requests(table, itemID, borrowerID):
         },
         UpdateExpression="SET borrowRequests = list_append(if_not_exists(borrowRequests, :empty_list), :b)",
         ExpressionAttributeValues={
-            ':b': [borrowerID],
+            ':b': [data],
             ':empty_list': []
         },
         ReturnValues="UPDATED_NEW"
@@ -35,8 +36,18 @@ def handler(event, context):
         body = parse_event_body(event["body"])
         itemID = body["itemID"]
         borrowerID = body["borrowerID"]
-        
-        response = append_borrower_to_borrow_requests(table, itemID, borrowerID)
+        timestamp = str(int(time.time()))
+        startDate = body["startDate"]
+        endDate = body["endDate"]
+
+        data = {
+            "borrowerID": borrowerID,
+            "timestamp": timestamp,
+            "startDate": startDate,
+            "endDate": endDate
+        }
+
+        response = append_borrower_to_borrow_requests(table, itemID, data)
         
         return {
             'statusCode': 200,
