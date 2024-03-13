@@ -19,7 +19,7 @@ export default function Notification() {
         </Dropdown>
       </div>
       <div className="flex-col flex-grow ml-4">
-        <p className="text-white text-lg mb-4">
+        <p className="text-white text-lg mb-4 pr-4">
           Joseph has Requested your Hammer!
         </p>
         <div className="flex">
@@ -31,7 +31,7 @@ export default function Notification() {
           </button>
         </div>
       </div>
-      <div className="absolute top-0 right-0 text-gray-300 text-sm mt-5 mr-3">
+      <div className="top-0 right-0 text-gray-300 text-sm pl-10 pt-1">
         Calgary | 1 hour ago
       </div>
     </div>
