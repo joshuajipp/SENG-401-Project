@@ -25,7 +25,16 @@ def test_get_user_from_table(dynamodb_mock):
     dynamodb_mock.create_table(
         TableName = table_name, 
         KeySchema = [{'AttributeName': 'userID', 'KeyType': 'HASH'}],
-        AttributeDefinitions = [{'AttributeName': 'userID', 'AttributeType': 'S'}],     
+        AttributeDefinitions = [
+            {'AttributeName': 'userID', 'AttributeType': 'S'},
+            {'AttributeName': 'email', 'AttributeType': 'S'}
+        ],
+        GlobalSecondaryIndexes=[{
+            'IndexName': 'EmailIndex',
+            'KeySchema': [{'AttributeName': 'email', 'KeyType': 'HASH'}],
+            'Projection': {'ProjectionType': 'ALL'},
+            'ProvisionedThroughput': {'ReadCapacityUnits': 1, 'WriteCapacityUnits': 1}
+        }],     
         ProvisionedThroughput={'ReadCapacityUnits': 1, 'WriteCapacityUnits': 1}
     )
 
@@ -41,15 +50,19 @@ def test_get_user_from_table(dynamodb_mock):
             "location": "Sample location"
         }
     )
-    event = {"body": json.dumps({"userID": userID})}
+    headers = {
+        "userID": userID,
+        "email": "john@example.com"
+    }
+    event = {"headers": headers}
     context = {}
     response = handler(event, context, table)
 
     assert response["statusCode"] == 200, "Status code should be 200 for successful execution."
     response_body = json.loads(response['body'])
-    assert response_body[0]["userID"] == userID, "Incorrect userID returned"
-    assert response_body[0]["name"] == "John Doe", "Incorrect name returned"
-    assert response_body[0]["email"] == "john@example.com", "Incorrect email returned"
-    assert response_body[0]["rating"] == 5, "Incorrect rating returned"
-    assert response_body[0]["bio"] == "Sample bio", "Incorrect bio returned"
-    assert response_body[0]["location"] == "Sample location", "Incorrect location returned"
+    assert response_body["userID"] == userID, "Incorrect userID returned"
+    assert response_body["name"] == "John Doe", "Incorrect name returned"
+    assert response_body["email"] == "john@example.com", "Incorrect email returned"
+    assert response_body["rating"] == 5, "Incorrect rating returned"
+    assert response_body["bio"] == "Sample bio", "Incorrect bio returned"
+    assert response_body["location"] == "Sample location", "Incorrect location returned"

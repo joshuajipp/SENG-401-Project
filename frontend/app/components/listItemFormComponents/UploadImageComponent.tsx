@@ -11,8 +11,14 @@ export default function UploadImageComponent() {
   const [imageURLs, setImageURLs] = useState<string[]>(
     Array.from({ length: 8 })
   );
+  const maxImageSize = 5 * 1024 * 1024; // 5 MB
+
   const handleAddImage = (newImage: File, index: number) => {
     if (index >= 8) return;
+    if (newImage.size > maxImageSize) {
+      alert("Image is too large. Please upload an image smaller than 5MB.");
+      return;
+    }
     setImageURLs((prevURLs) => {
       const updatedURLs = [...prevURLs];
       const reader = new FileReader();
@@ -90,7 +96,7 @@ export default function UploadImageComponent() {
     <div className="flex flex-row flex-wrap gap-2">
       <input
         className="hidden"
-        name="imageURLs"
+        name="images"
         readOnly
         value={JSON.stringify(imageURLs)}
       />

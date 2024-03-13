@@ -29,9 +29,9 @@ def handler(event, context):
       table_name = 'users-30144999'
       table = get_dynamodb_table(table_name)
       
-      # Retrieve userID and attempt to delete account
-      body = parse_event_body(event_body=event['body'])
-      userID = body['userID']
+      # Retrieve userID
+      headers = event.get("headers", {})
+      userID = headers.get("userid", "")
       
       # Check if user exists
       response = table.get_item(Key={'userID': userID})

@@ -110,15 +110,19 @@ def update_account(table, userID, old_entry, new_info):
 
 # ----------------------------------------------------------------------------------------------------------------- #
 def handler(event, context):
+  i = 0
   try:
     # setup connection to dynamodb table
     # and parse event body
     table = get_dynamodb_table(table_name="users-30144999")
-    body = parse_event_body(event_body=event['body'])
+    body = parse_event_body(event_body=event["body"])
 
+    i = i + 1
     # Retrieve userID
+
     userID = body['userID'] 
-    
+    i = i + 1
+
     # Get old entry if it exists otherwise return 404
     response = table.get_item(Key={'userID': userID})
     if 'Item' not in response:
@@ -128,35 +132,38 @@ def handler(event, context):
           'body': 'User not found'
       }
     old_entry = response['Item']
+    i = i + 1
     
     # Retrieve new table entry info turn it to a dictionary
     new_info = {
-      'userID': userID,
       'name': body['name'],
       'email': body['email'],
       'rating': body['rating'],
       'bio': body['bio'],
       'location': body['location']
     }
+    i = i + 1
     
     # Get old entry
     old_entry = dict(table.get_item(Key={'userID': userID}))
+    i = i + 1
 
-    # Check if image is different from old one
-    raw_image = body['image']
-    image_bytes = base64.b64decode(raw_image)
-    new_image_hash = hashlib.sha256(image_bytes).hexdigest()
+    # # Check if image is different from old one
+    # raw_image = body['image']
+    # image_bytes = base64.b64decode(raw_image)
+    # new_image_hash = hashlib.sha256(image_bytes).hexdigest()
     
-    # Add image hash to new info if its different
-    (new_image_hash != old_entry['imageHash'])
+    # # Add image hash to new info if its different
+    # (new_image_hash != old_entry['imageHash'])
     
-    if ("imageHash" not in old_entry) or (new_image_hash != old_entry['imageHash']):
-      response = post_image(image_bytes)
-      new_info['profilePicture'] = response["secure_url"]
-      new_info['imageHash'] = new_image_hash
+    # if ("imageHash" not in old_entry) or (new_image_hash != old_entry['imageHash']):
+    #   response = post_image(image_bytes)
+    #   new_info['profilePicture'] = response["secure_url"]
+    #   new_info['imageHash'] = new_image_hash
 
     # Update the account
     response = update_account(table, userID, old_entry, new_info)
+    i = i + 1
 
     return {
       'statuscode': 200,
@@ -168,6 +175,6 @@ def handler(event, context):
     print(f"exception: {e}")
     return {
       'statusCode': 500,
-      'body': json.dumps(f'Error updating account: {str(e)}')
+      'body': json.dumps(f'Error updating account: {str(e): codeError: {i}}')
     }
   
