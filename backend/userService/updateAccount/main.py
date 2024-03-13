@@ -142,18 +142,18 @@ def handler(event, context):
     # Get old entry
     old_entry = dict(table.get_item(Key={'userID': userID}))
 
-    # Check if image is different from old one
-    raw_image = body['image']
-    image_bytes = base64.b64decode(raw_image)
-    new_image_hash = hashlib.sha256(image_bytes).hexdigest()
+    # # Check if image is different from old one
+    # raw_image = body['image']
+    # image_bytes = base64.b64decode(raw_image)
+    # new_image_hash = hashlib.sha256(image_bytes).hexdigest()
     
-    # Add image hash to new info if its different
-    (new_image_hash != old_entry['imageHash'])
+    # # Add image hash to new info if its different
+    # (new_image_hash != old_entry['imageHash'])
     
-    if ("imageHash" not in old_entry) or (new_image_hash != old_entry['imageHash']):
-      response = post_image(image_bytes)
-      new_info['profilePicture'] = response["secure_url"]
-      new_info['imageHash'] = new_image_hash
+    # if ("imageHash" not in old_entry) or (new_image_hash != old_entry['imageHash']):
+    #   response = post_image(image_bytes)
+    #   new_info['profilePicture'] = response["secure_url"]
+    #   new_info['imageHash'] = new_image_hash
 
     # Update the account
     response = update_account(table, userID, old_entry, new_info)
