@@ -115,7 +115,7 @@ def handler(event, context):
     # setup connection to dynamodb table
     # and parse event body
     table = get_dynamodb_table(table_name="users-30144999")
-    body = parse_event_body(event['body'])
+    body = parse_event_body(event_body=event["body"])
 
     i = i + 1
     # Retrieve userID
