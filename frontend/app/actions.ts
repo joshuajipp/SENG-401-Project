@@ -10,6 +10,25 @@ const GET_USER_URL =
 
 const CREATE_LISTING_URL =
   "https://evieebr3t3elnuixwsaa32lp7m0fbfre.lambda-url.ca-central-1.on.aws/";
+
+const GET_BORROWED_ITEMS_URL = 
+  "https://tot5q6oh7lsjo3xgfzsu4rtbhy0zznxz.lambda-url.ca-central-1.on.aws/";
+
+const GET_LENDER_ITEMS_URL =
+  "https://iat6gyr54ckeyk532ukyqqqx6m0blqpr.lambda-url.ca-central-1.on.aws/";
+
+const DELETE_ITEM_URL =
+  "https://42klw4pzml6aqrxcaufnk2d5gq0ivpml.lambda-url.ca-central-1.on.aws/";
+
+const BORROW_ITEM_URL = 
+  "https://kjqor37l3b7q6yymuewr7enudy0dvgef.lambda-url.ca-central-1.on.aws/";
+
+const RETURN_ITEM_URL =
+  "https://gpd2zooxjwtnoqjxgsaxwvgjni0lfpkn.lambda-url.ca-central-1.on.aws/";
+
+const GET_ITEM_PAGE_URL = 
+  "https://hb6atawovzyta4acaj4bkd4rxa0pmhvp.lambda-url.ca-central-1.on.aws/";
+
 export const createListing = async (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
   // const rawFormData = {
@@ -85,4 +104,118 @@ export const requestItem = async (formData: FormData) => {
   console.log(rawFormData);
   // send to API endpoint
   redirect("/");
+};
+
+export const getBorrowedItems = async (borrowerID: string) => {
+  const response = await fetch(GET_BORROWED_ITEMS_URL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "borrowerID": borrowerID,
+    },
+  });
+
+  if (response.status !== 200) {
+    throw new Error('Failed to return item. Status code: ' + response.status);
+  }
+
+  const borrowedItems = await response.json();
+  return borrowedItems;
+};
+
+export const getLenderItems = async (lenderID: string) => {
+  const response = await fetch(GET_LENDER_ITEMS_URL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "lenderID": lenderID,
+    },
+  });
+
+  if (response.status !== 200) {
+    throw new Error('Failed to return item. Status code: ' + response.status);
+  }
+
+  const lenderItems = await response.json();
+  return lenderItems;
+};
+
+export const deleteItem = async (itemID: string) => {
+  const response = await fetch(DELETE_ITEM_URL, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "itemID": itemID,
+    },
+  });
+
+  if (response.status !== 200) {
+    throw new Error('Failed to return item. Status code: ' + response.status);
+  }
+
+  return response;
+};
+
+export const borrowItem = async (itemID: string, borrowerID: string) => {
+  const response = await fetch(BORROW_ITEM_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      itemID: itemID,
+      borrowerID: borrowerID,
+    })
+  });
+
+  if (response.status !== 200) {
+    throw new Error('Failed to return item. Status code: ' + response.status);
+  }
+
+  return response;
+}
+  
+export const returnItem = async (itemID: string) => {
+  const response = await fetch(RETURN_ITEM_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      itemID: itemID,
+    })
+  });
+
+  if (response.status !== 200) {
+    throw new Error('Failed to return item. Status code: ' + response.status);
+  }
+
+  return response;
+}
+
+export const getItemPage = async (
+  location: string, 
+  pageCount: string = '10', 
+  category: string = '', 
+  lastItem: string = '', 
+  search: string = ''
+) => {
+  const response = await fetch(GET_ITEM_PAGE_URL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "location": location,
+      "pageCount": pageCount,
+      "category": category,
+      "lastItem": lastItem,
+      "search": search,
+    },
+  });
+
+  if (response.status !== 200) {
+    throw new Error('Failed to return item. Status code: ' + response.status);
+  }
+
+  const itemPage = await response.json();
+  return itemPage;
 };
