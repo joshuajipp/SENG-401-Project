@@ -1,6 +1,7 @@
 import boto3
 import json
 import time
+from decimal import Decimal
 
 def get_dynamodb_table(table_name):
     """Initialize a DynamoDB resource and get the table."""
@@ -36,7 +37,7 @@ def handler(event, context):
         body = parse_event_body(event["body"])
         itemID = body["itemID"]
         borrowerID = body["borrowerID"]
-        timestamp = str(int(time.time()))
+        timestamp = Decimal(time.time())
         startDate = body["startDate"]
         endDate = body["endDate"]
 
