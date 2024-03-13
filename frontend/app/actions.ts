@@ -10,6 +10,9 @@ const GET_USER_URL =
 
 const CREATE_LISTING_URL =
   "https://evieebr3t3elnuixwsaa32lp7m0fbfre.lambda-url.ca-central-1.on.aws/";
+
+const GET_BORROWED_ITEMS_URL = 
+  "https://tot5q6oh7lsjo3xgfzsu4rtbhy0zznxz.lambda-url.ca-central-1.on.aws/"
 export const createListing = async (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
   // const rawFormData = {
@@ -85,4 +88,21 @@ export const requestItem = async (formData: FormData) => {
   console.log(rawFormData);
   // send to API endpoint
   redirect("/");
+};
+
+export const getBorrowedItems = async (borrowerID: string) => {
+  const response = await fetch(GET_BORROWED_ITEMS_URL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "borrowerID": borrowerID, // Custom header to pass the borrowerID
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch borrowed items');
+  }
+
+  const borrowedItems = await response.json();
+  return borrowedItems;
 };
