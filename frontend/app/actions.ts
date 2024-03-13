@@ -17,6 +17,9 @@ const GET_BORROWED_ITEMS_URL =
 const GET_LENDER_ITEMS_URL =
   "https://iat6gyr54ckeyk532ukyqqqx6m0blqpr.lambda-url.ca-central-1.on.aws/";
 
+const DELETE_ITEM_URL =
+  "https://42klw4pzml6aqrxcaufnk2d5gq0ivpml.lambda-url.ca-central-1.on.aws/";
+
 export const createListing = async (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
   // const rawFormData = {
@@ -126,4 +129,20 @@ export const getLenderItems = async (lenderID: string) => {
 
   const lenderItems = await response.json();
   return lenderItems;
+};
+
+export const deleteItem = async (itemID: string) => {
+  const response = await fetch(DELETE_ITEM_URL, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "itemID": itemID,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to delete item');
+  }
+
+  return response;
 };
