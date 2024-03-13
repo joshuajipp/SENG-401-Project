@@ -26,6 +26,9 @@ const BORROW_ITEM_URL =
 const RETURN_ITEM_URL =
   "https://gpd2zooxjwtnoqjxgsaxwvgjni0lfpkn.lambda-url.ca-central-1.on.aws/";
 
+const GET_ITEM_PAGE_URL = 
+  "https://hb6atawovzyta4acaj4bkd4rxa0pmhvp.lambda-url.ca-central-1.on.aws/";
+
 export const createListing = async (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
   // const rawFormData = {
@@ -189,3 +192,30 @@ export const returnItem = async (itemID: string) => {
 
   return response;
 }
+
+export const getItemPage = async (
+  location: string, 
+  pageCount: string = '10', 
+  category: string = '', 
+  lastItem: string = '', 
+  search: string = ''
+) => {
+  const response = await fetch(GET_ITEM_PAGE_URL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "location": location,
+      "pageCount": pageCount,
+      "category": category,
+      "lastItem": lastItem,
+      "search": search,
+    },
+  });
+
+  if (response.status !== 200) {
+    throw new Error('Failed to return item. Status code: ' + response.status);
+  }
+
+  const itemPage = await response.json();
+  return itemPage;
+};
