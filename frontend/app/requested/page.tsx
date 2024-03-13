@@ -51,14 +51,16 @@ export default function page() {
         <p>Empty</p>
       ) : (
         <div>
-          {requestedItems.map((item, index) => (
-            <Notification
-              key={index}
-              itemName={item["itemName"]}
-              userName="Joseph"       // fetch requesting user
-              location={item["location"]}   //
-            ></Notification>
-          ))}
+          {requestedItems.map((item, index) =>
+            item.borrowRequests.map((request, requestIndex) => (
+              <Notification
+                key={`${index}-${requestIndex}`} // Use a unique key for each Notification component
+                itemName={item.itemName}
+                userName="Joseph"
+                location="Calgary"
+              ></Notification>
+            ))
+          )}
         </div>
       )}
     </div>
