@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useState, useEffect } from "react";
+import Notification from "../components/Notification";
 interface Item {
   location: string;
   lenderID: string;
@@ -50,7 +51,12 @@ export default function page() {
         <p>Empty</p>
       ) : (
         <div>
-          <p>Not Empty</p>
+          <Notification
+            itemName="Hammer"
+            userName="Joseph"
+            location="Edmonton"
+            timeStamp="8 hours"
+          ></Notification>
         </div>
       )}
     </div>
