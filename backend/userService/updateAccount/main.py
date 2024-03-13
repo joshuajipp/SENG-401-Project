@@ -114,10 +114,10 @@ def handler(event, context):
     # setup connection to dynamodb table
     # and parse event body
     table = get_dynamodb_table(table_name="users-30144999")
-    body = parse_event_body(event_body=event['body'])
+    body = event.get("body", {})
 
     # Retrieve userID
-    userID = body['userID'] 
+    userID = body.get("userid", "")
     
     # Get old entry if it exists otherwise return 404
     response = table.get_item(Key={'userID': userID})
@@ -131,11 +131,11 @@ def handler(event, context):
     
     # Retrieve new table entry info turn it to a dictionary
     new_info = {
-      'name': body['name'],
-      'email': body['email'],
-      'rating': body['rating'],
-      'bio': body['bio'],
-      'location': body['location']
+      'name': body.get('name', ""),
+      'email': body.get('email', ""),
+      'rating': body.get('rating', ""),
+      'bio': body.get('bio', ""),
+      'location': body.get('location', "")
     }
     
     # Get old entry
