@@ -1,5 +1,5 @@
-import React from "react";
+import ItemRequests from "./ItemRequests";
 
-export default function page() {
-  return <div>page</div>;
+export default async function page() {
+  return <ItemRequests></ItemRequests>;
 }

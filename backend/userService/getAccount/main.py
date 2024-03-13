@@ -11,7 +11,7 @@ def handler(event, context, table=None):
         table = dynamodb_resource.Table("users-30144999")  
     
     headers = event["headers"]
-    userID = headers.get('userID') 
+    userID = headers.get('userid') 
     email = headers.get('email')
     
     # check if request contains userID or email
