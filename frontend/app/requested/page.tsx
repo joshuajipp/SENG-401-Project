@@ -55,7 +55,6 @@ export default function page() {
             itemName="Hammer"
             userName="Joseph"
             location="Edmonton"
-            timeStamp="8 hours"
           ></Notification>
         </div>
       )}

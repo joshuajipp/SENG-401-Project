@@ -4,12 +4,11 @@ import { AppProps } from 'next/app';
 
 interface NotificationProps {
   itemName: string;
-  userName: string; // user name (and picture) fix
+  userName: string;
   location: string;
-  timeStamp: string;
 }
 
-export default function Notification({ itemName, userName, location, timeStamp }: NotificationProps) {
+export default function Notification({ itemName, userName, location }: NotificationProps) {
   return (
     <div className="flex bg-brand p-4 w-full mx-auto relative">
       <div className="flex">
@@ -40,7 +39,7 @@ export default function Notification({ itemName, userName, location, timeStamp }
         </div>
       </div>
       <div className="top-0 right-0 text-gray-300 text-sm pl-10 pt-1">
-        {location} | {timeStamp} ago
+        {location} | 1 day ago
       </div>
     </div>
   );
