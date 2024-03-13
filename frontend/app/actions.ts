@@ -23,6 +23,9 @@ const DELETE_ITEM_URL =
 const BORROW_ITEM_URL = 
   "https://kjqor37l3b7q6yymuewr7enudy0dvgef.lambda-url.ca-central-1.on.aws/";
 
+const RETURN_ITEM_URL =
+  "https://gpd2zooxjwtnoqjxgsaxwvgjni0lfpkn.lambda-url.ca-central-1.on.aws/";
+
 export const createListing = async (formData: FormData) => {
   const rawFormData = Object.fromEntries(formData.entries());
   // const rawFormData = {
@@ -109,8 +112,8 @@ export const getBorrowedItems = async (borrowerID: string) => {
     },
   });
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch borrowed items');
+  if (response.status !== 200) {
+    throw new Error('Failed to return item. Status code: ' + response.status);
   }
 
   const borrowedItems = await response.json();
@@ -126,8 +129,8 @@ export const getLenderItems = async (lenderID: string) => {
     },
   });
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch lender items');
+  if (response.status !== 200) {
+    throw new Error('Failed to return item. Status code: ' + response.status);
   }
 
   const lenderItems = await response.json();
@@ -143,8 +146,8 @@ export const deleteItem = async (itemID: string) => {
     },
   });
 
-  if (!response.ok) {
-    throw new Error('Failed to delete item');
+  if (response.status !== 200) {
+    throw new Error('Failed to return item. Status code: ' + response.status);
   }
 
   return response;
@@ -162,10 +165,27 @@ export const borrowItem = async (itemID: string, borrowerID: string) => {
     })
   });
 
-  if (!response.ok) {
-    throw new Error('Failed to borrow item');
+  if (response.status !== 200) {
+    throw new Error('Failed to return item. Status code: ' + response.status);
   }
 
   return response;
 }
   
+export const returnItem = async (itemID: string) => {
+  const response = await fetch(RETURN_ITEM_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      itemID: itemID,
+    })
+  });
+
+  if (response.status !== 200) {
+    throw new Error('Failed to return item. Status code: ' + response.status);
+  }
+
+  return response;
+}
