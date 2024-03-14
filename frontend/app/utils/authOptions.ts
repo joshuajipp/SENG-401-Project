@@ -11,10 +11,26 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     async session({ session, token }) {
-      const res = await authenticateUser(session);
-      const userData = await res.json();
-      const newSession = { userData, ...session };
-      return newSession;
+      try {
+        const res = await authenticateUser(session);
+        // Ensure res is a fetch response and has .json() method
+        if (res && typeof res.json === "function") {
+          const userData = await res.json();
+          const newSession = { ...session, userData };
+          return newSession;
+        } else {
+          console.error(
+            "authenticateUser did not return a valid response:",
+            res
+          );
+          // Handle the error or return the session unmodified
+          return session;
+        }
+      } catch (error) {
+        console.error("Error in session callback:", error);
+        // Return the session unmodified or handle error as needed
+        return session;
+      }
     },
   },
 };
