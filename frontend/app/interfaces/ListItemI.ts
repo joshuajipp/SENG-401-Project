@@ -33,3 +33,16 @@ export interface ListItemI {
   setPhoneNum: React.Dispatch<React.SetStateAction<string>>;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
 }
+
+export interface ItemsGetListI {
+  location: string;
+  lenderID: string;
+  timestamp: number;
+  condition: Condition;
+  category: Category;
+  images: string[];
+  itemID: string;
+  description: string;
+  imageHashes?: string[];
+  itemName: string;
+}
