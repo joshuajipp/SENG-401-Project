@@ -27,7 +27,7 @@ export default async function ListingsContainer({
             key={listing.itemName}
             className=" shadow rounded-lg border border-brand flex flex-row gap-4 p-4"
           >
-            <Link href={`listings/${listing.itemID}`}>
+            <Link href={`listings/item/${listing.itemID}`}>
               <Image
                 width={120}
                 height={120}
@@ -38,7 +38,7 @@ export default async function ListingsContainer({
             </Link>
 
             <div className=" flex flex-col gap-2">
-              <Link href={`listings/${listing.itemID}`}>
+              <Link href={`listings/item/${listing.itemID}`}>
                 <h1 className="text-gray-950 text-xl font-semibold">
                   {listing.itemName}
                 </h1>
