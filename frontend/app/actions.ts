@@ -283,6 +283,5 @@ export const searchItemsRedirect = async (formData: FormData) => {
   if (location) {
     searchQuery += `location=${location}&`;
   }
-  console.log(searchQuery);
   redirect(`/listings${searchQuery}`);
 };
