@@ -8,6 +8,7 @@ function SubmitButton({ ...props }) {
   const pendingMessage = props.pending;
   const successMessage = props.success;
   const errorMessage = props.error;
+  const buttonTitle = props.title;
   const { pending } = useFormStatus();
   const notify = () =>
     toast.promise(functionThatReturnPromise, {
@@ -24,7 +25,7 @@ function SubmitButton({ ...props }) {
       aria-disabled={pending}
       onClick={notify}
     >
-      {pending ? "Processing..." : "Post Listing"}
+      {pending ? "Processing..." : buttonTitle || "Post Listing"}
     </Button>
   );
 }

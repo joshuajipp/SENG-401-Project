@@ -33,3 +33,23 @@ export interface ListItemI {
   setPhoneNum: React.Dispatch<React.SetStateAction<string>>;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
 }
+export interface BorrowRequest {
+  borrowerID: string;
+  endDate: string;
+  startDate: string;
+  // Need to resolve inconsistency in timestamp type
+  timestamp: string;
+}
+export interface ItemsGetListI {
+  location: string;
+  lenderID: string;
+  timestamp: number;
+  condition: Condition;
+  category: Category;
+  images: string[];
+  itemID: string;
+  description: string;
+  imageHashes?: string[];
+  borrowRequests?: BorrowRequest[];
+  itemName: string;
+}

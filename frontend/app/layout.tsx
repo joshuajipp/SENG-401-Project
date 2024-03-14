@@ -29,7 +29,7 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Header />
             <ThemeSwitcher />
-            <div className="flex min-h-screen flex-col items-center justify-between p-24">
+            <div className="flex min-h-screen flex-col items-center justify-between p-24 text-black dark:text-white">
               {children}
             </div>
             <ToastComponent />

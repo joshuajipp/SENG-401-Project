@@ -3,6 +3,7 @@ import DatepickerRentalForm from "./DatepickerRentalForm";
 import { requestItem } from "../actions";
 import { getServerSession } from "next-auth";
 import SubmitButton from "./SubmitButton";
+import Link from "next/link";
 export default async function RequestRentalForm() {
   const session = await getServerSession();
   const itemID = "1";
@@ -10,7 +11,7 @@ export default async function RequestRentalForm() {
     <>
       <form
         action={requestItem}
-        className=" mx-auto bg-white dark:bg-slate-800 p-8 rounded-lg"
+        className=" bg-white dark:bg-slate-800 p-8 rounded-lg gap-2 flex flex-col"
       >
         <div className="flex flex-col gap-8">
           <input className="hidden" name="itemID" value={itemID} readOnly />
@@ -20,7 +21,9 @@ export default async function RequestRentalForm() {
             value={session?.user?.email || ""}
             readOnly
           />
-          <h1 className=" font-bold text-2xl">Request Item Rental</h1>
+          <h1 className=" font-bold text-2xl dark:text-white">
+            Request Item Rental
+          </h1>
           <div className=" w-full ">
             <label
               htmlFor="return-date"
@@ -49,7 +52,22 @@ export default async function RequestRentalForm() {
             pending="Requesting item..."
             success="Request has been made successfully!"
             error="Error requesting item. Please try again later."
+            title="Request Item"
           />
+        </div>
+        <div className="text-center text-xs">
+          Toolshed is not responsible for any loss of personal property,
+          liability of damage, theft, or crime. To deter and identify potential
+          fraud, spam or suspicious behaviour, we anonymize your email address
+          (as applicable) and reserve the right to monitor conversations. By
+          sending the message you agree to our{" "}
+          <Link href="/" className="underline">
+            Terms of Use
+          </Link>
+          {" and "}{" "}
+          <Link href="/" className="underline">
+            Privacy Policy.
+          </Link>
         </div>
       </form>
     </>

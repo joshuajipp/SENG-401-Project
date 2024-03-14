@@ -2,6 +2,7 @@ import { Select, Label, TextInput, Textarea } from "flowbite-react";
 import { Category, Condition } from "@/app/interfaces/ListItemI";
 import ListItemFormTemplate from "./ListItemFormTemplate";
 import TagsComponent from "./TagsComponent";
+import CategorySelect from "../CategorySelect";
 export default function ListingDetails() {
   return (
     <ListItemFormTemplate formNumber={1} formHeader={"ListingDetails"}>
@@ -9,13 +10,7 @@ export default function ListingDetails() {
         <div className="mb-2 block font-bold">
           <Label htmlFor="category" value="Category: " />
         </div>
-        <Select id="category" name="category">
-          {Object.values(Category).map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </Select>
+        <CategorySelect />
       </div>
       <div>
         <div className="mb-2 block font-bold">
