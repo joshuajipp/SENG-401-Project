@@ -3,14 +3,11 @@ import Image from "next/image";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import Link from "next/link";
 import { Dropdown, DropdownItem } from "flowbite-react";
+import { Category, ItemsGetListI } from "../interfaces/ListItemI";
+import { getItemPage } from "../actions";
 
 const CategoryOptions = () => {
-  const categories = [
-    "Hand Tools",
-    "Power Tools",
-    "Outdoor & Garden",
-    "Hammers",
-  ];
+  const categories = Object.values(Category);
   return (
     <ul className="flex flex-col gap-1">
       {categories.map((category) => (
@@ -35,41 +32,10 @@ const SortListingsButton = () => {
     </Dropdown>
   );
 };
-const ListingsContainer = () => {
-  const listings = [
-    {
-      itemID: 1,
-      title: "Great Value Rising Crust Frozen Pizza, Supreme",
-      location: "Calgary | 6 minutes ago",
-      description:
-        "Vivamus adipiscing nisl ut dolor dignissim semper. Nullaluctus malesuada tincidunt. Class aptent taciti sociosqu ad litora torquent Vivamus adipiscing nisl ut dolor dignissim semper.",
-      image: "https://via.placeholder.com/120x120",
-    },
-    {
-      itemID: 2,
-      title: "Great Value Rising Crust Frozen Pizza, Supreme",
-      location: "Calgary | 6 minutes ago",
-      description:
-        "Vivamus adipiscing nisl ut dolor dignissim semper. Nullaluctus malesuada tincidunt. Class aptent taciti sociosqu ad litora torquent Vivamus adipiscing nisl ut dolor dignissim semper.",
-      image: "https://via.placeholder.com/120x120",
-    },
-    {
-      itemID: 3,
-      title: "Great Value Rising Crust Frozen Pizza, Supreme",
-      location: "Calgary | 6 minutes ago",
-      description:
-        "Vivamus adipiscing nisl ut dolor dignissim semper. Nullaluctus malesuada tincidunt. Class aptent taciti sociosqu ad litora torquent Vivamus adipiscing nisl ut dolor dignissim semper.",
-      image: "https://via.placeholder.com/120x120",
-    },
-    {
-      itemID: 4,
-      title: "Great Value Rising Crust Frozen Pizza, Supreme",
-      location: "Calgary | 6 minutes ago",
-      description:
-        "Vivamus adipiscing nisl ut dolor dignissim semper. Nullaluctus malesuada tincidunt. Class aptent taciti sociosqu ad litora torquent Vivamus adipiscing nisl ut dolor dignissim semper.",
-      image: "https://via.placeholder.com/120x120",
-    },
-  ];
+const ListingsContainer = async () => {
+  const res = await getItemPage("Calgary");
+  const listings: ItemsGetListI[] = res.items;
+  console.log(listings);
   return (
     <ul className="flex flex-col gap-3 ">
       <div className="flex flex-row justify-between items-center">
@@ -87,14 +53,14 @@ const ListingsContainer = () => {
       <ul className="flex flex-col gap-1 ">
         {listings.map((listing) => (
           <li
-            key={listing.title}
+            key={listing.itemName}
             className=" shadow rounded-lg border border-brand flex flex-row gap-4 p-4"
           >
             <Link href={`listings/${listing.itemID}`}>
               <Image
                 width={120}
                 height={120}
-                src={listing.image}
+                src={listing.images[0] || "/missingImage.jpg"}
                 alt="listing Image"
                 className="rounded"
               />
@@ -103,7 +69,7 @@ const ListingsContainer = () => {
             <div className=" flex flex-col gap-2">
               <Link href={`listings/${listing.itemID}`}>
                 <h1 className="text-gray-950 text-xl font-semibold">
-                  {listing.title}
+                  {listing.itemName}
                 </h1>
               </Link>
 
