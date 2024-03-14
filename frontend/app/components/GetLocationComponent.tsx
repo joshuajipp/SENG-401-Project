@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Location, {
   GoogleAPILocation,
   LocationInfo,
@@ -8,7 +8,6 @@ import { getSession } from "next-auth/react";
 import { getAddress, updateUser } from "../actions";
 export default function GetLocationComponent() {
   const [location, setLocation] = useState<Location | null>(null);
-  const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -19,11 +18,11 @@ export default function GetLocationComponent() {
           });
         },
         (error) => {
-          setError(error.message);
+          alert(error.message);
         }
       );
     } else {
-      setError("Geolocation is not supported by your browser.");
+      alert("Geolocation is not supported by your browser.");
     }
   }, []);
   useEffect(() => {

@@ -50,16 +50,17 @@ def handler(event, context):
         current_item = table.get_item(
             Key={'itemID': itemID}
         )
-        if 'Item' not in current_item or 'borrowRequests' not in current_item['Item']:
-            raise ValueError("Item or borrowRequests not found")
 
         borrow_requests = current_item['Item']['borrowRequests']
-        if borrowerID in borrow_requests:
+
+        try:
             borrowerID_index = borrow_requests.index(borrowerID)
             response = remove_borrower_id_from_borrow_requests(table, itemID, borrowerID_index)
-        else:
-            raise ValueError("borrowerID not found in borrowRequests")
-        
+        except ValueError:
+            borrowerID_index = None 
+            
+
+        response = update_item_in_table(table, itemID, borrowerID)
         return {
             'statusCode': 200,
             'body': json.dumps(response)
