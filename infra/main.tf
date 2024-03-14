@@ -243,6 +243,16 @@ resource "aws_dynamodb_table" "items_dynamodb_table" {
   }
 }
 
+resource "aws_lambda_function" "send_borrowed_item_email_lambda" {
+  filename         = "./sendBorrowedItemEmail.zip"
+  function_name    = "send-borrowed-item-email-30144999"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "main.handler"
+  runtime          = "python3.9"
+  timeout = 300
+  source_code_hash = filebase64sha256("./sendBorrowedItemEmail.zip")
+}
+
 
 resource "aws_lambda_function" "create_account_lambda" {
   filename         = "./createAccount.zip"
@@ -601,6 +611,19 @@ resource "aws_lambda_function_url" "url_update_account_location" {
 
 resource "aws_lambda_function_url" "url_update_average_account_rating" {
   function_name      = aws_lambda_function.update_average_account_rating_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["PUT"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
+
+resource "aws_lambda_function_url" "url_send_borrowed_item_email" {
+  function_name      = aws_lambda_function.send_borrowed_item_email_lambda.function_name
   authorization_type = "NONE"
 
   cors {
