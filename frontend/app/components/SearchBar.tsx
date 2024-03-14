@@ -1,12 +1,10 @@
-import { Dropdown, DropdownItem, Select, TextInput } from "flowbite-react";
-import Link from "next/link";
-import { Category } from "../interfaces/ListItemI";
+import { TextInput } from "flowbite-react";
 import { FaLocationDot } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { searchItemsRedirect } from "../actions";
-import { BiCategory } from "react-icons/bi";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../utils/authOptions";
+import CategorySelect from "./CategorySelect";
 
 export default async function SearchBar() {
   const res = await getServerSession(authOptions);
@@ -26,17 +24,7 @@ export default async function SearchBar() {
             </button>
           }
         />
-
-        <Select icon={BiCategory} id="category" name="category">
-          <option selected disabled hidden>
-            Choose a category
-          </option>
-          {Object.values(Category).map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </Select>
+        <CategorySelect />
       </form>
 
       <div className="hidden sm:flex flex-row place-items-center gap-2 ">
