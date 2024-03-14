@@ -15,11 +15,15 @@ def parse_event_body(event_body):
 
 def update_user_location(table, userID, location):
     """Update a user's location in the DynamoDB table."""
+    expression_attribute_keys = {
+        '#loc': 'location'
+    }
     response = table.update_item(
         Key={
             'userID': userID
         },
-        UpdateExpression="set location = :l",
+        UpdateExpression="set #loc = :l",
+        ExpressionAttributeNames=expression_attribute_keys,
         ExpressionAttributeValues={
             ':l': location
         },
