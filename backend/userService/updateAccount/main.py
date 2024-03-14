@@ -110,15 +110,16 @@ def update_account(table, userID, old_entry, new_info):
 
 # ----------------------------------------------------------------------------------------------------------------- #
 def handler(event, context):
+  count = 0
   try:
     # setup connection to dynamodb table
     # and parse event body
     table = get_dynamodb_table(table_name="users-30144999")
     body = parse_event_body(event_body=event['body'])
-
+    count = count + 1
     # Retrieve userID
     userID = body['userID'] 
-    
+    count = count + 1
     # Get old entry if it exists otherwise return 404
     response = table.get_item(Key={'userID': userID})
     if 'Item' not in response:
@@ -128,7 +129,7 @@ def handler(event, context):
           'body': 'User not found'
       }
     old_entry = response['Item']
-    
+    count = count + 1
     # Retrieve new table entry info turn it to a dictionary
     new_info = {
       'userID': userID,
@@ -138,10 +139,10 @@ def handler(event, context):
       'bio': body['bio'],
       'location': body['location']
     }
-    
+    count = count + 1
     # Get old entry
     old_entry = dict(table.get_item(Key={'userID': userID}))
-
+    count = count + 1
     # # Check if image is different from old one
     # raw_image = body['image']
     # image_bytes = base64.b64decode(raw_image)
@@ -157,7 +158,7 @@ def handler(event, context):
 
     # Update the account
     response = update_account(table, userID, old_entry, new_info)
-
+    count = count + 1
     return {
       'statuscode': 200,
       'body': json.dumps(response)
@@ -168,6 +169,6 @@ def handler(event, context):
     print(f"exception: {e}")
     return {
       'statusCode': 500,
-      'body': json.dumps(f'Error updating account: {str(e)}')
+      'body': json.dumps(f'Error updating account: {str(e): errorCount: {count}}')
     }
   
