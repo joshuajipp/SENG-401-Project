@@ -61,6 +61,24 @@ resource "aws_iam_policy" "cloudwatch_policy" {
 EOF
 }
 
+resource "aws_iam_policy" "ses_send_email_policy" {
+  name        = "SESSendEmailPolicy"
+  description = "Policy for allowing SES to send emails"
+
+  policy = jsonencode({
+    Version   = "2012-10-17",
+    Statement = [{
+      Action   = ["ses:SendEmail", "ses:SendRawEmail"],
+      Resource = "*",
+      Effect   = "Allow",
+    }],
+  })
+}
+
+resource "aws_ses_email_identity" "email_identity" {
+  email = "toolshed.notifications@gmail.com"
+}
+
 resource "aws_lambda_function" "create_item_lambda" {
   filename         = "./createItem.zip"
   function_name    = "create-item-30144999"
@@ -374,6 +392,11 @@ resource "aws_iam_role_policy_attachment" "cloudwatch_policy_attatchment" {
 
 resource "aws_iam_role_policy_attachment" "parameter_store_policy_attachment" {
   policy_arn = aws_iam_policy.parameter_store_policy.arn
+  role       = aws_iam_role.lambda_role.name
+}
+
+resource "aws_iam_role_policy_attachment" "ses_send_email_policy_attachment" {
+  policy_arn = aws_iam_policy.ses_send_email_policy.arn
   role       = aws_iam_role.lambda_role.name
 }
 
