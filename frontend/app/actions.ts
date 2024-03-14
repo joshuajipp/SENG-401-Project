@@ -12,6 +12,7 @@ const DELETE_ITEM_URL = process.env.DELETE_ITEM_URL as string;
 const BORROW_ITEM_URL = process.env.BORROW_ITEM_URL as string;
 const RETURN_ITEM_URL = process.env.RETURN_ITEM_URL as string;
 const GET_ITEM_PAGE_URL = process.env.GET_ITEM_PAGE_URL as string;
+const GET_ITEM_FROM_ID_URL = process.env.GET_ITEM_FROM_ID_URL as string;
 
 export const createListing = async (formData: FormData) => {
   const session = await getServerSession(authOptions);
@@ -248,4 +249,21 @@ export const getItemPage = async ({
 
   const itemPage = await response.json();
   return itemPage;
+};
+
+export const getItemFromID = async (itemID: string) => {
+  const response = await fetch(GET_ITEM_FROM_ID_URL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      itemID: itemID,
+    },
+  });
+
+  if (response.status !== 200) {
+    throw new Error("Failed to return item. Status code: " + response.status);
+  }
+
+  const item = await response.json();
+  return item;
 };
