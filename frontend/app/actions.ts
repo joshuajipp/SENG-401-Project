@@ -214,13 +214,13 @@ export const returnItem = async (itemID: string) => {
 };
 
 export const getItemPage = async ({
-  location,
+  location = "Calgary",
   pageCount = "10",
   category = "",
   lastItem = "",
   search = "",
 }: {
-  location: string;
+  location?: string;
   pageCount?: string;
   category?: string;
   lastItem?: string;
@@ -244,7 +244,7 @@ export const getItemPage = async ({
   });
 
   if (response.status !== 200) {
-    throw new Error("Failed to return item. Status code: " + response.status);
+    console.error("Failed to return item. Status code: " + response.status);
   }
 
   const itemPage = await response.json();
@@ -261,9 +261,28 @@ export const getItemFromID = async (itemID: string) => {
   });
 
   if (response.status !== 200) {
-    throw new Error("Failed to return item. Status code: " + response.status);
+    console.error("Failed to return item. Status code: " + response.status);
   }
 
   const item = await response.json();
   return item;
+};
+
+export const searchItemsRedirect = async (formData: FormData) => {
+  const rawFormData = Object.fromEntries(formData.entries());
+  const searchValue = rawFormData.searchValue;
+  const category = rawFormData.category;
+  const location = rawFormData.location;
+  let searchQuery = "?";
+  if (searchValue) {
+    searchQuery += `search=${searchValue}&`;
+  }
+  if (category) {
+    searchQuery += `category=${category}&`;
+  }
+  if (location) {
+    searchQuery += `location=${location}&`;
+  }
+  console.log(searchQuery);
+  redirect(`/listings${searchQuery}`);
 };
