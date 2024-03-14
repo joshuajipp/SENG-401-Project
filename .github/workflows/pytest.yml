@@ -26,6 +26,7 @@ jobs:
           - './backend/userService/deleteAccount/'
           - './backend/userService/getAccount/'
           - './backend/userService/updateAccount/'
+          - './backend/userService/updateAverageAccountRating/'
 
       fail-fast: false
 
