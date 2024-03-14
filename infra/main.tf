@@ -265,6 +265,16 @@ resource "aws_lambda_function" "update_account_lambda" {
   timeout = 300
   source_code_hash = filebase64sha256("./updateAccount.zip")
 }
+
+resource "aws_lambda_function" "update_account_location_lambda" {
+  filename         = "./updateAccountLocation.zip"
+  function_name    =  "update-account-location-30144999"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "main.handler"
+  runtime          = "python3.9"
+  timeout = 300
+  source_code_hash = filebase64sha256("./updateAccountLocation.zip")
+}
 resource "aws_dynamodb_table" "users_dynamodb_table" {
   name         = "users-30144999"
   billing_mode = "PROVISIONED"

@@ -169,6 +169,16 @@ jobs:
           cd ./backend/itemService/getItemFromID
           zip -r ../../../infra/getItemFromID.zip .
           cd -
+
+      - name: Install Python dependencies updateAccountLocation
+        run: |
+          pip3 install -r ./backend/userService/updateAccountLocation/requirements.txt -t ./backend/userService/updateAccountLocation/
+
+      - name: Zip create updateAccountLocation function
+        run: |
+          cd ./backend/userService/updateAccountLocation
+          zip -r ../../../infra/updateAccountLocation.zip .
+          cd -
             
       - name: Terraform Init and Apply
         run: |
