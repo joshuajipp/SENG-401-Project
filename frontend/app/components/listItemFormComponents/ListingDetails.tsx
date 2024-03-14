@@ -1,8 +1,10 @@
 import { Select, Label, TextInput, Textarea } from "flowbite-react";
-import { Category, Condition } from "@/app/interfaces/ListItemI";
+import { Condition } from "@/app/interfaces/ListItemI";
 import ListItemFormTemplate from "./ListItemFormTemplate";
 import TagsComponent from "./TagsComponent";
 import CategorySelect from "../CategorySelect";
+import { CiViewList } from "react-icons/ci";
+
 export default function ListingDetails() {
   return (
     <ListItemFormTemplate formNumber={1} formHeader={"ListingDetails"}>
@@ -14,9 +16,12 @@ export default function ListingDetails() {
       </div>
       <div>
         <div className="mb-2 block font-bold">
-          <Label htmlFor="condition" value="Condition: (optional)" />
+          <Label htmlFor="condition" value="Condition: " />
         </div>
-        <Select id="condition" name="condition">
+        <Select icon={CiViewList} id="condition" name="condition" required>
+          <option selected disabled hidden>
+            Choose a condition
+          </option>
           {Object.values(Condition).map((cond) => (
             <option key={cond} value={cond}>
               {cond}

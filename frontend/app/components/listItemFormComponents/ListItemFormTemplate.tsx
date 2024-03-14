@@ -15,7 +15,7 @@ export default function ListItemFormTemplate({
         <div className=" rounded-lg bg-gray-200 p-2 size-8 justify-center items-center flex">
           {formNumber}
         </div>
-        <div className=" text-xl font-medium text-black ">{formHeader}</div>
+        <div className=" text-xl font-medium ">{formHeader}</div>
       </div>
       {children}
     </div>
