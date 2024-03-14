@@ -6,14 +6,11 @@ import {
   DropdownItem,
   Navbar,
 } from "flowbite-react";
-import { TextInput } from "flowbite-react";
-import { FaLocationDot } from "react-icons/fa6";
-import { FaSearch } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/utils/authOptions";
-import { Category } from "@/app/interfaces/ListItemI";
+import SearchBar from "../SearchBar";
 
 function Logo() {
   return (
@@ -81,37 +78,7 @@ function UserProfile({
     </Dropdown>
   );
 }
-function SearchBar() {
-  const dropdownOptions = Object.values(Category);
-  const location = "Calgary, Alberta";
-  const searchValue = "listings";
-  return (
-    <div className="flex dark:text-white order-2 md:order-none gap-4 place-items-center justify-center items-center">
-      <TextInput
-        type="text"
-        icon={FaSearch}
-        placeholder="What are you looking for?"
-        addon={
-          <Link href={"/" + searchValue}>
-            <button className="bg-transparent hover:opacity-85">Search</button>
-          </Link>
-        }
-      />
 
-      <Dropdown inline label="All categories">
-        {dropdownOptions.map((option) => (
-          <DropdownItem key={option}>{option}</DropdownItem>
-        ))}
-      </Dropdown>
-      <div className="hidden sm:flex flex-row place-items-center gap-2 ">
-        <div className="rounded-full opacity-80 p-2 bg-brand">
-          <FaLocationDot />
-        </div>
-        <div className=" text-sm text-black dark:text-white">{location}</div>
-      </div>
-    </div>
-  );
-}
 export default async function Header() {
   const session = await getServerSession(authOptions);
   const sessionUser = session && session.user;

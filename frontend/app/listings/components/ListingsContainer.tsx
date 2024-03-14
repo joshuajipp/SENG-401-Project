@@ -5,13 +5,18 @@ import SortListingsButton from "./SortListingsButton";
 import Link from "next/link";
 import Image from "next/image";
 import { FaRegHeart } from "react-icons/fa";
+import { SearchParamsI } from "@/app/interfaces/SearchParamsI";
 
 export default async function ListingsContainer({
   searchParams,
 }: {
-  searchParams?: string;
+  searchParams: SearchParamsI;
 }) {
-  const res = await getItemPage({ location: "Calgary", search: searchParams });
+  const res = await getItemPage({
+    location: searchParams.location,
+    category: searchParams.category,
+    search: searchParams.search,
+  });
   const listings: ItemsGetListI[] = res.items;
   return (
     <ul className="flex flex-col gap-3 ">
