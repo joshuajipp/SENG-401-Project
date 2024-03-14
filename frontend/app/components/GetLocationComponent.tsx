@@ -5,7 +5,7 @@ import Location, {
   LocationInfo,
 } from "../interfaces/LocationI";
 import { getSession } from "next-auth/react";
-import { getAddress, updateUser } from "../actions";
+import { getAddress, updateAccountLocation } from "../actions";
 export default function GetLocationComponent() {
   const [location, setLocation] = useState<Location | null>(null);
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function GetLocationComponent() {
             locationInfo.country = location.long_name;
           }
         });
-        updateUser(locationInfo);
+        updateAccountLocation(locationInfo);
         return;
       }
     };
