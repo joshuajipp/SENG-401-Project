@@ -552,3 +552,16 @@ resource "aws_lambda_function_url" "url_get_item_from_id" {
     expose_headers    = ["keep-alive", "date"]
   }
 }
+
+resource "aws_lambda_function_url" "url_update_account_location" {
+  function_name      = aws_lambda_function.update_account_location_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["PUT"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
