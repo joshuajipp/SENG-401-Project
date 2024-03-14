@@ -1,42 +1,16 @@
-"use client";
-import React, { useState, useEffect } from "react";
+import { authOptions } from "@/app/utils/authOptions";
+import { getServerSession } from "next-auth";
 
-interface Location {
-  latitude: number;
-  longitude: number;
-}
-
-export default function MyComponent() {
-  const [location, setLocation] = useState<Location | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-        },
-        (error) => {
-          setError(error.message);
-        }
-      );
-    } else {
-      setError("Geolocation is not supported by your browser.");
-    }
-  }, []);
-
-  // Use location or error state in your component logic
+export default async function UserLocation() {
+  const session = await getServerSession(authOptions);
+  // @ts-ignore
+  const location = session?.userData?.location;
   return (
     <div>
       {location ? (
-        <p>
-          Your latitude: {location.latitude}, longitude: {location.longitude}
-        </p>
+        <p>Your location: {location}</p>
       ) : (
-        <p>{error || "Loading location..."}</p>
+        <p>Please enable location services</p>
       )}
     </div>
   );
