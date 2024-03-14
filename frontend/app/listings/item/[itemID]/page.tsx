@@ -9,7 +9,6 @@ import { ItemsGetListI } from "@/app/interfaces/ListItemI";
 export default async function page({ params }: { params: { itemID: string } }) {
   const res = await getItemFromID(params.itemID);
   const testItem: ItemsGetListI = res.items;
-  console.log(testItem);
   const ExtraInfoComponent = () => {
     return (
       <div className="flex flex-col p-4 bg-white dark:bg-slate-800 rounded-lg">
@@ -32,6 +31,9 @@ export default async function page({ params }: { params: { itemID: string } }) {
     );
   };
   const HeaderComponent = () => {
+    const date = new Date(testItem.timestamp * 1000);
+    const currentDate = new Date();
+    const diffTime = Math.abs(currentDate.getTime() - date.getTime());
     return (
       <div className=" bg-white dark:bg-slate-800 dark:text-white p-4 rounded-lg">
         <h1 className=" font-bold text-2xl dark:text-white">
@@ -42,7 +44,7 @@ export default async function page({ params }: { params: { itemID: string } }) {
             <FaLocationDot size={25} />
           </div>
           <div className="">
-            <p>10 days ago</p>
+            <p>{Math.ceil(diffTime / (1000 * 60 * 60 * 24))} days ago</p>
             <p>Location: {testItem.location}</p>
           </div>
         </div>
@@ -59,7 +61,7 @@ export default async function page({ params }: { params: { itemID: string } }) {
             <ExtraInfoComponent />
           </div>
           <div className="w-1/2">
-            <RequestRentalForm></RequestRentalForm>
+            <RequestRentalForm itemID={testItem.itemID} />
           </div>
         </div>
       </div>
