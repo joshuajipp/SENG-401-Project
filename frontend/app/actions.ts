@@ -212,13 +212,19 @@ export const returnItem = async (itemID: string) => {
   return response;
 };
 
-export const getItemPage = async (
-  location: string,
-  pageCount: string = "10",
-  category: string = "",
-  lastItem: string = "",
-  search: string = ""
-) => {
+export const getItemPage = async ({
+  location,
+  pageCount = "10",
+  category = "",
+  lastItem = "",
+  search = "",
+}: {
+  location: string;
+  pageCount?: string;
+  category?: string;
+  lastItem?: string;
+  search?: string;
+}) => {
   const session = await getServerSession(authOptions);
   if (!session) {
     console.log("No session found");
