@@ -12,6 +12,7 @@ const DELETE_ITEM_URL = process.env.DELETE_ITEM_URL as string;
 const BORROW_ITEM_URL = process.env.BORROW_ITEM_URL as string;
 const RETURN_ITEM_URL = process.env.RETURN_ITEM_URL as string;
 const GET_ITEM_PAGE_URL = process.env.GET_ITEM_PAGE_URL as string;
+const GET_ITEM_FROM_ID_URL = process.env.GET_ITEM_FROM_ID_URL as string;
 
 export const createListing = async (formData: FormData) => {
   const session = await getServerSession(authOptions);
@@ -212,13 +213,19 @@ export const returnItem = async (itemID: string) => {
   return response;
 };
 
-export const getItemPage = async (
-  location: string,
-  pageCount: string = "10",
-  category: string = "",
-  lastItem: string = "",
-  search: string = ""
-) => {
+export const getItemPage = async ({
+  location = "Calgary",
+  pageCount = "10",
+  category = "",
+  lastItem = "",
+  search = "",
+}: {
+  location?: string;
+  pageCount?: string;
+  category?: string;
+  lastItem?: string;
+  search?: string;
+}) => {
   const session = await getServerSession(authOptions);
   if (!session) {
     console.log("No session found");
@@ -237,9 +244,44 @@ export const getItemPage = async (
   });
 
   if (response.status !== 200) {
-    throw new Error("Failed to return item. Status code: " + response.status);
+    console.error("Failed to return item. Status code: " + response.status);
   }
 
   const itemPage = await response.json();
   return itemPage;
+};
+
+export const getItemFromID = async (itemID: string) => {
+  const response = await fetch(GET_ITEM_FROM_ID_URL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      itemID: itemID,
+    },
+  });
+
+  if (response.status !== 200) {
+    console.error("Failed to return item. Status code: " + response.status);
+  }
+
+  const item = await response.json();
+  return item;
+};
+
+export const searchItemsRedirect = async (formData: FormData) => {
+  const rawFormData = Object.fromEntries(formData.entries());
+  const searchValue = rawFormData.searchValue;
+  const category = rawFormData.category;
+  const location = rawFormData.location;
+  let searchQuery = "?";
+  if (searchValue) {
+    searchQuery += `search=${searchValue}&`;
+  }
+  if (category) {
+    searchQuery += `category=${category}&`;
+  }
+  if (location) {
+    searchQuery += `location=${location}&`;
+  }
+  redirect(`/listings${searchQuery}`);
 };

@@ -9,6 +9,7 @@ function SubmitButton({ ...props }) {
   const pendingMessage = props.pending;
   const successMessage = props.success;
   const errorMessage = props.error;
+  const buttonTitle = props.title;
   const { pending } = useFormStatus();
   const [loggedIn, setLoggedIn] = useState(false);
   useEffect(() => {
@@ -44,7 +45,7 @@ function SubmitButton({ ...props }) {
         ? "Please login to list item"
         : pending
         ? "Processing..."
-        : "Post Listing"}
+        : buttonTitle || "Post Listing"}
     </Button>
   );
 }
