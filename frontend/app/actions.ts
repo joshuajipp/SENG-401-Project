@@ -3,16 +3,19 @@ import { Session, getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "./utils/authOptions";
 
-const CREATE_USER_URL = process.env.CREATE_USER_URL as string;
 const GET_USER_URL = process.env.GET_USER_URL as string;
+const CREATE_USER_URL = process.env.CREATE_USER_URL as string;
 const CREATE_LISTING_URL = process.env.CREATE_LISTING_URL as string;
-const GET_BORROWED_ITEMS_URL = process.env.GET_BORROWED_ITEMS_URL as string;
-const GET_LENDER_ITEMS_URL = process.env.GET_LENDER_ITEMS_URL as string;
+const CREATE_BORROW_REQUEST_URL = process.env
+  .CREATE_BORROW_REQUEST_URL as string;
 const DELETE_ITEM_URL = process.env.DELETE_ITEM_URL as string;
-const BORROW_ITEM_URL = process.env.BORROW_ITEM_URL as string;
 const RETURN_ITEM_URL = process.env.RETURN_ITEM_URL as string;
 const GET_ITEM_PAGE_URL = process.env.GET_ITEM_PAGE_URL as string;
+const GET_LENDER_ITEMS_URL = process.env.GET_LENDER_ITEMS_URL as string;
+const REQUEST_ITEM_URL = process.env.REQUEST_ITEM_URL as string;
+const GET_BORROWED_ITEMS_URL = process.env.GET_BORROWED_ITEMS_URL as string;
 const GET_ITEM_FROM_ID_URL = process.env.GET_ITEM_FROM_ID_URL as string;
+const BORROW_ITEM_URL = process.env.BORROW_ITEM_URL as string;
 
 export const createListing = async (formData: FormData) => {
   const session = await getServerSession(authOptions);
@@ -97,8 +100,15 @@ export const requestItem = async (formData: FormData) => {
   }
   const rawFormData = Object.fromEntries(formData.entries());
   console.log(rawFormData);
-  // send to API endpoint
-  redirect("/");
+  // const response = await fetch(CREATE_BORROW_REQUEST_URL, {
+  //   method: "PUT",
+  //   body: JSON.stringify(rawFormData),
+  // });
+
+  // if (response.status !== 200) {
+  //   throw new Error("Failed to request item. Status code: " + response.status);
+  // }
+  // return response;
 };
 
 export const getBorrowedItems = async (borrowerID: string) => {
