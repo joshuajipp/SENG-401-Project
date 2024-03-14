@@ -78,6 +78,7 @@ resource "aws_lambda_function" "borrow_item_lambda" {
   handler          = "main.handler"
   runtime          = "python3.9"
   timeout = 300
+  source_code_hash = filebase64sha256("./borrowItem.zip")
 }
 
 resource "aws_lambda_function" "delete_item_lambda" {
@@ -87,6 +88,7 @@ resource "aws_lambda_function" "delete_item_lambda" {
   handler          = "main.handler"
   runtime          = "python3.9"
   timeout = 300
+  source_code_hash = filebase64sha256("./deleteItem.zip")
 }
 
 resource "aws_lambda_function" "get_item_page_lambda" {
