@@ -1,6 +1,7 @@
 import boto3
 import json
 from botocore.exceptions import ClientError
+import time
 
 def get_dynamodb_table(table_name):
     """Initialize a DynamoDB resource and get the table."""
@@ -160,9 +161,14 @@ def handler(event, context):
         body_content_for_borrower = format_json_to_html(item, lender_email)
         body_content_for_lender = format_json_to_html(item, borrower_email)
         sender = "toolshed.notifications@gmail.com"
-        send_email(sender, borrower_email, subject, body_type, body_content_for_borrower)
-        send_email(sender, lender_email, subject, body_type, body_content_for_lender)
-        
+        res = send_email(sender, borrower_email, subject, body_type, body_content_for_borrower)
+        if 'Error' in res:
+            raise Exception(res['Error'])
+        time.sleep(2)
+        res = send_email(sender, lender_email, subject, body_type, body_content_for_lender)
+        if 'Error' in res:
+            raise Exception(res['Error'])
+
         return {
             'statusCode': 200,
             'body': "Emails sent successfully!"
