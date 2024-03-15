@@ -164,7 +164,7 @@ def handler(event, context):
         res = send_email(sender, borrower_email, subject, body_type, body_content_for_borrower)
         if 'Error' in res:
             raise Exception(res['Error'])
-        time.sleep(2)
+        time.sleep(1.1)
         res = send_email(sender, lender_email, subject, body_type, body_content_for_lender)
         if 'Error' in res:
             raise Exception(res['Error'])
