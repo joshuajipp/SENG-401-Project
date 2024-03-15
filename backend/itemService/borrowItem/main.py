@@ -40,6 +40,7 @@ def remove_borrower_id_from_borrow_requests(table, itemID, borrowerID_index):
     return response
 
 def handler(event, context):
+    # test 1212
     try:
         table_name = 'items-30144999'
         table = get_dynamodb_table(table_name)

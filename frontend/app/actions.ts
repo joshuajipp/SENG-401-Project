@@ -2,6 +2,7 @@
 import { Session, getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "./utils/authOptions";
+import { LocationInfo } from "./interfaces/LocationI";
 import { GetItemPageAPIResponse } from "./interfaces/ListItemI";
 
 const GET_USER_URL = process.env.GET_USER_URL as string;
@@ -16,6 +17,8 @@ const GET_LENDER_ITEMS_URL = process.env.GET_LENDER_ITEMS_URL as string;
 const REQUEST_ITEM_URL = process.env.REQUEST_ITEM_URL as string;
 const GET_BORROWED_ITEMS_URL = process.env.GET_BORROWED_ITEMS_URL as string;
 const GET_ITEM_FROM_ID_URL = process.env.GET_ITEM_FROM_ID_URL as string;
+const UPDATE_ACCOUNT_LOCATION_URL = process.env
+  .UPDATE_ACCOUNT_LOCATION_URL as string;
 const BORROW_ITEM_URL = process.env.BORROW_ITEM_URL as string;
 
 export const createListing = async (formData: FormData) => {
@@ -49,15 +52,43 @@ export const createListing = async (formData: FormData) => {
   // redirect("/");
 };
 
+export const updateAccountLocation = async (newLocation: LocationInfo) => {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    console.log("No session found");
+    return;
+  }
+  console.log("updateAccountLocation");
+  const locationString = `${newLocation.city}, ${newLocation.province}, ${newLocation.country}`;
+  // @ts-ignore
+  const body = { location: locationString, userID: session.userData.userID };
+  console.log(body);
+  const response = await fetch(UPDATE_ACCOUNT_LOCATION_URL, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  if (response.status !== 200) {
+    const errorMessage =
+      "Failed to update account location. Status code: " + response.status;
+    console.error(errorMessage);
+    return errorMessage;
+  }
+  return response.json();
+};
+
 export const createUser = async (name: string, email: string) => {
   const body = {
     name: name,
     email: email,
     rating: null,
     bio: null,
-    location: null,
+    location: { city: null, province: null, country: null },
     phoneNumber: null,
   };
+  console.log("createUser");
   const response = await fetch(CREATE_USER_URL, {
     method: "POST",
     headers: {
@@ -127,7 +158,7 @@ export const getBorrowedItems = async (borrowerID: string) => {
   });
 
   if (response.status !== 200) {
-    throw new Error("Failed to return item. Status code: " + response.status);
+    console.error("Failed to return item. Status code: " + response.status);
   }
 
   const borrowedItems = await response.json();
@@ -149,7 +180,10 @@ export const getLenderItems = async (lenderID: string) => {
   });
 
   if (response.status !== 200) {
-    throw new Error("Failed to return item. Status code: " + response.status);
+    const errorMessage =
+      "Failed to return item. Status code: " + response.status;
+    console.error(errorMessage);
+    return errorMessage;
   }
 
   const lenderItems = await response.json();
@@ -171,7 +205,10 @@ export const deleteItem = async (itemID: string) => {
   });
 
   if (response.status !== 200) {
-    throw new Error("Failed to return item. Status code: " + response.status);
+    const errorMessage =
+      "Failed to delete item. Status code: " + response.status;
+    console.error(errorMessage);
+    return errorMessage;
   }
 
   return response;
@@ -195,7 +232,10 @@ export const borrowItem = async (itemID: string, borrowerID: string) => {
   });
 
   if (response.status !== 200) {
-    throw new Error("Failed to return item. Status code: " + response.status);
+    const errorMessage =
+      "Failed to borrow item. Status code: " + response.status;
+    console.error(errorMessage);
+    return errorMessage;
   }
 
   return response;
@@ -218,7 +258,10 @@ export const returnItem = async (itemID: string) => {
   });
 
   if (response.status !== 200) {
-    throw new Error("Failed to return item. Status code: " + response.status);
+    const errorMessage =
+      "Failed to return item. Status code: " + response.status;
+    console.error(errorMessage);
+    return errorMessage;
   }
 
   return response;
@@ -255,11 +298,22 @@ export const getItemPage = async ({
   });
 
   if (response.status !== 200) {
-    console.error("Failed to return item. Status code: " + response.status);
+    const errorMessage =
+      "Failed to get item page. Status code: " + response.status;
+    console.error(errorMessage);
+    return errorMessage;
   }
 
   const itemPage: GetItemPageAPIResponse = await response.json();
   return itemPage;
+};
+
+export const getAddress = async (latitude: number, longitude: number) => {
+  const response = await fetch(
+    `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.GOOGLE_MAPS_API_KEY}`
+  );
+  const data = await response.json();
+  return data;
 };
 
 export const getItemFromID = async (itemID: string) => {
@@ -272,7 +326,10 @@ export const getItemFromID = async (itemID: string) => {
   });
 
   if (response.status !== 200) {
-    console.error("Failed to return item. Status code: " + response.status);
+    const errorMessage =
+      "Failed to get item from id. Status code: " + response.status;
+    console.error(errorMessage);
+    return errorMessage;
   }
 
   const item = await response.json();

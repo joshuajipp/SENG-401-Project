@@ -20,18 +20,21 @@ def decimal_default(obj):
         return float(obj)
     raise TypeError
 
-def fetch_items_without_borrowerID_with_pagination(table_name, location, exclusiveStartKey, pageCount, search=None, category=None):
+def fetch_items_with_pagination(table_name, location, exclusiveStartKey, pageCount, search=None, category=None, fetchAll=False):
     table = get_dynamodb_table(table_name)
     fetched_items = []
     last_evaluated_key = exclusiveStartKey or None
 
     # Start building the FilterExpression for attribute_not_exists condition
-    filter_expressions = ['attribute_not_exists(borrowerID)']
+    filter_expressions = []
     expression_attribute_values = {
         ':value': location,
     }
     expression_attribute_names = {}
     expression_attribute_names['#loc'] = 'location'
+
+    if not fetchAll:
+        filter_expressions.append("attribute_not_exists(borrowerID)")
 
     # If search parameter is provided, add conditions for itemName and itemDescription
     if search:
@@ -51,9 +54,9 @@ def fetch_items_without_borrowerID_with_pagination(table_name, location, exclusi
     while len(fetched_items) < pageCount:
         query_kwargs = {
             'IndexName': 'LocationTimestampIndex',
-            'KeyConditionExpression': '#loc = :value',  # Updated to use alias
+            'KeyConditionExpression': '#loc = :value',
             'ExpressionAttributeValues': expression_attribute_values,
-            'ExpressionAttributeNames': expression_attribute_names,  # Include this line
+            'ExpressionAttributeNames': expression_attribute_names,  
             'FilterExpression': " AND ".join(filter_expressions),
             'Limit': pageCount,
             'ScanIndexForward': False
@@ -88,13 +91,15 @@ def handler(event, context):
         pageCount = int(pageCount)
         search = headers.get('search')
         category = headers.get('category')
+        fetchOnlyAvailableItems = headers.get('fetchOnlyAvailableItems', 'true')
+        fetchAll = not bool(fetchOnlyAvailableItems)
         table_name = 'items-30144999'
         if exclusiveStartKey != '':
             exclusiveStartKey = parse_event_body(exclusiveStartKey)
             exclusiveStartKey['timestamp'] = Decimal(str(exclusiveStartKey['timestamp']))
         
-        items, last_evaluated_key = fetch_items_without_borrowerID_with_pagination(
-            table_name, location, exclusiveStartKey, pageCount, search, category
+        items, last_evaluated_key = fetch_items_with_pagination(
+            table_name, location, exclusiveStartKey, pageCount, search, category, fetchAll
         )
         
         return {

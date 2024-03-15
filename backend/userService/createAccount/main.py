@@ -31,6 +31,7 @@ def handler(event, context, table=None):
             "name": data["name"],
             "email": data["email"],
             "rating": data["rating"],
+            "ratingCount": 0,
             "bio": data["bio"],
             "location": data["location"]
             }

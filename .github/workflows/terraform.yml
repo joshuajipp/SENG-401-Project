@@ -179,6 +179,37 @@ jobs:
           cd ./backend/userService/updateAccountLocation
           zip -r ../../../infra/updateAccountLocation.zip .
           cd -
+
+      - name: Install Python dependencies updateAverageAccountRating
+        run: |
+          pip3 install -r ./backend/userService/updateAverageAccountRating/requirements.txt -t ./backend/userService/updateAverageAccountRating/
+
+      - name: Zip create updateAverageAccountRating function
+        run: |
+          cd ./backend/userService/updateAverageAccountRating
+          zip -r ../../../infra/updateAverageAccountRating.zip .
+          cd -
+      
+      - name: Install Python dependencies sendBorrowedItemEmail
+        run: |
+          pip3 install -r ./backend/emailService/sendBorrowedItemEmail/requirements.txt -t ./backend/emailService/sendBorrowedItemEmail/
+
+      - name: Zip create sendBorrowedItemEmail function
+        run: |
+          cd ./backend/emailService/sendBorrowedItemEmail
+          zip -r ../../../infra/sendBorrowedItemEmail.zip .
+          cd -
+          
+      - name: Install Python dependencies sendSESVerification
+        run: |
+          pip3 install -r ./backend/emailService/sendSESVerification/requirements.txt -t ./backend/emailService/sendSESVerification/
+
+      - name: Zip create sendSESVerification function
+        run: |
+          cd ./backend/emailService/sendSESVerification
+          zip -r ../../../infra/sendSESVerification.zip .
+          cd -
+
             
       - name: Terraform Init and Apply
         run: |

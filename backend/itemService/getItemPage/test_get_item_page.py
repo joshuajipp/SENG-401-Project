@@ -78,7 +78,7 @@ def test_pagination_with_exact_page_size(items_table):
     """Test fetching items where the number of items exactly matches the page size."""
     populate_table_with_items(items_table)
     # Assuming populate_table_with_items adds 3 items without borrowerID
-    fetched_items, last_evaluated_key = fetch_items_without_borrowerID_with_pagination(
+    fetched_items, last_evaluated_key = fetch_items_with_pagination(
         'items-30144999', 'loc1', None, 3
     )
     assert len(fetched_items) == 3, "Should fetch exactly 3 items"
@@ -88,7 +88,7 @@ def test_pagination_with_additional_queries_needed(items_table):
     """Test fetching items where additional queries are needed due to filtered items."""
     populate_table_with_items(items_table)
     # Request 2 items, but since items with borrowerID are skipped, it might need more queries
-    fetched_items, last_evaluated_key = fetch_items_without_borrowerID_with_pagination(
+    fetched_items, last_evaluated_key = fetch_items_with_pagination(
         'items-30144999', 'loc1', None, 2
     )
     assert len(fetched_items) == 2, "Should fetch exactly 2 items"
@@ -98,11 +98,11 @@ def test_pagination_last_page_with_fewer_items(items_table):
     """Test fetching the last page of items when there are fewer items than the page size."""
     populate_table_with_items(items_table)
     # First, fetch 2 items to simulate partial consumption
-    _, last_evaluated_key = fetch_items_without_borrowerID_with_pagination(
+    _, last_evaluated_key = fetch_items_with_pagination(
         'items-30144999', 'loc1', None, 2
     )
     # Now, fetch with the last_evaluated_key to get the last page
-    fetched_items, last_evaluated_key_next = fetch_items_without_borrowerID_with_pagination(
+    fetched_items, last_evaluated_key_next = fetch_items_with_pagination(
         'items-30144999', 'loc1', last_evaluated_key, 2
     )
     # Assuming there was 1 item left without borrowerID
@@ -113,7 +113,7 @@ def test_pagination_with_no_matching_items(items_table):
     """Test fetching items when none match the filter criteria."""
     populate_table_with_items(items_table)
     # Fetch with a location that doesn't match any items
-    fetched_items, last_evaluated_key = fetch_items_without_borrowerID_with_pagination(
+    fetched_items, last_evaluated_key = fetch_items_with_pagination(
         'items-30144999', 'loc2', None, 3  # Assuming 'loc2' items don't exist
     )
     assert len(fetched_items) == 0, "Should not fetch any items"
@@ -141,13 +141,13 @@ def test_pagination_without_duplicates(items_table):
     populate_large_table(items_table, 21, 10)
 
     # Fetch the first page with 10 items
-    first_page_items, last_evaluated_key = fetch_items_without_borrowerID_with_pagination(
+    first_page_items, last_evaluated_key = fetch_items_with_pagination(
         'items-30144999', 'loc1', None, 10
     )
     assert len(first_page_items) == 10, "First page should contain exactly 10 items"
 
     # Use the LastEvaluatedKey to fetch the next page
-    second_page_items, _ = fetch_items_without_borrowerID_with_pagination(
+    second_page_items, _ = fetch_items_with_pagination(
         'items-30144999', 'loc1', last_evaluated_key, 10
     )
     assert len(second_page_items) == 1, "Second page should contain 1 item"
@@ -188,7 +188,7 @@ def test_pagination_with_search(items_table):
     )
 
     # Fetch items with a search query
-    fetched_items, _ = fetch_items_without_borrowerID_with_pagination(
+    fetched_items, _ = fetch_items_with_pagination(
         'items-30144999', 'loc1', None, 10, 'hammer'
     )
     assert len(fetched_items) == 2, "Should fetch exactly 2 items"
@@ -196,7 +196,7 @@ def test_pagination_with_search(items_table):
     assert fetched_items[1]['itemName'] == 'Used hammer', "Should fetch the correct items"
 
 
-# test fetch_items_without_borrowerID_with_pagination with search = None and category = Adventure
+# test fetch_items_with_pagination with search = None and category = Adventure
 def test_pagination_with_category(items_table):
     """Test fetching items with a category query."""
     items_table.put_item(
@@ -241,7 +241,7 @@ def test_pagination_with_category(items_table):
     )
 
     # Fetch items with a category query
-    fetched_items, _ = fetch_items_without_borrowerID_with_pagination(
+    fetched_items, _ = fetch_items_with_pagination(
         'items-30144999', 'loc1', None, 10, None, 'Adventure'
     )
     assert len(fetched_items) == 3, "Should fetch exactly 3 items"
