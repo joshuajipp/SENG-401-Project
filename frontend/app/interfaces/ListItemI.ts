@@ -53,3 +53,8 @@ export interface ItemsGetListI {
   borrowRequests?: BorrowRequest[];
   itemName: string;
 }
+
+export interface GetItemPageAPIResponse {
+  items: ItemsGetListI[];
+  last_evaluated_key: string;
+}

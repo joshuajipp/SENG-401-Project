@@ -17,7 +17,7 @@ export default async function ListingsContainer({
     category: searchParams.category,
     search: searchParams.search,
   });
-  const listings: ItemsGetListI[] | undefined = res.items;
+  const listings: ItemsGetListI[] | undefined = res?.items;
   if (!listings) return <div>No listings found</div>;
   return (
     <ul className="flex flex-col gap-3 ">

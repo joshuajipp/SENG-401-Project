@@ -2,6 +2,7 @@
 import { Session, getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "./utils/authOptions";
+import { GetItemPageAPIResponse } from "./interfaces/ListItemI";
 
 const GET_USER_URL = process.env.GET_USER_URL as string;
 const CREATE_USER_URL = process.env.CREATE_USER_URL as string;
@@ -257,7 +258,7 @@ export const getItemPage = async ({
     console.error("Failed to return item. Status code: " + response.status);
   }
 
-  const itemPage = await response.json();
+  const itemPage: GetItemPageAPIResponse = await response.json();
   return itemPage;
 };
 
