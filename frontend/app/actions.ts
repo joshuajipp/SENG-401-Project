@@ -28,27 +28,22 @@ export const createListing = async (formData: FormData) => {
     return;
   }
   const rawFormData = Object.fromEntries(formData.entries());
-  // const rawFormData = {
-  //   category: "Other",
-  //   condition: "New",
-  //   listingTitle: "test",
-  //   description: "asd",
-  //   tags: "[]",
-  //   images: "",
-  //   location: "Calgary, AB T3A 7V4",
-  //   lenderID: "536b23e7-6546-4c53-8b0b-6a48ea3ad6b6",
-  // };
-  //   parse and Send to API endpoint
   console.log(rawFormData);
   const response = await fetch(CREATE_LISTING_URL, {
-    method: "POST",
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(rawFormData),
   });
+  if (response.status !== 200) {
+    const errorMessage =
+      "Failed to update account location. Status code: " + response.status;
+    console.error(errorMessage);
+    return errorMessage;
+  }
   console.log(await response.json());
-  // return response.json();
+  return response.json();
   // redirect("/");
 };
 
@@ -96,6 +91,12 @@ export const createUser = async (name: string, email: string) => {
     },
     body: JSON.stringify(body),
   });
+  if (response.status !== 200) {
+    const errorMessage =
+      "Failed to update account location. Status code: " + response.status;
+    console.error(errorMessage);
+    return errorMessage;
+  }
   return response.json();
 };
 
@@ -124,6 +125,7 @@ export const authenticateUser = async (session: Session) => {
     }
   }
 };
+
 export const requestItem = async (formData: FormData) => {
   const session = await getServerSession(authOptions);
   if (!session) {
@@ -132,15 +134,18 @@ export const requestItem = async (formData: FormData) => {
   }
   const rawFormData = Object.fromEntries(formData.entries());
   console.log(rawFormData);
-  // const response = await fetch(CREATE_BORROW_REQUEST_URL, {
-  //   method: "PUT",
-  //   body: JSON.stringify(rawFormData),
-  // });
+  const response = await fetch(CREATE_BORROW_REQUEST_URL, {
+    method: "PUT",
+    body: JSON.stringify(rawFormData),
+  });
 
-  // if (response.status !== 200) {
-  //   throw new Error("Failed to request item. Status code: " + response.status);
-  // }
-  // return response;
+  if (response.status !== 200) {
+    const errorMessage =
+      "Failed to request item. Status code: " + response.status;
+    console.error(errorMessage);
+    return errorMessage;
+  }
+  return response;
 };
 
 export const getBorrowedItems = async (borrowerID: string) => {
@@ -158,9 +163,11 @@ export const getBorrowedItems = async (borrowerID: string) => {
   });
 
   if (response.status !== 200) {
-    console.error("Failed to return item. Status code: " + response.status);
+    const errorMessage =
+      "Failed to get Borrowed items. Status code: " + response.status;
+    console.error(errorMessage);
+    return errorMessage;
   }
-
   const borrowedItems = await response.json();
   return borrowedItems;
 };
@@ -181,7 +188,7 @@ export const getLenderItems = async (lenderID: string) => {
 
   if (response.status !== 200) {
     const errorMessage =
-      "Failed to return item. Status code: " + response.status;
+      "Failed to get lender item. Status code: " + response.status;
     console.error(errorMessage);
     return errorMessage;
   }
