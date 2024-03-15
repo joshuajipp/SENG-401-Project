@@ -130,10 +130,14 @@ def handler(event, context):
     
     # Retrieve new table entry info turn it to a dictionary
     new_info = {
-      'name': body["name"],
-      'email': body["email"],
-      'bio': body["bio"],
-      'location': body["location"]
+      key: value
+      for key, value in {
+          'name': body.get("name", ""),
+          'email': body.get("email", ""),
+          'bio': body.get("bio", ""),
+          'location': body.get("location", "")
+      }.items()
+      if value != ""
     }
     
     # # Check if image is different from old one
