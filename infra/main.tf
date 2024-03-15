@@ -79,6 +79,16 @@ resource "aws_ses_email_identity" "email_identity" {
   email = "toolshed.notifications@gmail.com"
 }
 
+resource "aws_lambda_function" "send_ses_verification_lambda" {
+  filename         = "./sendSESVerification.zip"
+  function_name    = "send-ses-verification-30144999"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "main.handler"
+  runtime          = "python3.9"
+  timeout = 300
+  source_code_hash = filebase64sha256("./sendSESVerification.zip")
+}
+
 resource "aws_lambda_function" "create_item_lambda" {
   filename         = "./createItem.zip"
   function_name    = "create-item-30144999"
@@ -629,7 +639,20 @@ resource "aws_lambda_function_url" "url_send_borrowed_item_email" {
   cors {
     allow_credentials = true
     allow_origins     = ["*"]
-    allow_methods     = ["PUT"]
+    allow_methods     = ["POST"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
+
+resource "aws_lambda_function_url" "url_send_ses_verification" {
+  function_name      = aws_lambda_function.send_ses_verification_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["POST"]
     allow_headers     = ["*"]
     expose_headers    = ["keep-alive", "date"]
   }

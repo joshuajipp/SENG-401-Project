@@ -199,6 +199,16 @@ jobs:
           cd ./backend/emailService/sendBorrowedItemEmail
           zip -r ../../../infra/sendBorrowedItemEmail.zip .
           cd -
+          
+      - name: Install Python dependencies sendSESVerification
+        run: |
+          pip3 install -r ./backend/emailService/sendSESVerification/requirements.txt -t ./backend/emailService/sendSESVerification/
+
+      - name: Zip create sendSESVerification function
+        run: |
+          cd ./backend/emailService/sendSESVerification
+          zip -r ../../../infra/sendSESVerification.zip .
+          cd -
 
             
       - name: Terraform Init and Apply
