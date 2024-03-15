@@ -16,7 +16,7 @@ def parse_event_body(event_body):
     return event_body
 
 def handler(event, context):
-    ses_client = boto3.client('ses', region_name='us-east-1') 
+    ses_client = boto3.client('ses', region_name='ca-central-1') 
     body = parse_event_body(event['body'])
     email_to_verify = body['email']
     
