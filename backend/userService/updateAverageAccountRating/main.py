@@ -24,6 +24,9 @@ def update_account_ratings(table, user, newRating):
     ratingCount += 1
     updatedRating = (ratingSum + newRating) / ratingCount
     
+    # turn updateRating to float to avoid errors
+    updatedRating = float(updatedRating)
+    
     # Update table query
     update_expression = "SET #rating = :rating, #ratingCount = :ratingCount"
     expression_attribute_values = {
