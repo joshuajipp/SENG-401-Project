@@ -61,6 +61,36 @@ resource "aws_iam_policy" "cloudwatch_policy" {
 EOF
 }
 
+resource "aws_iam_policy" "ses_send_email_policy" {
+  name        = "SESSendEmailPolicy"
+  description = "Policy for allowing SES to send emails"
+
+  policy = jsonencode({
+    Version   = "2012-10-17",
+    Statement = [{
+      Action   = ["ses:SendEmail",
+                    "ses:SendRawEmail",
+                    "ses:VerifyEmailIdentity"],
+      Resource = "*",
+      Effect   = "Allow",
+    }],
+  })
+}
+
+resource "aws_ses_email_identity" "email_identity" {
+  email = "toolshed.notifications@gmail.com"
+}
+
+resource "aws_lambda_function" "send_ses_verification_lambda" {
+  filename         = "./sendSESVerification.zip"
+  function_name    = "send-ses-verification-30144999"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "main.handler"
+  runtime          = "python3.9"
+  timeout = 300
+  source_code_hash = filebase64sha256("./sendSESVerification.zip")
+}
+
 resource "aws_lambda_function" "create_item_lambda" {
   filename         = "./createItem.zip"
   function_name    = "create-item-30144999"
@@ -151,6 +181,15 @@ resource "aws_lambda_function" "get_borrowed_items_lambda" {
   source_code_hash = filebase64sha256("./getBorrowedItems.zip")
 }
 
+resource "aws_lambda_function" "get_item_from_id_lambda" {
+  filename         = "./getItemFromID.zip"
+  function_name    = "get-item-from-id-30144999"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "main.handler"
+  runtime          = "python3.9"
+  timeout = 300
+  source_code_hash = filebase64sha256("./getItemFromID.zip")
+}
 
 resource "aws_dynamodb_table" "items_dynamodb_table" {
   name         = "items-30144999"
@@ -216,6 +255,16 @@ resource "aws_dynamodb_table" "items_dynamodb_table" {
   }
 }
 
+resource "aws_lambda_function" "send_borrowed_item_email_lambda" {
+  filename         = "./sendBorrowedItemEmail.zip"
+  function_name    = "send-borrowed-item-email-30144999"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "main.handler"
+  runtime          = "python3.9"
+  timeout = 300
+  source_code_hash = filebase64sha256("./sendBorrowedItemEmail.zip")
+}
+
 
 resource "aws_lambda_function" "create_account_lambda" {
   filename         = "./createAccount.zip"
@@ -255,6 +304,26 @@ resource "aws_lambda_function" "update_account_lambda" {
   runtime          = "python3.9"
   timeout = 300
   source_code_hash = filebase64sha256("./updateAccount.zip")
+}
+
+resource "aws_lambda_function" "update_average_account_rating_lambda" {
+  filename         = "./updateAverageAccountRating.zip"
+  function_name    = "update-average-account-rating-30144999"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "main.handler"
+  runtime          = "python3.9"
+  timeout = 300
+  source_code_hash = filebase64sha256("./updateAverageAccountRating.zip")
+}
+
+resource "aws_lambda_function" "update_account_location_lambda" {
+  filename         = "./updateAccountLocation.zip"
+  function_name    =  "update-account-location-30144999"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "main.handler"
+  runtime          = "python3.9"
+  timeout = 300
+  source_code_hash = filebase64sha256("./updateAccountLocation.zip")
 }
 resource "aws_dynamodb_table" "users_dynamodb_table" {
   name         = "users-30144999"
@@ -345,6 +414,11 @@ resource "aws_iam_role_policy_attachment" "cloudwatch_policy_attatchment" {
 
 resource "aws_iam_role_policy_attachment" "parameter_store_policy_attachment" {
   policy_arn = aws_iam_policy.parameter_store_policy.arn
+  role       = aws_iam_role.lambda_role.name
+}
+
+resource "aws_iam_role_policy_attachment" "ses_send_email_policy_attachment" {
+  policy_arn = aws_iam_policy.ses_send_email_policy.arn
   role       = aws_iam_role.lambda_role.name
 }
 
@@ -516,6 +590,71 @@ resource "aws_lambda_function_url" "url_get_borrowed_items" {
     allow_credentials = true
     allow_origins     = ["*"]
     allow_methods     = ["GET"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
+
+resource "aws_lambda_function_url" "url_get_item_from_id" {
+  function_name      = aws_lambda_function.get_item_from_id_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["GET"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
+
+resource "aws_lambda_function_url" "url_update_account_location" {
+  function_name      = aws_lambda_function.update_account_location_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["PUT"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
+
+resource "aws_lambda_function_url" "url_update_average_account_rating" {
+  function_name      = aws_lambda_function.update_average_account_rating_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["PUT"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
+
+resource "aws_lambda_function_url" "url_send_borrowed_item_email" {
+  function_name      = aws_lambda_function.send_borrowed_item_email_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["POST"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
+
+resource "aws_lambda_function_url" "url_send_ses_verification" {
+  function_name      = aws_lambda_function.send_ses_verification_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["POST"]
     allow_headers     = ["*"]
     expose_headers    = ["keep-alive", "date"]
   }

@@ -6,13 +6,11 @@ import {
   DropdownItem,
   Navbar,
 } from "flowbite-react";
-import { TextInput } from "flowbite-react";
-import { FaLocationDot } from "react-icons/fa6";
-import { FaSearch } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/utils/authOptions";
+import SearchBar from "../SearchBar";
 
 function Logo() {
   return (
@@ -63,14 +61,20 @@ function UserProfile({
           {sessionUser?.email}
         </span>
       </DropdownHeader>
-      <DropdownItem>My Profile</DropdownItem>
-      <DropdownItem>Requested Tools</DropdownItem>
-      <DropdownItem>Active Listings</DropdownItem>
-      <DropdownItem>Disputes</DropdownItem>
+      <Link href="profile">
+        <DropdownItem>My Profile</DropdownItem>
+      </Link>
+      <Link href="requested">
+        <DropdownItem>Requested Tools</DropdownItem>
+      </Link>
+      <Link href="listings">
+        <DropdownItem>Active Listings</DropdownItem>
+      </Link>
+      {/* <DropdownItem>Disputes</DropdownItem> */}
       <DropdownDivider />
-      <DropdownItem as="a" href="/api/auth/signout">
-        Sign out
-      </DropdownItem>
+      <Link href="/api/auth/signout">
+        <DropdownItem>Sign out</DropdownItem>
+      </Link>
     </Dropdown>
   );
 }
@@ -78,35 +82,10 @@ function UserProfile({
 export default async function Header() {
   const session = await getServerSession(authOptions);
   const sessionUser = session && session.user;
-  const dropdownOptions = [
-    "Hand Tools",
-    "Power Tools",
-    "Outdoor & Garden",
-    "Hammers",
-    "Sports",
-  ];
   return (
     <Navbar fluid rounded>
       <Logo />
-
-      <div className="flex order-2 md:order-none gap-4 place-items-center justify-center items-center">
-        <TextInput
-          type="text"
-          icon={FaSearch}
-          placeholder="What are you looking for?"
-        />
-        <Dropdown inline label="All categories">
-          {dropdownOptions.map((option) => (
-            <DropdownItem key={option}>{option}</DropdownItem>
-          ))}
-        </Dropdown>
-        <div className="hidden sm:flex flex-row place-items-center gap-2 ">
-          <div className="rounded-full opacity-80 p-2 bg-brand">
-            <FaLocationDot></FaLocationDot>
-          </div>
-          <div className=" text-sm">Calgary, Alberta</div>
-        </div>
-      </div>
+      <SearchBar />
       <div className="flex flex-row gap-4 place-items-center place-content-center">
         {session ? (
           <UserProfile sessionUser={sessionUser} />

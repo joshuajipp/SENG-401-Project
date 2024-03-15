@@ -4,13 +4,17 @@ import React from "react";
 import { useFormStatus } from "react-dom";
 import { toast } from "react-toastify";
 import { functionThatReturnPromise } from "../utils/mockPromise";
-function SubmitButton() {
+function SubmitButton({ ...props }) {
+  const pendingMessage = props.pending;
+  const successMessage = props.success;
+  const errorMessage = props.error;
+  const buttonTitle = props.title;
   const { pending } = useFormStatus();
   const notify = () =>
     toast.promise(functionThatReturnPromise, {
-      pending: "Listing is being uploaded...",
-      success: "Listing has been posted",
-      error: "Listing rejected. Please try again later.",
+      pending: pendingMessage || "Listing is being uploaded...",
+      success: successMessage || "Listing has been posted",
+      error: errorMessage || "Listing rejected. Please try again later.",
     });
   return (
     <Button
@@ -21,7 +25,7 @@ function SubmitButton() {
       aria-disabled={pending}
       onClick={notify}
     >
-      {pending ? "Processing..." : "Post Listing"}
+      {pending ? "Processing..." : buttonTitle || "Post Listing"}
     </Button>
   );
 }

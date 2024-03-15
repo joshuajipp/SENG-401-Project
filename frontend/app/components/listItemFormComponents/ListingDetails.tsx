@@ -1,40 +1,27 @@
-"use client";
-import React, { useState } from "react";
-import { Button, Select, Label, TextInput, Textarea } from "flowbite-react";
-import { FaSearch } from "react-icons/fa";
-import { useListItem } from "@/app/context/ListItemContext";
+import { Select, Label, TextInput, Textarea } from "flowbite-react";
 import { Condition } from "@/app/interfaces/ListItemI";
 import ListItemFormTemplate from "./ListItemFormTemplate";
-export default function ListingDetails() {
-  const { tags, setTags } = useListItem();
-  const [newTag, setNewTag] = useState<string>("");
-  const handleAddTag = () => {
-    if (newTag.length < 2) return;
-    if (tags.length >= 5) return;
-    if (tags.includes(newTag)) return;
-    setTags((prevTags) => [...prevTags, newTag]); // Add your new tag logic here
-    setNewTag("");
-  };
-  const removeTag = (indexToRemove: number) => {
-    setTags((prevTags) =>
-      prevTags.filter((_, index) => index !== indexToRemove)
-    );
-  };
+import TagsComponent from "./TagsComponent";
+import CategorySelect from "../CategorySelect";
+import { CiViewList } from "react-icons/ci";
 
+export default function ListingDetails() {
   return (
     <ListItemFormTemplate formNumber={1} formHeader={"ListingDetails"}>
-      <div className=" inline-flex flex-row justify-start items-center gap-2.5 whitespace-nowrap text-sm cursor-pointer">
-        <p className="text-brand font-medium">Select Category:</p>
-        <p className="text-brand font-bold ">
-          Buy and Sell {">"} Sporting Goods & Exercise {">"} Ski
-        </p>
-        <p className="text-blue-500 font-bold ">Change category</p>
+      <div>
+        <div className="mb-2 block font-bold">
+          <Label htmlFor="category" value="Category: " />
+        </div>
+        <CategorySelect />
       </div>
       <div>
         <div className="mb-2 block font-bold">
-          <Label htmlFor="condition" value="Condition: (optional)" />
+          <Label htmlFor="condition" value="Condition: " />
         </div>
-        <Select id="condition" name="condition">
+        <Select icon={CiViewList} id="condition" name="condition" required>
+          <option selected disabled hidden>
+            Choose a condition
+          </option>
           {Object.values(Condition).map((cond) => (
             <option key={cond} value={cond}>
               {cond}
@@ -59,55 +46,7 @@ export default function ListingDetails() {
           name="description"
         />
       </div>
-      <div>
-        <div className="mb-2 block font-bold">
-          <Label htmlFor="tags" value="Tags (optional)" />
-          <div className=" font-normal text-sm">
-            Increase your item exposure. Enter up to 5 keywords someone could
-            search to find your listing.
-          </div>
-        </div>
-        <div className=" mb-2 block">
-          <TextInput
-            onChange={(e) => setNewTag(e.target.value)}
-            value={newTag}
-            id="tags"
-            icon={FaSearch}
-            placeholder="Enter a tag"
-            minLength={2}
-            maxLength={20}
-            helperText="Tag must be between 2-20 characters"
-          />
-        </div>
-        <input
-          className="hidden"
-          name="tags"
-          value={JSON.stringify(tags)}
-          readOnly
-        />
-
-        <div className="flex flex-row gap-4">
-          <Button
-            color={"primary"}
-            onClick={handleAddTag}
-            className="flex-nowrap text-nowrap"
-          >
-            Add tag
-          </Button>
-          <ul className="flex flex-wrap gap-2 w-full p-2 bg-slate-500 rounded-lg">
-            {tags.map((tag, index) => (
-              <Button
-                color={"primary"}
-                key={index}
-                size="xs"
-                onClick={() => removeTag(index)}
-              >
-                {tag}
-              </Button>
-            ))}
-          </ul>
-        </div>
-      </div>
+      <TagsComponent></TagsComponent>
     </ListItemFormTemplate>
   );
 }

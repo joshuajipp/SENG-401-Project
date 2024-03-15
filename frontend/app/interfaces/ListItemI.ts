@@ -4,10 +4,19 @@ export enum Condition {
   UsedGood = "Used - Good",
   UsedFair = "Used - Fair",
 }
+export enum Category {
+  Other = "Other",
+  Sports = "Sports",
+  Electronics = "Electronics",
+  Furniture = "Furniture",
+  Tools = "Tools",
+  Outdoors = "Outdoors",
+}
 export interface ListItemI {
   title: string;
   condition: Condition;
   description: string;
+  category: Category;
   tags: string[];
   images: (File | undefined)[];
   city: string;
@@ -23,4 +32,24 @@ export interface ListItemI {
   setPostalCode: React.Dispatch<React.SetStateAction<string>>;
   setPhoneNum: React.Dispatch<React.SetStateAction<string>>;
   setEmail: React.Dispatch<React.SetStateAction<string>>;
+}
+export interface BorrowRequest {
+  borrowerID: string;
+  endDate: string;
+  startDate: string;
+  // Need to resolve inconsistency in timestamp type
+  timestamp: string;
+}
+export interface ItemsGetListI {
+  location: string;
+  lenderID: string;
+  timestamp: number;
+  condition: Condition;
+  category: Category;
+  images: string[];
+  itemID: string;
+  description: string;
+  imageHashes?: string[];
+  borrowRequests?: BorrowRequest[];
+  itemName: string;
 }
