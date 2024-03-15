@@ -68,7 +68,9 @@ resource "aws_iam_policy" "ses_send_email_policy" {
   policy = jsonencode({
     Version   = "2012-10-17",
     Statement = [{
-      Action   = ["ses:SendEmail", "ses:SendRawEmail"],
+      Action   = ["ses:SendEmail",
+                    "ses:SendRawEmail",
+                    "ses:VerifyEmailIdentity"],
       Resource = "*",
       Effect   = "Allow",
     }],
