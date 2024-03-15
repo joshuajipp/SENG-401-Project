@@ -11,11 +11,10 @@ export default function UploadImageComponent() {
   const [imageURLs, setImageURLs] = useState<string[]>(
     Array.from({ length: 8 })
   );
-  const maxImageSize = 5 * 1024 * 1024; // 5 MB
-
+  const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
   const handleAddImage = (newImage: File, index: number) => {
     if (index >= 8) return;
-    if (newImage.size > maxImageSize) {
+    if (newImage.size > MAX_IMAGE_SIZE) {
       alert("Image is too large. Please upload an image smaller than 5MB.");
       return;
     }
@@ -24,7 +23,9 @@ export default function UploadImageComponent() {
       const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target?.result) {
-          updatedURLs[index] = e.target.result as string;
+          let imageString = e.target.result as string;
+          let URLArray = imageString.split(",");
+          updatedURLs[index] = URLArray[1];
         }
       };
       reader.readAsDataURL(newImage);
