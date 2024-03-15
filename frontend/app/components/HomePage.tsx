@@ -4,94 +4,29 @@ import Image from "next/image";
 
 export default function HomePage() {
 
-    // --------------------------------------------------------
-
-    const testHomePageItems = [
-        {
-            toolID: 1,
-            name: "Hunting Axe",
-            lender: "Jarl Balgruff",
-            lenderRating: "4.9",
-            location: "Calgary, AB",
-            image: "/axe.jpg"
-        },
-        {
-            toolID: 2,
-            name: "Robot",
-            lender: "Travis Scott",
-            lenderRating: "5.0",
-            location: "Houston, TX",
-            image: "/mech_suit.jpg"
-        },
-        {
-            toolID: 3,
-            name: "Crowbar",
-            lender: "Lebron James",
-            lenderRating: "4.8",
-            location: "Los Angeles, CA",
-            image: "/Crowbar.jpg"
-        },
-        {
-            toolID: 4,
-            name: "Mallet",
-            lender: "Goku",
-            lenderRating: "4.9",
-            location: "Detroit, MI",
-            image: "/mallet.jpg"
-        },
-        {
-            toolID: 5,
-            name: "Power Saw",
-            lender: "Walter White",
-            lenderRating: "5.0",
-            location: "Vancouver, BC",
-            image: "/saw.jpg"
-        }
-    ]
-
-    // --------------------------------------------------------
-
-    interface ToolItem {
-        toolID: any;
-        name: any;
-        lender: any;
-        lenderRating: any;
-        location: any;
-        image: any;
-    }
-
-    const [homePageItems, setHomePageItems] = useState<ToolItem[]>([])
-
-    const getHomePageItems = () => {
-        // query database to retrieve some items from the highest rated lenders
-        // for now, test data was created in place
-        setHomePageItems(testHomePageItems)
-    }
-
-    const viewToolDetails = (toolID: any) => {
-        // will navigate to the tool details page for whichever tool is clicked on
-        // use react router
-    }
-
-    useEffect(() => {
-        getHomePageItems()
-    })
-
     return (
         <>
             <div className="h-auto w-full">
-                <div className="text-6xl text-center font-bold mb-10">Items From Some of our Highest Rated Lenders</div>
-                <div className="flex flex-row justify-evenly items-center">
-                    {homePageItems.map((tool, index) => {
-                        return (
-                            <div key={tool.toolID} onClick={() => viewToolDetails(tool.toolID)} className="flex flex-col p-5 border-2 border-brand text-center justify-around items-center rounded-lg hover:cursor-pointer hover:underline w-72 h-96">
-                                <header className="font-bold text-3xl">{tool.name}</header>
-                                <Image className="rounded-lg border border-black" src={tool.image} alt={tool.name} width={100} height={100} style={{ width: '300px', height: '200px' }}/>
-                                <header className="text-base">Lender: {tool.lender} ({tool.lenderRating}☆)</header>
-                                <header className="text-base">Location: <span className="text-blue-600">{tool.location}</span></header>
-                            </div>
-                        );
-                    })}
+                <div className="text-6xl text-center font-bold mb-10">Welcome to ToolShed!</div>
+                <div className="h-auto w-full flex flex-row justify-evenly items-center">
+                    <div className="w-1/2 border-r border-brand h-80 flex flex-col justify-evenly items-center text-center px-10">
+                        <div className="text-4xl font-bold underline">Borrow Tools...</div>
+                        <Image className="rounded-lg" src="/rent_tool.png" alt="tools" width={100} height={100} style={{ width: '200px', height: '150px' }}/>
+                        <div className="text-2xl">
+                            Choose a category above to see a list of tools
+                            <br></br>that are available to be borrowed,
+                            <br></br>and rent the tool of your choice from one of our lenders!
+                        </div>
+                    </div>
+                    <div className="w-1/2 border-l border-brand h-80 flex flex-col justify-evenly items-center text-center">
+                        <div className="text-4xl font-bold underline">...Or Lend Them!</div>
+                        <Image className="rounded-lg" src="/handshake.png" alt="tools" width={100} height={100} style={{ width: '200px', height: '150px' }}/>
+                        <div className="text-2xl">
+                            List one of your own tools as available to borrow,
+                            <br></br>and lend it to someone in need of that tool.
+                            <br></br>Join our community in its goal of helping others!
+                        </div>
+                    </div>
                 </div>
             </div>
 
