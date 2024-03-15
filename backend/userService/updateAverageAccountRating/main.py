@@ -24,9 +24,6 @@ def update_account_ratings(table, user, newRating):
     ratingCount += 1
     updatedRating = (ratingSum + newRating) / ratingCount
     
-    # turn updateRating to float to avoid errors
-    updatedRating = float(updatedRating)
-    
     # Update table query
     update_expression = "SET #rating = :rating, #ratingCount = :ratingCount"
     expression_attribute_values = {
@@ -73,10 +70,16 @@ def handler(event, context):
         # Update the new rating
         response = update_account_ratings(table, user, newRating)
         
+        # Create a new response body
+        response_body = {
+            'rating': str(response['Attributes']['rating']),
+            'ratingCount': str(response['Attributes']['ratingCount'])
+        }
+        
         # return response
         return {
             'statusCode': 200,
-            'body': json.dumps(response)
+            'body': json.dumps(response_body)
         }
             
     except Exception as e:
