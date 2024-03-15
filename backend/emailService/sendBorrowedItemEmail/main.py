@@ -147,7 +147,7 @@ def handler(event, context):
         item_res = table.get_item(Key={'itemID': item_id})
         item = item_res['Item']
         lenderID = item['lenderID']
-        borrowerID = event_body['borrowerID']
+        borrowerID = item['borrowerID']
         table = get_dynamodb_table('users-30144999')
         lender_res = table.get_item(Key={'userID': lenderID})
         lender = lender_res['Item']
