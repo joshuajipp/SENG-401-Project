@@ -8,8 +8,9 @@ import { GetItemPageAPIResponse } from "./interfaces/ListItemI";
 const GET_USER_URL = process.env.GET_USER_URL as string;
 const CREATE_USER_URL = process.env.CREATE_USER_URL as string;
 const CREATE_LISTING_URL = process.env.CREATE_LISTING_URL as string;
-const CREATE_BORROW_REQUEST_URL = process.env
-  .CREATE_BORROW_REQUEST_URL as string;
+// unclear if this is to confirm a borrow request or to create a new borrow request
+// const CREATE_BORROW_REQUEST_URL = process.env
+//   .CREATE_BORROW_REQUEST_URL as string;
 const DELETE_ITEM_URL = process.env.DELETE_ITEM_URL as string;
 const RETURN_ITEM_URL = process.env.RETURN_ITEM_URL as string;
 const GET_ITEM_PAGE_URL = process.env.GET_ITEM_PAGE_URL as string;
@@ -80,7 +81,7 @@ export const createUser = async (name: string, email: string) => {
     email: email,
     rating: null,
     bio: null,
-    location: { city: null, province: null, country: null },
+    location: null,
     phoneNumber: null,
   };
   console.log("createUser");
@@ -125,7 +126,18 @@ export const authenticateUser = async (session: Session) => {
     }
   }
 };
+function convertDateToUnixTime(dateStr: string) {
+  // Parse the date string into a JavaScript Date object
+  const date = new Date(dateStr);
 
+  // Get the Unix timestamp in milliseconds
+  const timestampInMilliseconds = date.getTime();
+
+  // Convert to seconds (optional)
+  const timestampInSeconds = Math.floor(timestampInMilliseconds / 1000);
+
+  return timestampInSeconds;
+}
 export const requestItem = async (formData: FormData) => {
   const session = await getServerSession(authOptions);
   if (!session) {
@@ -133,8 +145,14 @@ export const requestItem = async (formData: FormData) => {
     return;
   }
   const rawFormData = Object.fromEntries(formData.entries());
+  const borrowDate = formData.get("startDate") as string;
+  const returnDate = formData.get("endDate") as string;
+  const borrowDateUnixTime = convertDateToUnixTime(borrowDate);
+  const returnDateUnixTime = convertDateToUnixTime(returnDate);
+  rawFormData.startDate = JSON.stringify(borrowDateUnixTime);
+  rawFormData.endDate = JSON.stringify(returnDateUnixTime);
   console.log(rawFormData);
-  const response = await fetch(CREATE_BORROW_REQUEST_URL, {
+  const response = await fetch(REQUEST_ITEM_URL, {
     method: "PUT",
     body: JSON.stringify(rawFormData),
   });
@@ -145,7 +163,9 @@ export const requestItem = async (formData: FormData) => {
     console.error(errorMessage);
     return errorMessage;
   }
-  return response;
+  // log response
+  console.log(await response.json());
+  return { status: response.status, message: response.statusText };
 };
 
 export const getBorrowedItems = async (borrowerID: string) => {
