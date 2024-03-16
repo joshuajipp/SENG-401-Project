@@ -10,8 +10,8 @@ export default async function ContactDetails() {
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-medium">Contact Details</h1>
       <div className="flex flex-col gap-4 text-black dark:text-white">
-        <DetailField title={"phoneNum"} value={phoneNum} />
-        <DetailField title={"email"} value={session?.user?.email} />
+        <DetailField title={"Phone Number"} value={phoneNum} />
+        <DetailField title={"Email"} value={session?.user?.email} />
       </div>
     </div>
   );
