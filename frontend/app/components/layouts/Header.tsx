@@ -70,7 +70,10 @@ function UserProfile({
       <Link href="listings">
         <DropdownItem>Active Listings</DropdownItem>
       </Link>
-      {/* <DropdownItem>Disputes</DropdownItem> */}
+      <Link href="/profile/borrowed">
+        <DropdownItem>Borrowed Items</DropdownItem>
+      </Link>
+
       <DropdownDivider />
       <Link href="/api/auth/signout">
         <DropdownItem>Sign out</DropdownItem>
