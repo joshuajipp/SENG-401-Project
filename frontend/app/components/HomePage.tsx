@@ -1,6 +1,9 @@
 'use client';
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
+import React from "react";
+import { FaTools } from "react-icons/fa";
+import { FaHandshake } from "react-icons/fa";
+import { FaToolbox } from "react-icons/fa";
+import { FaHandHoldingHeart } from "react-icons/fa";
 
 export default function HomePage() {
 
@@ -11,7 +14,7 @@ export default function HomePage() {
                 <div className="h-auto w-full flex flex-row justify-evenly items-center">
                     <div className="w-1/2 border-r border-brand h-80 flex flex-col justify-evenly items-center text-center px-10">
                         <div className="text-4xl font-bold underline">Borrow Tools...</div>
-                        <Image className="rounded-lg" src="/rent_tool.png" alt="tools" width={100} height={100} style={{ width: '200px', height: '150px' }}/>
+                        <FaTools style={{ fontSize: '7em' }}/>
                         <div className="text-2xl">
                             Choose a category above to see a list of tools
                             <br></br>that are available to be borrowed,
@@ -20,7 +23,7 @@ export default function HomePage() {
                     </div>
                     <div className="w-1/2 border-l border-brand h-80 flex flex-col justify-evenly items-center text-center">
                         <div className="text-4xl font-bold underline">...Or Lend Them!</div>
-                        <Image className="rounded-lg" src="/handshake.png" alt="tools" width={100} height={100} style={{ width: '200px', height: '150px' }}/>
+                        <FaHandshake style={{ fontSize: '7em' }}/>
                         <div className="text-2xl">
                             List one of your own tools as available to borrow,
                             <br></br>and lend it to someone in need of that tool.
@@ -45,13 +48,13 @@ export default function HomePage() {
                     </span>
                 </div>
                 <div className="w-1/3 text-center h-5/6 flex justify-center items-center">
-                    <Image className="rounded-lg" src="/tools.jpg" alt="tools" width={100} height={100} style={{ width: '350px', height: '300px' }}/>
+                    <FaToolbox style={{ fontSize: '8em' }}/>
                 </div>
             </div>
 
             <div className="bg-brand mt-28 rounded-md w-11/12 h-96 flex flex-row justify-center items-center">
                 <div className="w-1/3 text-center h-5/6 flex justify-center items-center">
-                    <Image className="rounded-lg" src="/happy.jpg" alt="tools" width={100} height={100} style={{ width: '350px', height: '300px' }}/>
+                    <FaHandHoldingHeart style={{ fontSize: '7em' }}/>
                 </div>
                 <div className="w-2/3 text-center h-5/6 pl-10 pr-10">
                     <header className="font-bold underline text-2xl mb-8">Our Goal:</header>
