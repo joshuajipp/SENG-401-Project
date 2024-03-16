@@ -19,56 +19,56 @@ def parse_event_body(event_body):
 
 # ----------------------------------------------------------------------------------------------------------------- #
 
-# Cloudinary stuff
-def post_image(image):
-    # Get the credentials from AWS Parameter Store
-    ssm = boto3.client('ssm')
-    parameter_names = []
-    key_string = ssm.get_parameter(
-        Name="CloudinaryKey",
-        WithDecryption=True
-    )["Parameter"]["Value"]
+# # Cloudinary stuff
+# def post_image(image):
+#     # Get the credentials from AWS Parameter Store
+#     ssm = boto3.client('ssm')
+#     parameter_names = []
+#     key_string = ssm.get_parameter(
+#         Name="CloudinaryKey",
+#         WithDecryption=True
+#     )["Parameter"]["Value"]
 
-    keys = key_string.split(",")
+#     keys = key_string.split(",")
 
-    cloud_name = keys[0]
-    api_key = keys[1]
-    api_secret = keys[2]
+#     cloud_name = keys[0]
+#     api_key = keys[1]
+#     api_secret = keys[2]
 
-    url = f'https://api.cloudinary.com/v1_1/{cloud_name}/image/upload/'
+#     url = f'https://api.cloudinary.com/v1_1/{cloud_name}/image/upload/'
 
-    # Set up the payload
-    payload = {
-        'api_key': api_key,
-    }
-    file = {
-        'file': image
-    }
-    payload["signature"] = create_signature(payload, api_secret)
-    res = requests.post(url, files=file, data=payload)
-    return res.json()
+#     # Set up the payload
+#     payload = {
+#         'api_key': api_key,
+#     }
+#     file = {
+#         'file': image
+#     }
+#     payload["signature"] = create_signature(payload, api_secret)
+#     res = requests.post(url, files=file, data=payload)
+#     return res.json()
 
-def create_signature(body, api_secret):
-    exclude = ["api_key", "resource_type", "cloud_name"]
-    sorted_body = sort_dict(body, exclude)
-    query_string = create_query_string(sorted_body)
-    query_string = f"{query_string}{api_secret}"
-    hashed = hashlib.sha1(query_string.encode("utf-8")).hexdigest()
-    return hashed
+# def create_signature(body, api_secret):
+#     exclude = ["api_key", "resource_type", "cloud_name"]
+#     sorted_body = sort_dict(body, exclude)
+#     query_string = create_query_string(sorted_body)
+#     query_string = f"{query_string}{api_secret}"
+#     hashed = hashlib.sha1(query_string.encode("utf-8")).hexdigest()
+#     return hashed
 
-def create_query_string(dict):
-    query_string = ""
-    for ind, (key, value) in enumerate(dict.items()):
-        query_string = f"{key}={value}" if ind == 0 else f"{query_string}&{key}={value}"
-    return query_string
+# def create_query_string(dict):
+#     query_string = ""
+#     for ind, (key, value) in enumerate(dict.items()):
+#         query_string = f"{key}={value}" if ind == 0 else f"{query_string}&{key}={value}"
+#     return query_string
 
-def sort_dict(dict, exclude):
-    myKeys = list(dict.keys())
-    myKeys.sort()
-    for i in range(len(exclude)):
-        if exclude[i] in myKeys:
-            myKeys.remove(exclude[i])
-    return {i: dict[i] for i in myKeys}
+# def sort_dict(dict, exclude):
+#     myKeys = list(dict.keys())
+#     myKeys.sort()
+#     for i in range(len(exclude)):
+#         if exclude[i] in myKeys:
+#             myKeys.remove(exclude[i])
+#     return {i: dict[i] for i in myKeys}
 
 # ----------------------------------------------------------------------------------------------------------------- #
 
@@ -120,28 +120,26 @@ def handler(event, context):
     userID = body['userID'] 
     
     # Get old entry if it exists otherwise return 404
-    response = table.get_item(Key={'userID': userID})
-    if 'Item' not in response:
+    old_entry = table.get_item(Key={'userID': userID})["Item"]
+    if old_entry is None:
       # User not found
       return {
           'statusCode': 404,
           'body': 'User not found'
       }
-    old_entry = response['Item']
     
     # Retrieve new table entry info turn it to a dictionary
     new_info = {
-      'userID': userID,
-      'name': body['name'],
-      'email': body['email'],
-      'rating': body['rating'],
-      'bio': body['bio'],
-      'location': body['location']
+      key: value
+      for key, value in {
+          'name': body.get("name", ""),
+          'email': body.get("email", ""),
+          'bio': body.get("bio", ""),
+          'location': body.get("location", "")
+      }.items()
+      if value != ""
     }
     
-    # Get old entry
-    old_entry = dict(table.get_item(Key={'userID': userID}))
-
     # # Check if image is different from old one
     # raw_image = body['image']
     # image_bytes = base64.b64decode(raw_image)
@@ -159,7 +157,7 @@ def handler(event, context):
     response = update_account(table, userID, old_entry, new_info)
 
     return {
-      'statuscode': 200,
+      'statusCode': 200,
       'body': json.dumps(response)
     }
   

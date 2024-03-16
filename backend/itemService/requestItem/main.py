@@ -41,6 +41,9 @@ def handler(event, context):
         startDate = body["startDate"]
         endDate = body["endDate"]
 
+        if startDate > endDate:
+            raise ValueError("startDate cannot be after endDate")
+
         data = {
             "borrowerID": borrowerID,
             "timestamp": timestamp,

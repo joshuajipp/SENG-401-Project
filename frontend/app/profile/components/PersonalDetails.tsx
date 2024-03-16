@@ -3,16 +3,12 @@ import Image from "next/image";
 import { DetailField } from "./DetailField";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/utils/authOptions";
-import UserLocation from "./UserLocation";
 export default async function PersonalDetails() {
   const session = await getServerSession(authOptions);
   const name = session?.user?.name;
-  // const city = "Calgary";
-  // const city =
-  //   navigator.geolocation.getCurrentPosition((position) => {
-  //     return position.coords.latitude;
-  //   }) || "Calgary";
-  const state = "Alberta";
+  const location =
+    // @ts-ignore
+    session?.userData?.location || "Please enable location services";
 
   return (
     <div className="flex flex-col gap-4 ">
@@ -27,8 +23,7 @@ export default async function PersonalDetails() {
         />
         <div className="flex flex-col gap-4 text-black dark:text-white">
           <DetailField title={"Name"} value={name} />
-          <UserLocation></UserLocation>
-          <DetailField title={"State"} value={state} />
+          <DetailField title={"Location"} value={location} />
         </div>
       </div>
     </div>
