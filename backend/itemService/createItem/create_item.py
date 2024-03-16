@@ -106,7 +106,6 @@ def handler(event, context):
 
         # Image handling
         raw_images = body['images']
-        print(raw_images)
         image_urls = []
         image_hashes = []
         for raw_image in raw_images:
