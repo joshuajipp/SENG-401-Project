@@ -16,11 +16,11 @@ export default async function RequestRentalForm({
       <div className="w-full flex flex-col font-medium text-sm gap-4">
         <div className=" w-full ">
           <label htmlFor="borrow-date">Borrow Date *</label>
-          <DatepickerRentalForm name="borrowDate" />
+          <DatepickerRentalForm name="startDate" />
         </div>
         <div className=" w-full ">
           <label htmlFor="return-date">Return Date *</label>
-          <DatepickerRentalForm name="returnDate" />
+          <DatepickerRentalForm name="endDate" />
         </div>
         <div className="w-full">
           <label htmlFor="message" className="block mb-2">
@@ -46,7 +46,7 @@ export default async function RequestRentalForm({
         <input className="hidden" name="itemID" value={itemID} readOnly />
         <input
           className="hidden"
-          name="userID"
+          name="borrowerID"
           // @ts-ignore
           value={session?.userData?.userID || ""}
           readOnly
