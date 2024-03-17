@@ -97,7 +97,7 @@ def handler(event, context):
         lenderID = item["lenderID"]
 
         # Get the new values
-        itemName = body["itemName"]
+        itemName = body["listingTitle"]
         description = body["description"]
         condition = body["condition"]
         location = body["location"]
