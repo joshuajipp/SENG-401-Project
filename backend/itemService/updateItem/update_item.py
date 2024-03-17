@@ -24,7 +24,7 @@ def update_item_in_table(table, newData):
     )
     return response
 
-def post_image(image):
+def post_image(image, timestamp):
     # Get the credentials from AWS Parameter Store
     ssm = boto3.client('ssm')
     parameter_names = []
@@ -39,16 +39,22 @@ def post_image(image):
     api_key = keys[1]
     api_secret = keys[2]
 
+    # Set up the URL
     url = f'https://api.cloudinary.com/v1_1/{cloud_name}/image/upload/'
 
     # Set up the payload
     payload = {
         'api_key': api_key,
+        'timestamp': timestamp
     }
     file = {
         'file': image
     }
+
+    # Create a signature and add it to the payload
     payload["signature"] = create_signature(payload, api_secret)
+
+    # Post the image to Cloudinary
     res = requests.post(url, files=file, data=payload)
     print(res.json())
     return res.json()
@@ -109,13 +115,13 @@ def handler(event, context):
         image_urls = []
         image_hashes = []
         for raw_image in raw_images:
-            if raw_image is not "null" and raw_image is not None:
+            if raw_image != "null" and raw_image is not None:
                 image_bytes = base64.b64decode(raw_image)
                 new_image_hash = hashlib.sha256(image_bytes).hexdigest()
                 
                 # If the image has changed, upload it to Cloudinary, and update the image URL and hash
                 if new_image_hash not in old_image_hashes:
-                    response = post_image(image_bytes)
+                    response = post_image(image_bytes, timestamp)
                     image_url = response["secure_url"]
                     image_hash = new_image_hash
                     
