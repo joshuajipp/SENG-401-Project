@@ -50,6 +50,7 @@ def post_image(image):
     }
     payload["signature"] = create_signature(payload, api_secret)
     res = requests.post(url, files=file, data=payload)
+    print(res.json())
     return res.json()
 
 def create_signature(body, api_secret):
