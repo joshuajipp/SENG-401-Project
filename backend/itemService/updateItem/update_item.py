@@ -77,6 +77,10 @@ def create_query_string(dict):
 
 def handler(event, context):
     try:
+        # Parse the event body
+        body = parse_event_body(event["body"])
+        itemID = body["itemID"]
+
         # Get the table and retrieve the old values
         table_name = 'items-30144999'
         table = get_dynamodb_table(table_name)
@@ -91,10 +95,6 @@ def handler(event, context):
         old_image_hashes = item["imageHashes"]
         timestamp = item["timestamp"]
         lenderID = item["lenderID"]
-
-        # Parse the event body
-        body = parse_event_body(event["body"])
-        itemID = body["itemID"]
 
         # Get the new values
         itemName = body["name"]
