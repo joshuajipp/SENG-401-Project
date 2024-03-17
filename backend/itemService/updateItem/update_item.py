@@ -127,11 +127,10 @@ def handler(event, context):
                     
                 # If the image has not changed, use the old image URL and hash
                 else:
-                    image_url = table.get_item(Key={"itemID": itemID})["Item"]["image"]
-                    image_url = table.get_item(Key={"itemID": itemID})["Item"]["image"]
-
                     i = old_image_hashes.index(new_image_hash)
                     image_hash = old_image_hashes[i]
+
+                    image_url = table.get_item(Key={"itemID": itemID})["Item"]["image"][i]
 
                 image_urls.append(image_url)
                 image_hashes.append(image_hash)
