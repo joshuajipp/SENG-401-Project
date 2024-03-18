@@ -94,10 +94,21 @@ def test_remove_borrower_id_from_borrow_requests(items_table):
     assert response['Item']['borrowRequests'] == ['JX153'], "Should remove the borrowerID from the borrowRequests array in the table."
 
 def test_handler_with_valid_borrowerID(items_table):
+    borrowRequests = [{
+        "borrowerID": "74544474-9cb7-4aa3-9f30-714b1cf2b317",
+        "endDate": "1710482400",
+        "startDate": "1700482400",
+        "timestamp": 1710773998
+    }, {
+        "borrowerID": "JX152",
+        "endDate": "1710482400",
+        "startDate": "1700482400",
+        "timestamp": 1711773998
+    }]
     items_table.put_item(
         Item={
             'itemID': '1',
-            'borrowRequests': ['JX152', 'JX153'],
+            'borrowRequests': borrowRequests,
             'timestamp': 1234567890,
             'location': 'Vancouver',
         }

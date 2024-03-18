@@ -77,18 +77,32 @@ def test_append_borrower_to_borrow_requests(items_table):
     assert response['Item']['borrowRequests'] == ['AGJKL'], "Should append a borrowerID to the borrowRequests array."
 
 def test_handler_success(items_table):
+    borrowRequests = [{
+        "borrowerID": "JX152",
+        "endDate": "1710482400",
+        "startDate": "1700482400",
+        "timestamp": 1711773998
+    }]
     items_table.put_item(
         Item={
             'itemID': '1',
-            'borrowRequests': ["JX152"],
+            'borrowRequests': borrowRequests,
             'timestamp': 123,
             'location': 'Toronto'
         }
     )
     event = {
-        "body": '{"itemID": "1", "borrowerID": "AGJKL"}'
+        "body": '{"itemID": "1", "borrowerID": "AGJKL", "startDate": "1700382400", "endDate": "1710482400"}'
     }
     context = None
     response = handler(event, context)
-    assert response['statusCode'] == 200, "Should return a 200 status code."
-    assert json.loads(response['body'])['updatedAttributes']['borrowRequests'] == ['JX152','AGJKL'], "Should append a borrowerID to the borrowRequests array."
+    assert response['statusCode'] == 200, "Should return a success status code."
+        
+    borrowRequests = json.loads(response['body'])["updatedAttributes"]["borrowRequests"]
+
+    contains_borrower = False
+    for request in borrowRequests:
+        if request["borrowerID"] == "AGJKL":
+            contains_borrower = True
+            break
+    assert contains_borrower, "Should append the borrowerID to the borrowRequests array."
