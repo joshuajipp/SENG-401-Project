@@ -292,7 +292,7 @@ export const returnItem = async (itemID: string) => {
 };
 
 export const getItemPage = async ({
-  location = "Calgary",
+  location = "Calgary, Alberta, Canada",
   pageCount = "10",
   category = "",
   lastItem = "",
