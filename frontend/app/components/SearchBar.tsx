@@ -10,6 +10,7 @@ export default async function SearchBar() {
   const res = await getServerSession(authOptions);
   // @ts-ignore
   const location = res?.userData?.location || "Loading...";
+  // console.log(location);
   return (
     <div className="flex dark:text-white order-2 md:order-none gap-4 place-items-center justify-center items-center">
       <form action={searchItemsRedirect} className="flex flex-row gap-2">
