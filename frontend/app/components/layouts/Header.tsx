@@ -61,13 +61,13 @@ function UserProfile({
           {sessionUser?.email}
         </span>
       </DropdownHeader>
-      <Link href="profile">
+      <Link href="/profile">
         <DropdownItem>My Profile</DropdownItem>
       </Link>
-      <Link href="requested">
+      <Link href="/requested">
         <DropdownItem>Requested Tools</DropdownItem>
       </Link>
-      <Link href="listings">
+      <Link href="/profile/activeListings">
         <DropdownItem>Active Listings</DropdownItem>
       </Link>
       <Link href="/profile/borrowed">
