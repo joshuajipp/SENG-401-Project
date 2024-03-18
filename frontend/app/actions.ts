@@ -47,14 +47,14 @@ export const createListing = async (formData: FormData) => {
       },
       body: JSON.stringify(myBody),
     });
-    if (response.status !== 200) {
+    if (!response.ok) {
       const errorResponse = await response.json();
       console.error("Failed to create listing:", errorResponse);
-      return `Failed to create item. Status code: ${response.status}, Error: ${
-        errorResponse.message || response.statusText
-      }`;
+      const errorMessage = `Failed to create item. Status code: ${
+        response.status
+      }, Error: ${errorResponse.message || response.statusText}`;
+      return Promise.reject(new Error(errorMessage));
     }
-    // redirect("/");
     return { status: "success" };
   } catch (error) {
     console.error("Error creating listing:", error);
@@ -80,11 +80,11 @@ export const updateAccountLocation = async (newLocation: LocationInfo) => {
     },
     body: JSON.stringify(body),
   });
-  if (response.status !== 200) {
+  if (!response.ok) {
     const errorMessage =
       "Failed to update account location. Status code: " + response.status;
     console.error(errorMessage);
-    return errorMessage;
+    return Promise.reject(new Error(errorMessage));
   }
   return response.json();
 };
@@ -106,11 +106,11 @@ export const createUser = async (name: string, email: string) => {
     },
     body: JSON.stringify(body),
   });
-  if (response.status !== 200) {
+  if (!response.ok) {
     const errorMessage =
       "Failed to update account location. Status code: " + response.status;
     console.error(errorMessage);
-    return errorMessage;
+    return Promise.reject(new Error(errorMessage));
   }
   return response.json();
 };
@@ -170,11 +170,11 @@ export const requestItem = async (formData: FormData) => {
       body: JSON.stringify(newBody),
     });
 
-    if (response.status !== 200) {
+    if (!response.ok) {
       const errorResponse = await response.text(); // It's better to await here for consistency
       const errorMessage = `Failed to request item. Status code: ${response.status}, Error: ${errorResponse}`;
       console.error(errorMessage);
-      return errorMessage;
+      return Promise.reject(new Error(errorMessage));
     }
 
     return { status: "success", response: await response.json() }; // Assuming JSON response, adjust as needed
