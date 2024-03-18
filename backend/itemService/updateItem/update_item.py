@@ -138,7 +138,7 @@ def handler(event, context):
                     i = old_image_hashes.index(new_image_hash)
                     image_hash = old_image_hashes[i]
 
-                    image_url = table.get_item(Key={"itemID": itemID})["Item"]["image"][i]
+                    image_url = table.get_item(Key={"itemID": itemID})["Item"]["images"][i]
 
                 if image_url is not None and image_hash != "null":
                     image_urls.append(image_url)
