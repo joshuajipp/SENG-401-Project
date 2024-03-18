@@ -125,12 +125,13 @@ def handler(event, context):
                 if new_image_hash not in old_image_hashes:
                 # Save the image to a temp file
                     filename = "/tmp/img.png"
+                    stringtime = str(timestamp)
                     
                     with open(filename, "wb") as f:
                         f.write(image_bytes)
 
                     with open(filename, "rb") as f:
-                        response = post_image(f, str(timestamp))
+                        response = post_image(f, stringtime)
 
                     image_url = response["secure_url"]
                     print(image_url)
