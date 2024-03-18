@@ -115,7 +115,7 @@ def handler(event, context):
         image_urls = []
         image_hashes = []
         for raw_image in raw_images:
-            if raw_image != "null" and raw_image is not None:
+            if raw_image is not None and raw_image != "null":
                 image_bytes = base64.b64decode(raw_image)
                 new_image_hash = hashlib.sha256(image_bytes).hexdigest()
                 
@@ -134,13 +134,15 @@ def handler(event, context):
                     image_hash = new_image_hash
                     
                 # If the image has not changed, use the old image URL and hash
-                elif new_image_hash in old_image_hashes:
+                elif new_image_hash in old_image_hashes and new_image_hash is not None:
                     i = old_image_hashes.index(new_image_hash)
                     image_hash = old_image_hashes[i]
+
                     image_url = table.get_item(Key={"itemID": itemID})["Item"]["image"][i]
 
-                image_urls.append(image_url)
-                image_hashes.append(image_hash)
+                if image_url is not None and image_hash != "null":
+                    image_urls.append(image_url)
+                    image_hashes.append(image_hash)
 
         # Create a new item object
         newInfo = {
