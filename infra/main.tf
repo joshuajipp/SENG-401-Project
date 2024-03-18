@@ -145,7 +145,7 @@ resource "aws_lambda_function" "update_item_lambda" {
   filename         = "./updateItem.zip"
   function_name    = "update-item-30144999"
   role             = aws_iam_role.lambda_role.arn
-  handler          = "main.handler"
+  handler          = "update_item.handler"
   runtime          = "python3.9"
   timeout = 300
   source_code_hash = filebase64sha256("./updateItem.zip")

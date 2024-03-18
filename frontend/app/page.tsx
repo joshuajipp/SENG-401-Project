@@ -1,10 +1,9 @@
-import GetLocationComponent from "./components/GetLocationComponent";
+import HomePage from "./components/HomePage";
 
 export default async function Home() {
   return (
     <main>
-      <GetLocationComponent></GetLocationComponent>
-      main page
+      <HomePage></HomePage>
     </main>
   );
 }

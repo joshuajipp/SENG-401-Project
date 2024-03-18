@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "flowbite-react";
 import { FaTimes } from "react-icons/fa";
@@ -11,31 +11,37 @@ export default function UploadImageComponent() {
   const [imageURLs, setImageURLs] = useState<string[]>(
     Array.from({ length: 8 })
   );
-  const maxImageSize = 5 * 1024 * 1024; // 5 MB
-
+  const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
   const handleAddImage = (newImage: File, index: number) => {
     if (index >= 8) return;
-    if (newImage.size > maxImageSize) {
+    if (newImage.size > MAX_IMAGE_SIZE) {
       alert("Image is too large. Please upload an image smaller than 5MB.");
       return;
     }
-    setImageURLs((prevURLs) => {
-      const updatedURLs = [...prevURLs];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          updatedURLs[index] = e.target.result as string;
-        }
-      };
-      reader.readAsDataURL(newImage);
-      return updatedURLs;
-    });
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        let imageString = e.target.result as string;
+        let URLArray = imageString.split(",");
+
+        // Move setImageURLs update inside here to ensure it happens after reading the file
+        setImageURLs((prevURLs) => {
+          const updatedURLs = [...prevURLs];
+          updatedURLs[index] = URLArray[1]; // Assuming you want to store only the Base64 content without the data URL prefix
+          return updatedURLs;
+        });
+      }
+    };
+    reader.readAsDataURL(newImage);
+
     setImages((prevImages) => {
       const updatedImages = [...prevImages];
       updatedImages[index] = newImage;
       return updatedImages;
     });
   };
+
   const handleRemoveImage = (index: number) => {
     if (index >= 8) return;
     setImages((prevImages) => {
@@ -94,12 +100,7 @@ export default function UploadImageComponent() {
   };
   return (
     <div className="flex flex-row flex-wrap gap-2">
-      <input
-        className="hidden"
-        name="images"
-        readOnly
-        value={JSON.stringify(imageURLs)}
-      />
+      <input className="hidden" name="images" readOnly value={imageURLs} />
       {images.map((image, index) => {
         return (
           <MediaImage

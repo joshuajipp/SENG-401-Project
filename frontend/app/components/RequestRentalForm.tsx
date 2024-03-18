@@ -4,12 +4,13 @@ import { requestItem } from "../actions";
 import { getServerSession } from "next-auth";
 import SubmitButton from "./SubmitButton";
 import Link from "next/link";
+import { authOptions } from "../utils/authOptions";
 export default async function RequestRentalForm({
   itemID,
 }: {
   itemID: string;
 }) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   const RequestFields = () => {
     return (
       <div className="w-full flex flex-col font-medium text-sm gap-4">
@@ -27,7 +28,7 @@ export default async function RequestRentalForm({
           </label>
           <textarea
             id="message"
-            name="message"
+            // name="message"
             rows={5}
             className="block p-2.5 w-full text-sm bg-stone-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Leave a comment..."
@@ -46,7 +47,8 @@ export default async function RequestRentalForm({
         <input
           className="hidden"
           name="userID"
-          value={session?.user?.email || ""}
+          // @ts-ignore
+          value={session?.userData?.userID || ""}
           readOnly
         />
         <h1 className=" font-bold text-2xl ">Request Item Rental</h1>
