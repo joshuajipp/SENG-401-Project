@@ -118,7 +118,7 @@ def handler(event, context):
             if raw_image is not None and raw_image != "null":
                 image_bytes = base64.b64decode(raw_image)
                 new_image_hash = hashlib.sha256(image_bytes).hexdigest()
-                
+                print("what the hell is this?")
                 # If the image has changed, upload it to Cloudinary, and update the image URL and hash
                 if new_image_hash not in old_image_hashes:
                 # Save the image to a temp file
@@ -131,6 +131,7 @@ def handler(event, context):
                         response = post_image(f, str(timestamp))
 
                     image_url = response["secure_url"]
+                    print(image_url)
                     image_hash = new_image_hash
                     
                 # If the image has not changed, use the old image URL and hash
@@ -138,7 +139,7 @@ def handler(event, context):
                     i = old_image_hashes.index(new_image_hash)
                     image_hash = old_image_hashes[i]
 
-                    image_url = table.get_item(Key={"itemID": itemID})["Item"]["images"][i]
+                    image_url = item["images"][i]
 
                 if image_url is not None and image_hash != "null":
                     image_urls.append(image_url)
