@@ -163,10 +163,11 @@ def handler(event, context):
             'timestamp': timestamp,
         }
 
-
         # Update the item in the table
         response = update_item_in_table(table, newInfo)
         
+        print("This is a test")
+
         return {
             'statusCode': 200,
             'body': json.dumps(response)
