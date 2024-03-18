@@ -128,7 +128,7 @@ def handler(event, context):
                         f.write(image_bytes)
 
                     with open(filename, "rb") as f:
-                        response = post_image(image_bytes, str(timestamp))
+                        response = post_image(f, str(timestamp))
 
                     image_url = response["secure_url"]
                     image_hash = new_image_hash
