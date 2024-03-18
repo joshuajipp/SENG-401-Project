@@ -57,7 +57,7 @@ def post_image(image, timestamp):
 
     # Post the image to Cloudinary
     res = requests.post(url, files=file, data=payload)
-    print(res.json())
+
     return res.json()
 
 def create_signature(body, api_secret):
@@ -93,8 +93,6 @@ def handler(event, context):
         table_name = 'items-30144999'
         table = get_dynamodb_table(table_name)
         item = table.get_item(Key={"itemID": itemID})["Item"]
-        
-        print(item)
 
         if item is None:
             return {
@@ -121,7 +119,6 @@ def handler(event, context):
             if raw_image is not None and raw_image != "null":
                 image_bytes = base64.b64decode(raw_image)
                 new_image_hash = hashlib.sha256(image_bytes).hexdigest()
-                print("what the hell is this?")
                 # If the image has changed, upload it to Cloudinary, and update the image URL and hash
                 if new_image_hash not in old_image_hashes:
                 # Save the image to a temp file
@@ -135,7 +132,6 @@ def handler(event, context):
                         response = post_image(f, stringtime)
 
                     image_url = response["secure_url"]
-                    print(image_url)
                     image_hash = new_image_hash
                     
                 # If the image has not changed, use the old image URL and hash
@@ -165,16 +161,13 @@ def handler(event, context):
 
         # Update the item in the table
         response = update_item_in_table(table, newInfo)
-        
-        print(response)
-
         return {
             'statusCode': 200,
             'body': json.dumps(response['ResponseMetadata'])
         }
 
     except Exception as e:
-        print(e)
+
         return {
             'statusCode': 500,
             'body': json.dumps(str(e))
