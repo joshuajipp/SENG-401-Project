@@ -309,11 +309,13 @@ export const getItemPage = async ({
     console.log("No session found");
     return;
   }
+  // @ts-ignore
+  const userLocation = session.userData.location || location;
   const response = await fetch(GET_ITEM_PAGE_URL, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      location: location,
+      location: userLocation,
       pageCount: pageCount,
       category: category,
       lastItem: lastItem,
