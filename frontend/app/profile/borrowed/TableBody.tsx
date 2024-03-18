@@ -1,7 +1,8 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-export default function ItemRow() {
+import AcceptReturnModal from "./AcceptReturnModal";
+export default function TableBody() {
   const startDate = new Date("2024-02-14").toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
@@ -19,7 +20,7 @@ export default function ItemRow() {
   const profileImage = "https://via.placeholder.com/55x48";
   return (
     <tbody>
-      <tr className=" bg-[#DDD8E9] rounded transition duration-300 ease-in-out transform hover:scale-[1.02] shadow">
+      <tr className=" bg-[#DDD8E9] rounded transition duration-300 ease-in-out transform hover:scale-[1.02] shadow dark:text-black">
         <td className="p-4">
           <Link href="/" className="flex flex-row gap-2 items-center">
             <Image alt="Tool Image" src={toolImage} width={66} height={47} />
@@ -34,10 +35,10 @@ export default function ItemRow() {
                 src={profileImage}
                 className="rounded-full"
                 fill
-                />
+              />
             </div>
             <div>{lenderName}</div>
-                </Link>
+          </Link>
         </td>
         <td className="p-4">
           <div>{startDate}</div>
@@ -46,7 +47,7 @@ export default function ItemRow() {
           <div>{endDate}</div>
         </td>
         <td className="p-4">
-          <div className=" text-red-500">{borrowedState}</div>
+          <AcceptReturnModal borrowedState={borrowedState}></AcceptReturnModal>
         </td>
       </tr>
     </tbody>

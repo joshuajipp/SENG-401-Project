@@ -1,10 +1,11 @@
 import React from "react";
-import TableBody from "./TableBody";
-export default function BorrowedItemsContainer() {
+import TableBody from "../borrowed/TableBody";
+
+export default function ActiveListingsContainer() {
   const TableHeader = () => {
     const tableHeaders = [
       "Item Name",
-      "Lender Name",
+      "Borrower Name",
       "Start Date",
       "End Date",
       "Status",
