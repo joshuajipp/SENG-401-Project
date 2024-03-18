@@ -46,7 +46,7 @@ def fetch_items_with_pagination(table_name, location, exclusiveStartKey, pageCou
         expression_attribute_names['#description'] = 'description'
     
     if category:
-        filter_expressions.append("(category = :category)")
+        filter_expressions.append("(#category = :category)")
         expression_attribute_values[':category'] = category
         expression_attribute_names['#category'] = 'category'
 
