@@ -121,7 +121,15 @@ def handler(event, context):
                 
                 # If the image has changed, upload it to Cloudinary, and update the image URL and hash
                 if new_image_hash not in old_image_hashes:
-                    response = post_image(image_bytes, str(timestamp))
+                # Save the image to a temp file
+                    filename = "/tmp/img.png"
+                    
+                    with open(filename, "wb") as f:
+                        f.write(image_bytes)
+
+                    with open(filename, "rb") as f:
+                        response = post_image(image_bytes, str(timestamp))
+
                     image_url = response["secure_url"]
                     image_hash = new_image_hash
                     
