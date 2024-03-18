@@ -46,7 +46,7 @@ export default async function RequestRentalForm({
         <input className="hidden" name="itemID" value={itemID} readOnly />
         <input
           className="hidden"
-          name="userID"
+          name="borrowerID"
           // @ts-ignore
           value={session?.userData?.userID || ""}
           readOnly

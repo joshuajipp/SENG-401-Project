@@ -8,8 +8,7 @@ import { GetItemPageAPIResponse } from "./interfaces/ListItemI";
 const GET_USER_URL = process.env.GET_USER_URL as string;
 const CREATE_USER_URL = process.env.CREATE_USER_URL as string;
 const CREATE_LISTING_URL = process.env.CREATE_LISTING_URL as string;
-const CREATE_BORROW_REQUEST_URL = process.env
-  .CREATE_BORROW_REQUEST_URL as string;
+const BORROW_ITEM_URL = process.env.BORROW_ITEM_URL as string;
 const DELETE_ITEM_URL = process.env.DELETE_ITEM_URL as string;
 const RETURN_ITEM_URL = process.env.RETURN_ITEM_URL as string;
 const GET_ITEM_PAGE_URL = process.env.GET_ITEM_PAGE_URL as string;
@@ -19,7 +18,6 @@ const GET_BORROWED_ITEMS_URL = process.env.GET_BORROWED_ITEMS_URL as string;
 const GET_ITEM_FROM_ID_URL = process.env.GET_ITEM_FROM_ID_URL as string;
 const UPDATE_ACCOUNT_LOCATION_URL = process.env
   .UPDATE_ACCOUNT_LOCATION_URL as string;
-const BORROW_ITEM_URL = process.env.BORROW_ITEM_URL as string;
 
 export const createListing = async (formData: FormData) => {
   try {
@@ -144,25 +142,46 @@ export const authenticateUser = async (session: Session) => {
 };
 
 export const requestItem = async (formData: FormData) => {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    console.log("No session found");
-    return;
-  }
-  const rawFormData = Object.fromEntries(formData.entries());
-  console.log(rawFormData);
-  const response = await fetch(CREATE_BORROW_REQUEST_URL, {
-    method: "PUT",
-    body: JSON.stringify(rawFormData),
-  });
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      console.error("No session found. Please log in.");
+      return;
+    }
 
-  if (response.status !== 200) {
-    const errorMessage =
-      "Failed to request item. Status code: " + response.status;
-    console.error(errorMessage);
-    return errorMessage;
+    const rawFormData = Object.fromEntries(formData.entries());
+
+    const newBody = {
+      itemID: rawFormData.itemID,
+      borrowerID: rawFormData.borrowerID,
+      startDate: Math.floor(
+        new Date(rawFormData.borrowDate as string).getTime() / 1000
+      ),
+      endDate: Math.floor(
+        new Date(rawFormData.returnDate as string).getTime() / 1000
+      ),
+    };
+
+    const response = await fetch(REQUEST_ITEM_URL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newBody),
+    });
+
+    if (response.status !== 200) {
+      const errorResponse = await response.text(); // It's better to await here for consistency
+      const errorMessage = `Failed to request item. Status code: ${response.status}, Error: ${errorResponse}`;
+      console.error(errorMessage);
+      return errorMessage;
+    }
+
+    return { status: "success", response: await response.json() }; // Assuming JSON response, adjust as needed
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return `An error occurred: ${error || "Unknown error"}`;
   }
-  return response;
 };
 
 export const getBorrowedItems = async (borrowerID: string) => {
@@ -189,29 +208,39 @@ export const getBorrowedItems = async (borrowerID: string) => {
   return borrowedItems;
 };
 
-export const getLenderItems = async (lenderID: string) => {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    console.log("No session found");
-    return;
-  }
-  const response = await fetch(GET_LENDER_ITEMS_URL, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      lenderID: lenderID,
-    },
-  });
+export const getLenderItems = async () => {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      console.error("No session found. Please log in to continue.");
+      return null; // Or throw new Error("No session found");
+    }
 
-  if (response.status !== 200) {
-    const errorMessage =
-      "Failed to get lender item. Status code: " + response.status;
-    console.error(errorMessage);
-    return errorMessage;
-  }
+    // @ts-ignore
+    const lenderID = session.userData.userID;
+    const response = await fetch(GET_LENDER_ITEMS_URL, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        lenderID: lenderID, // Ensure headers are correctly named and valued
+      },
+    });
 
-  const lenderItems = await response.json();
-  return lenderItems;
+    const data = await response.json(); // Parse JSON response once
+
+    if (response.status !== 200) {
+      console.error(
+        `Failed to get lender items. Status code: ${response.status}`,
+        data
+      );
+      return null; // Or throw new Error(`Failed to get lender items. Status code: ${response.status}`);
+    }
+
+    return data; // Successfully return the parsed data
+  } catch (error) {
+    console.error("Error fetching lender items:", error);
+    return null; // Or throw error; depending on how you want to handle errors
+  }
 };
 
 export const deleteItem = async (itemID: string) => {
@@ -292,7 +321,7 @@ export const returnItem = async (itemID: string) => {
 };
 
 export const getItemPage = async ({
-  location = "Calgary",
+  location = "Calgary, Alberta, Canada",
   pageCount = "10",
   category = "",
   lastItem = "",
@@ -309,11 +338,13 @@ export const getItemPage = async ({
     console.log("No session found");
     return;
   }
+  // @ts-ignore
+  const userLocation = session.userData.location || location;
   const response = await fetch(GET_ITEM_PAGE_URL, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      location: location,
+      location: userLocation,
       pageCount: pageCount,
       category: category,
       lastItem: lastItem,
