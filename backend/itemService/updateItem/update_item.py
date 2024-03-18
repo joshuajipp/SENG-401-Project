@@ -3,6 +3,7 @@ import requests
 import json
 import hashlib
 import base64
+from decimal import Decimal
 
 def get_dynamodb_table(table_name):
     """Initialize a DynamoDB resource and get the table."""
