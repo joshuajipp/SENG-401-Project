@@ -170,7 +170,7 @@ export const requestItem = async (formData: FormData) => {
       body: JSON.stringify(newBody),
     });
 
-    if (response.status !== 200) {
+    if (!response.ok) {
       const errorResponse = await response.text(); // It's better to await here for consistency
       const errorMessage = `Failed to request item. Status code: ${response.status}, Error: ${errorResponse}`;
       console.error(errorMessage);
