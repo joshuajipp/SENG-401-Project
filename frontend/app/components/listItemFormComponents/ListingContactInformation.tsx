@@ -45,7 +45,7 @@ export default async function ListingContactInformation() {
           className="hidden"
           name="lenderID"
           // @ts-ignore
-          value={session?.userData[0]?.userID || session?.user?.email}
+          value={session?.userData?.userID || ""}
           readOnly
         />
       </div>

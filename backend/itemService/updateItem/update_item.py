@@ -3,6 +3,7 @@ import requests
 import json
 import hashlib
 import base64
+from decimal import Decimal
 
 def get_dynamodb_table(table_name):
     """Initialize a DynamoDB resource and get the table."""
@@ -24,7 +25,7 @@ def update_item_in_table(table, newData):
     )
     return response
 
-def post_image(image):
+def post_image(image, timestamp):
     # Get the credentials from AWS Parameter Store
     ssm = boto3.client('ssm')
     parameter_names = []
@@ -39,17 +40,24 @@ def post_image(image):
     api_key = keys[1]
     api_secret = keys[2]
 
+    # Set up the URL
     url = f'https://api.cloudinary.com/v1_1/{cloud_name}/image/upload/'
 
     # Set up the payload
     payload = {
         'api_key': api_key,
+        'timestamp': timestamp
     }
     file = {
         'file': image
     }
+
+    # Create a signature and add it to the payload
     payload["signature"] = create_signature(payload, api_secret)
+
+    # Post the image to Cloudinary
     res = requests.post(url, files=file, data=payload)
+
     return res.json()
 
 def create_signature(body, api_secret):
@@ -77,11 +85,15 @@ def create_query_string(dict):
 
 def handler(event, context):
     try:
+        # Parse the event body
+        body = parse_event_body(event["body"])
+        itemID = body["itemID"]
+
         # Get the table and retrieve the old values
         table_name = 'items-30144999'
         table = get_dynamodb_table(table_name)
         item = table.get_item(Key={"itemID": itemID})["Item"]
-        
+
         if item is None:
             return {
                 'statusCode': 404,
@@ -92,12 +104,8 @@ def handler(event, context):
         timestamp = item["timestamp"]
         lenderID = item["lenderID"]
 
-        # Parse the event body
-        body = parse_event_body(event["body"])
-        itemID = body["itemID"]
-
         # Get the new values
-        itemName = body["name"]
+        itemName = body["listingTitle"]
         description = body["description"]
         condition = body["condition"]
         location = body["location"]
@@ -108,26 +116,34 @@ def handler(event, context):
         image_urls = []
         image_hashes = []
         for raw_image in raw_images:
-            if raw_image is not "null":
+            if raw_image is not None and raw_image != "null":
                 image_bytes = base64.b64decode(raw_image)
                 new_image_hash = hashlib.sha256(image_bytes).hexdigest()
-                
                 # If the image has changed, upload it to Cloudinary, and update the image URL and hash
                 if new_image_hash not in old_image_hashes:
-                    response = post_image(image_bytes)
+                # Save the image to a temp file
+                    filename = "/tmp/img.png"
+                    stringtime = str(timestamp)
+                    
+                    with open(filename, "wb") as f:
+                        f.write(image_bytes)
+
+                    with open(filename, "rb") as f:
+                        response = post_image(f, stringtime)
+
                     image_url = response["secure_url"]
                     image_hash = new_image_hash
                     
                 # If the image has not changed, use the old image URL and hash
-                else:
-                    image_url = table.get_item(Key={"itemID": itemID})["Item"]["image"]
-                    image_url = table.get_item(Key={"itemID": itemID})["Item"]["image"]
-
+                elif new_image_hash in old_image_hashes and new_image_hash is not None:
                     i = old_image_hashes.index(new_image_hash)
                     image_hash = old_image_hashes[i]
 
-                image_urls.append(image_url)
-                image_hashes.append(image_hash)
+                    image_url = item["images"][i]
+
+                if image_url is not None and image_hash != "null":
+                    image_urls.append(image_url)
+                    image_hashes.append(image_hash)
 
         # Create a new item object
         newInfo = {
@@ -143,16 +159,15 @@ def handler(event, context):
             'timestamp': timestamp,
         }
 
-
         # Update the item in the table
         response = update_item_in_table(table, newInfo)
-        
         return {
             'statusCode': 200,
-            'body': json.dumps(response)
+            'body': json.dumps(response['ResponseMetadata'])
         }
 
     except Exception as e:
+
         return {
             'statusCode': 500,
             'body': json.dumps(str(e))
