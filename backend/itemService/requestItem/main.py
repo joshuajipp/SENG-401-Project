@@ -21,20 +21,25 @@ def decimal_default(obj):
         return float(obj)
     raise TypeError
 
-def append_borrower_to_borrow_requests(table, itemID, data):
-    """Append a borrowerID to the borrowRequests array in the DynamoDB table."""
+def update_borrow_requests(table, itemID, data):
+    current_data = table.get_item(Key={'itemID': itemID})
+    borrow_requests = current_data.get('Item', {}).get('borrowRequests', [])
+
+    for request in borrow_requests:
+        if request['borrowerID'] == data['borrowerID']:
+            request.update(data)
+            break
+    else:
+        borrow_requests.append(data)
+
     response = table.update_item(
-        Key={
-            'itemID': itemID
-        },
-        UpdateExpression="SET borrowRequests = list_append(if_not_exists(borrowRequests, :empty_list), :b)",
-        ExpressionAttributeValues={
-            ':b': [data],
-            ':empty_list': []
-        },
+        Key={'itemID': itemID},
+        UpdateExpression="SET borrowRequests = :br",
+        ExpressionAttributeValues={':br': borrow_requests},
         ReturnValues="UPDATED_NEW"
     )
     return response
+
 
 def handler(event, context):
     try:
@@ -57,7 +62,7 @@ def handler(event, context):
             "endDate": endDate
         }
 
-        response = append_borrower_to_borrow_requests(table, itemID, data)
+        response = update_borrow_requests(table, itemID, data)
         
         return {
             'statusCode': 200,
