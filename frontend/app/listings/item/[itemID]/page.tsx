@@ -8,44 +8,42 @@ import { ItemsGetListI } from "@/app/interfaces/ListItemI";
 
 export default async function page({ params }: { params: { itemID: string } }) {
   const res = await getItemFromID(params.itemID);
-  const testItem: ItemsGetListI = res.items;
+  const item: ItemsGetListI = res.items;
   const ExtraInfoComponent = () => {
     return (
       <div className="flex flex-col p-4 bg-white dark:bg-slate-800 rounded-lg">
         <div className="flex flex-row justify-around ">
           <div className="flex flex-row items-center gap-2">
             <BiCategory />
-            <p>Category: {testItem.category}</p>
+            <p>Category: {item.category}</p>
           </div>
           <div className="flex flex-row items-center gap-2">
             <CiViewList />
-            <p>Condition: {testItem.condition}</p>
+            <p>Condition: {item.condition}</p>
           </div>
         </div>
         <br />
         <div className="flex flex-col gap-2">
           <h1 className=" text-2xl">Description</h1>
-          <p className="">{testItem.description}</p>
+          <p className="">{item.description}</p>
         </div>
       </div>
     );
   };
   const HeaderComponent = () => {
-    const date = new Date(testItem.timestamp * 1000);
+    const date = new Date(item.timestamp * 1000);
     const currentDate = new Date();
     const diffTime = Math.abs(currentDate.getTime() - date.getTime());
     return (
       <div className=" bg-white dark:bg-slate-800 dark:text-white p-4 rounded-lg">
-        <h1 className=" font-bold text-2xl dark:text-white">
-          {testItem.itemName}
-        </h1>
+        <h1 className=" font-bold text-2xl dark:text-white">{item.itemName}</h1>
         <div className="flex flex-row items-center gap-4">
           <div className="rounded-full opacity-80 p-2 bg-brand">
             <FaLocationDot size={25} />
           </div>
           <div className="">
             <p>{Math.ceil(diffTime / (1000 * 60 * 60 * 24))} days ago</p>
-            <p>Location: {testItem.location}</p>
+            <p>Location: {item.location}</p>
           </div>
         </div>
       </div>
@@ -57,11 +55,11 @@ export default async function page({ params }: { params: { itemID: string } }) {
         <div className="flex flex-row justify-between gap-4">
           <div className=" w-full flex flex-col gap-4">
             <HeaderComponent />
-            <ImageViewer />
+            <ImageViewer images={item.images} />
             <ExtraInfoComponent />
           </div>
           <div className="w-1/2">
-            <RequestRentalForm itemID={testItem.itemID} />
+            <RequestRentalForm itemID={item.itemID} />
           </div>
         </div>
       </div>
