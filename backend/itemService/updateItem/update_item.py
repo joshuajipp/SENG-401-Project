@@ -93,6 +93,8 @@ def handler(event, context):
         table = get_dynamodb_table(table_name)
         item = table.get_item(Key={"itemID": itemID})["Item"]
         
+        print(item)
+
         if item is None:
             return {
                 'statusCode': 404,
