@@ -31,6 +31,16 @@ def remove_borrowerID_from_item(table, itemID):
     )
     return response
 
+def remove_start_end_dates_from_item(table, itemID):
+    """Remove the startDate and endDate attributes from an item in the DynamoDB table."""
+    response = table.update_item(
+        Key={
+            'itemID': itemID
+        },
+        UpdateExpression="REMOVE startDate, endDate",
+        ReturnValues="UPDATED_NEW"
+    )
+    return response
 
 
 def handler(event, context):
@@ -39,6 +49,8 @@ def handler(event, context):
         table = get_dynamodb_table(table_name)
         body = parse_event_body(event["body"])
         itemID = body["itemID"]
+
+        response = remove_start_end_dates_from_item(table, itemID)
         
         response = remove_borrowerID_from_item(table, itemID)
         
