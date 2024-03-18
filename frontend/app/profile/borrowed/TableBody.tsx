@@ -2,24 +2,38 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import AcceptReturnModal from "./AcceptReturnModal";
-export default function TableBody() {
-  const startDate = new Date("2024-02-14").toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-  const endDate = new Date("2024-02-28").toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-  const lenderName = "Joseph Stalin";
-  const borrowedState = "Unreturned";
-  const itemName = "Wrench";
-  const toolImage = "https://via.placeholder.com/66x47";
-  const profileImage = "https://via.placeholder.com/55x48";
-  return (
-    <tbody>
+import { getLenderItems } from "@/app/actions";
+import { ItemsGetListI } from "@/app/interfaces/ListItemI";
+export default async function TableBody() {
+  const res = await getLenderItems();
+  const items: ItemsGetListI[] = res.items;
+  const RowEntry = ({ item }: { item: ItemsGetListI }) => {
+    const startDate = new Date("2024-02-14").toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+    const endDate = new Date("2024-02-28").toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+    // const startDate = new Date(item.borrowRequests[0].startDate).toLocaleDateString("en-US", {
+    //   month: "long",
+    //   day: "numeric",
+    //   year: "numeric",
+    // });
+    // const endDate = new Date(item.borrowRequests[0].endDate).toLocaleDateString("en-US", {
+    //   month: "long",
+    //   day: "numeric",
+    //   year: "numeric",
+    // });
+    const lenderName = "Joseph Stalin";
+    const borrowedState = "Unreturned";
+    const itemName = item.itemName;
+    const toolImage = item.images[0] || "/missingImage.jpg";
+    const profileImage = "https://via.placeholder.com/55x48";
+    return (
       <tr className=" bg-[#DDD8E9] rounded transition duration-300 ease-in-out transform hover:scale-[1.02] shadow dark:text-black">
         <td className="p-4">
           <Link href="/" className="flex flex-row gap-2 items-center">
@@ -50,6 +64,13 @@ export default function TableBody() {
           <AcceptReturnModal borrowedState={borrowedState}></AcceptReturnModal>
         </td>
       </tr>
+    );
+  };
+  return (
+    <tbody>
+      {items.map((item, index) => {
+        return <RowEntry key={index} item={item}></RowEntry>;
+      })}
     </tbody>
   );
 }

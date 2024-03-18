@@ -189,29 +189,39 @@ export const getBorrowedItems = async (borrowerID: string) => {
   return borrowedItems;
 };
 
-export const getLenderItems = async (lenderID: string) => {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    console.log("No session found");
-    return;
-  }
-  const response = await fetch(GET_LENDER_ITEMS_URL, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      lenderID: lenderID,
-    },
-  });
+export const getLenderItems = async () => {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      console.error("No session found. Please log in to continue.");
+      return null; // Or throw new Error("No session found");
+    }
 
-  if (response.status !== 200) {
-    const errorMessage =
-      "Failed to get lender item. Status code: " + response.status;
-    console.error(errorMessage);
-    return errorMessage;
-  }
+    // @ts-ignore
+    const lenderID = session.userData.userID;
+    const response = await fetch(GET_LENDER_ITEMS_URL, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        lenderID: lenderID, // Ensure headers are correctly named and valued
+      },
+    });
 
-  const lenderItems = await response.json();
-  return lenderItems;
+    const data = await response.json(); // Parse JSON response once
+
+    if (response.status !== 200) {
+      console.error(
+        `Failed to get lender items. Status code: ${response.status}`,
+        data
+      );
+      return null; // Or throw new Error(`Failed to get lender items. Status code: ${response.status}`);
+    }
+
+    return data; // Successfully return the parsed data
+  } catch (error) {
+    console.error("Error fetching lender items:", error);
+    return null; // Or throw error; depending on how you want to handle errors
+  }
 };
 
 export const deleteItem = async (itemID: string) => {
