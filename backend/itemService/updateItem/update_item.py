@@ -166,7 +166,7 @@ def handler(event, context):
         # Update the item in the table
         response = update_item_in_table(table, newInfo)
         
-        print("This is a test")
+        print(response)
 
         return {
             'statusCode': 200,
