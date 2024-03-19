@@ -1,5 +1,6 @@
 'use client';
 import React from "react";
+import Link from "next/link";
 import { FaTools } from "react-icons/fa";
 import { FaHandshake } from "react-icons/fa";
 import { FaToolbox } from "react-icons/fa";
@@ -10,7 +11,7 @@ export default function HomePage() {
     return (
         <>
             <div className="h-auto w-full">
-                <div className="text-6xl text-center font-bold mb-10">Welcome to ToolShed!</div>
+                <div className="text-6xl text-center font-extrabold mb-10">Welcome to ToolShed!</div>
                 <div className="h-auto w-full flex flex-row justify-evenly items-center">
                     <div className="w-1/2 border-r border-brand h-80 flex flex-col justify-evenly items-center text-center px-10">
                         <div className="text-4xl font-bold underline">Borrow Tools...</div>
@@ -30,6 +31,9 @@ export default function HomePage() {
                             <br></br>Join our community in its goal of helping others!
                         </div>
                     </div>
+                </div>
+                <div className="flex flex-row justify-center items-center mt-10 w-full text-center">
+                    <Link href="/about" className="flex justify-center items-center bg-brand font-bold rounded-lg w-64 h-12 text-center hover:underline text-4xl">Learn More...</Link>
                 </div>
             </div>
 
