@@ -13,8 +13,15 @@ interface Item {
   itemID: string;
   description: string;
   imageHashes: [];
-  borrowRequests: string[];
+  borrowRequests: BorrowRequest[];
   itemName: string;
+}
+
+interface BorrowRequest {
+  borrowerID: string;
+  endDate: string; // Assuming endDate is a string representing a date
+  startDate: string; // Assuming startDate is a string representing a date
+  timestamp: number;
 }
 
 export default function ItemRequests() {
