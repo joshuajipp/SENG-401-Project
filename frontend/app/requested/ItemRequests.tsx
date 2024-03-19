@@ -63,8 +63,8 @@ export default function ItemRequests() {
               <Notification
                 key={`${index}-${requestIndex}`}
                 itemName={item.itemName}
-                borrowerID={request}
-                location="Calgary"
+                borrowerID={request.borrowerID}
+                location={item.location}
               ></Notification>
             ))
           )}
