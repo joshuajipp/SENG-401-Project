@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "./utils/authOptions";
 import { LocationInfo } from "./interfaces/LocationI";
 import { GetItemPageAPIResponse } from "./interfaces/ListItemI";
+import { profile } from "console";
 
 const GET_USER_URL = process.env.GET_USER_URL as string;
 const CREATE_USER_URL = process.env.CREATE_USER_URL as string;
@@ -65,14 +66,12 @@ export const createListing = async (formData: FormData) => {
 export const updateAccountLocation = async (newLocation: LocationInfo) => {
   const session = await getServerSession(authOptions);
   if (!session) {
-    console.log("No session found");
+    console.error("No session found");
     return;
   }
-  console.log("updateAccountLocation");
   const locationString = `${newLocation.city}, ${newLocation.province}, ${newLocation.country}`;
   // @ts-ignore
   const body = { location: locationString, userID: session.userData.userID };
-  console.log(body);
   const response = await fetch(UPDATE_ACCOUNT_LOCATION_URL, {
     method: "PUT",
     headers: {
@@ -89,16 +88,20 @@ export const updateAccountLocation = async (newLocation: LocationInfo) => {
   return response.json();
 };
 
-export const createUser = async (name: string, email: string) => {
+export const createUser = async (
+  name: string,
+  email: string,
+  profilePicture: string
+) => {
   const body = {
     name: name,
     email: email,
     rating: null,
     bio: null,
-    location: { city: null, province: null, country: null },
+    location: null,
     phoneNumber: null,
+    profilePicture: profilePicture,
   };
-  console.log("createUser");
   const response = await fetch(CREATE_USER_URL, {
     method: "POST",
     headers: {
@@ -108,7 +111,7 @@ export const createUser = async (name: string, email: string) => {
   });
   if (!response.ok) {
     const errorMessage =
-      "Failed to update account location. Status code: " + response.status;
+      "Failed to create account. Status code: " + response.status;
     console.error(errorMessage);
     return Promise.reject(new Error(errorMessage));
   }
@@ -135,7 +138,11 @@ export const authenticateUser = async (session: Session) => {
     return res;
   } else {
     if (session.user?.name && session.user?.email) {
-      const newRes = await createUser(session.user.name, session.user.email);
+      const newRes = await createUser(
+        session.user.name,
+        session.user.email,
+        session.user.image as string
+      );
       return newRes;
     }
   }
@@ -187,7 +194,7 @@ export const requestItem = async (formData: FormData) => {
 export const getBorrowedItems = async (borrowerID: string) => {
   const session = await getServerSession(authOptions);
   if (!session) {
-    console.log("No session found");
+    console.error("No session found");
     return;
   }
   const response = await fetch(GET_BORROWED_ITEMS_URL, {
@@ -246,7 +253,7 @@ export const getLenderItems = async () => {
 export const deleteItem = async (itemID: string) => {
   const session = await getServerSession(authOptions);
   if (!session) {
-    console.log("No session found");
+    console.error("No session found");
     return;
   }
   const response = await fetch(DELETE_ITEM_URL, {
@@ -270,7 +277,7 @@ export const deleteItem = async (itemID: string) => {
 export const borrowItem = async (itemID: string, borrowerID: string) => {
   const session = await getServerSession(authOptions);
   if (!session) {
-    console.log("No session found");
+    console.error("No session found");
     return;
   }
   const response = await fetch(BORROW_ITEM_URL, {
@@ -297,7 +304,7 @@ export const borrowItem = async (itemID: string, borrowerID: string) => {
 export const returnItem = async (itemID: string) => {
   const session = await getServerSession(authOptions);
   if (!session) {
-    console.log("No session found");
+    console.error("No session found");
     return;
   }
   const response = await fetch(RETURN_ITEM_URL, {
@@ -335,7 +342,7 @@ export const getItemPage = async ({
 }) => {
   const session = await getServerSession(authOptions);
   if (!session) {
-    console.log("No session found");
+    console.error("No session found");
     return;
   }
   // @ts-ignore
