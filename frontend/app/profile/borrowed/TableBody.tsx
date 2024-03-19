@@ -6,8 +6,8 @@ import { getLenderItems } from "@/app/actions";
 import { ItemsGetListI } from "@/app/interfaces/ListItemI";
 export default async function TableBody() {
   const res = await getLenderItems();
-  const items: ItemsGetListI[] = res.items;
-  const LenderRowEntry = ({ item }: { item: ItemsGetListI }) => {
+  const items: ItemsGetListI[] = res.items || [];
+  const LenderRowEntry: React.FC<{ item: ItemsGetListI }> = ({ item }) => {
     const startDate = new Date("2024-02-14").toLocaleDateString("en-US", {
       month: "long",
       day: "numeric",
@@ -64,9 +64,10 @@ export default async function TableBody() {
   };
   return (
     <tbody>
-      {items.map((item, index) => {
-        return <LenderRowEntry key={index} item={item}></LenderRowEntry>;
-      })}
+      {items &&
+        items.map((item, index) => {
+          return <LenderRowEntry key={index} item={item}></LenderRowEntry>;
+        })}
     </tbody>
   );
 }
