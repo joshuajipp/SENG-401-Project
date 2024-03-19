@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, Dropdown, DropdownItem } from "flowbite-react";
+import { time } from "console";
 
 interface NotificationProps {
   itemName: string;
@@ -42,6 +43,19 @@ export default function Notification({
   //   fetchUserDetails();
   // }, []);
 
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  const timeDifference = currentTimestamp - timestamp;
+
+  let formattedTimeAgo;
+  if (timeDifference < 60) {
+    formattedTimeAgo = `${timeDifference} seconds ago`;
+  } else if (timeDifference < 3600) {
+    formattedTimeAgo = `${Math.floor(timeDifference / 60)} minutes ago`;
+  } else if (timeDifference < 86400) {
+    formattedTimeAgo = `${Math.floor(timeDifference / 3600)} hours ago`;
+  } else {
+    formattedTimeAgo = `${Math.floor(timeDifference / 86400)} days ago`;
+  }
   return (
     <div className="flex bg-brand p-4 border border-gray-700 w-full mx-auto relative">
       <div className="flex">
@@ -72,7 +86,7 @@ export default function Notification({
         </div>
       </div>
       <div className="top-0 right-0 text-gray-300 text-sm pl-10 pt-1">
-        {location} | 1 day ago
+        {location} | {formattedTimeAgo}
       </div>
     </div>
   );
