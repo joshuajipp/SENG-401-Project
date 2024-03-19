@@ -5,7 +5,6 @@ import { time } from "console";
 interface NotificationProps {
   itemName: string;
   borrowerID: string;
-  location: string;
   startDate: string;
   endDate: string;
   timestamp: number;
@@ -14,10 +13,9 @@ interface NotificationProps {
 export default function Notification({
   itemName,
   borrowerID,
-  location,
   startDate,
   endDate,
-  timestamp
+  timestamp,
 }: NotificationProps) {
   const [borrowerDetails, setBorrowerDetails] = useState();
 
@@ -29,8 +27,8 @@ export default function Notification({
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            userID: borrowerID
-          }
+            userID: borrowerID,
+          },
         }
       );
       const userData = await response.json();
@@ -56,9 +54,9 @@ export default function Notification({
 
   const startDateObj = new Date(Number(startDate) * 1000);
   const endDateObj = new Date(Number(endDate) * 1000);
-  const formattedStartDate = startDateObj.toISOString().split('T')[0];
-  const formattedEndDate = endDateObj.toISOString().split('T')[0];
-  
+  const formattedStartDate = startDateObj.toISOString().split("T")[0];
+  const formattedEndDate = endDateObj.toISOString().split("T")[0];
+
   return (
     <div className="flex bg-brand p-4 border border-gray-700 w-full mx-auto relative">
       <div className="flex p-2">
@@ -76,11 +74,11 @@ export default function Notification({
         </Dropdown>
       </div>
       <div className="flex-col flex-grow pl-4 pr-4">
-      {borrowerDetails && (
-        <p className="text-white text-lg mb-4 pr-4">
-          {borrowerDetails.name} has Requested your {itemName}!
-        </p>
-      )}
+        {borrowerDetails && (
+          <p className="text-white text-lg mb-4 pr-4">
+            {borrowerDetails.name} has Requested your {itemName}!
+          </p>
+        )}
         <p className="text-sm">
           {formattedStartDate} - {formattedEndDate}
         </p>
@@ -93,9 +91,11 @@ export default function Notification({
           </button>
         </div>
       </div>
-      <div className="top-0 right-0 text-gray-300 text-sm pl-10 pt-1">
-        {location} | {formattedTimeAgo}
-      </div>
+      {borrowerDetails && (
+        <div className="top-0 right-0 text-gray-300 text-sm pl-10 pt-1">
+          {borrowerDetails.location} | {formattedTimeAgo}
+        </div>
+      )}
     </div>
   );
 }

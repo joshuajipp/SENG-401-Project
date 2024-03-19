@@ -65,7 +65,6 @@ export default function ItemRequests() {
                 key={`${index}-${requestIndex}`}
                 itemName={item.itemName}
                 borrowerID={request.borrowerID}
-                location={item.location}
                 startDate={request.startDate}
                 endDate={request.endDate}
                 timestamp={request.timestamp}
