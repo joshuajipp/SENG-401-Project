@@ -17,7 +17,7 @@ interface Item {
   itemName: string;
 }
 
-export default function MyComponent() {
+export default function ItemRequests() {
   const [requestedItems, setRequestedItems] = useState<Item[]>([]);
 
   useEffect(() => {
