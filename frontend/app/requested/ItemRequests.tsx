@@ -29,6 +29,7 @@ export default function ItemRequests() {
 
   useEffect(() => {
     // Fetch user items when component mounts
+    // Fix hardcoded userID: get current user from auth
     async function getLenderItems() {
       const res = await fetch(
         "https://iat6gyr54ckeyk532ukyqqqx6m0blqpr.lambda-url.ca-central-1.on.aws/",

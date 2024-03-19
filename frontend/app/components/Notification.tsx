@@ -19,29 +19,26 @@ export default function Notification({
   endDate,
   timestamp
 }: NotificationProps) {
-  const [borrowerDetails, setBorrowerDetails] = useState(null);
+  const [borrowerDetails, setBorrowerDetails] = useState();
 
-  // useEffect(() => {
-  //   const fetchUserDetails = async () => {
-  //     const body = {
-  //       userID: borrowerID,
-  //     };
-  //     const response = await fetch(
-  //       "https://v5ezikbdjg4hadx5mqmundbaxq0zjdnj.lambda-url.ca-central-1.on.aws/",
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(body),
-  //       }
-  //     );
-  //     const userData = await response.json();
-  //     setBorrowerDetails(userData);
-  //   };
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      const response = await fetch(
+        "https://v5ezikbdjg4hadx5mqmundbaxq0zjdnj.lambda-url.ca-central-1.on.aws/",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            userID: borrowerID
+          }
+        }
+      );
+      const userData = await response.json();
+      setBorrowerDetails(userData);
+    };
 
-  //   fetchUserDetails();
-  // }, []);
+    fetchUserDetails();
+  }, [borrowerID]);
 
   const currentTimestamp = Math.floor(Date.now() / 1000);
   const timeDifference = currentTimestamp - timestamp;
@@ -64,7 +61,7 @@ export default function Notification({
   
   return (
     <div className="flex bg-brand p-4 border border-gray-700 w-full mx-auto relative">
-      <div className="flex">
+      <div className="flex p-2">
         <Dropdown
           inline
           label={
@@ -78,10 +75,12 @@ export default function Notification({
           <DropdownItem>View Profile</DropdownItem>
         </Dropdown>
       </div>
-      <div className="flex-col flex-grow ml-4">
+      <div className="flex-col flex-grow pl-4 pr-4">
+      {borrowerDetails && (
         <p className="text-white text-lg mb-4 pr-4">
-          {borrowerID} has Requested your {itemName}!
+          {borrowerDetails.name} has Requested your {itemName}!
         </p>
+      )}
         <p className="text-sm">
           {formattedStartDate} - {formattedEndDate}
         </p>
