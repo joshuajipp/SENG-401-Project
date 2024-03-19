@@ -12,6 +12,7 @@ import RentalFormHeader from "@/app/components/RentalFormHeader";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/utils/authOptions";
 import EditItemModal from "./EditItemModal";
+import DeleteItemModal from "./DeleteItemModal";
 
 export default async function page({ params }: { params: { itemID: string } }) {
   const res = await getItemFromID(params.itemID);
@@ -82,7 +83,11 @@ export default async function page({ params }: { params: { itemID: string } }) {
                 <Disclaimer></Disclaimer>
               </RequestRentalForm>
             ) : (
-              <EditItemModal item={item} />
+              <div className=" flex flex-col gap-2">
+                <div className=" text-xl font-bold">Options:</div>
+                <EditItemModal item={item} />
+                <DeleteItemModal item={item}></DeleteItemModal>
+              </div>
             )}
           </div>
         </div>

@@ -4,12 +4,13 @@ import { redirect } from "next/navigation";
 import { authOptions } from "./utils/authOptions";
 import { LocationInfo } from "./interfaces/LocationI";
 import { GetItemPageAPIResponse } from "./interfaces/ListItemI";
+import { revalidatePath } from "next/cache";
 
 const GET_USER_URL = process.env.GET_USER_URL as string;
 const CREATE_USER_URL = process.env.CREATE_USER_URL as string;
 const CREATE_LISTING_URL = process.env.CREATE_LISTING_URL as string;
 const BORROW_ITEM_URL = process.env.BORROW_ITEM_URL as string;
-const DELETE_ITEM_URL = process.env.DELETE_ITEM_URL as string;
+const DELETE_LISTING_URL = process.env.DELETE_LISTING_URL as string;
 const RETURN_ITEM_URL = process.env.RETURN_ITEM_URL as string;
 const GET_ITEM_PAGE_URL = process.env.GET_ITEM_PAGE_URL as string;
 const GET_LENDER_ITEMS_URL = process.env.GET_LENDER_ITEMS_URL as string;
@@ -249,7 +250,7 @@ export const deleteItem = async (itemID: string) => {
     console.log("No session found");
     return;
   }
-  const response = await fetch(DELETE_ITEM_URL, {
+  const response = await fetch(DELETE_LISTING_URL, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -257,14 +258,15 @@ export const deleteItem = async (itemID: string) => {
     },
   });
 
-  if (response.status !== 200) {
-    const errorMessage =
-      "Failed to delete item. Status code: " + response.status;
+  if (!response.ok) {
+    const errorMessage = `Failed to delete item. Status code: ${response.status}`;
     console.error(errorMessage);
     return errorMessage;
   }
+  revalidatePath(`/listings/item`);
+  revalidatePath(`/listings/item/[itemID]`, "page");
 
-  return response;
+  return { message: "Item deleted successfully" };
 };
 
 export const borrowItem = async (itemID: string, borrowerID: string) => {
