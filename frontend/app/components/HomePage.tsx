@@ -13,19 +13,19 @@ export default function HomePage() {
             <div className="h-auto w-full">
                 <div className="text-6xl text-center font-extrabold mb-10">Welcome to ToolShed!</div>
                 <div className="h-auto w-full flex flex-row justify-evenly items-center">
-                    <div className="w-1/2 border-r border-brand h-80 flex flex-col justify-evenly items-center text-center px-10">
-                        <div className="text-4xl font-bold underline">Borrow Tools...</div>
+                    <div className="w-1/2 border-r border-brand h-full flex flex-col justify-evenly items-center text-center px-10">
+                        <div className="text-4xl font-bold underline mb-10">Borrow Tools...</div>
                         <FaTools style={{ fontSize: '7em' }}/>
-                        <div className="text-2xl">
+                        <div className="text-2xl mt-10">
                             Choose a category above to see a list of tools
                             <br></br>that are available to be borrowed,
                             <br></br>and rent the tool of your choice from one of our lenders!
                         </div>
                     </div>
-                    <div className="w-1/2 border-l border-brand h-80 flex flex-col justify-evenly items-center text-center">
-                        <div className="text-4xl font-bold underline">...Or Lend Them!</div>
+                    <div className="w-1/2 h-full flex flex-col justify-evenly items-center text-center px-10">
+                        <div className="text-4xl font-bold underline mb-10">...Or Lend Them!</div>
                         <FaHandshake style={{ fontSize: '7em' }}/>
-                        <div className="text-2xl">
+                        <div className="text-2xl mt-10">
                             List one of your own tools as available to borrow,
                             <br></br>and lend it to someone in need of that tool.
                             <br></br>Join our community in its goal of helping others!
@@ -33,11 +33,11 @@ export default function HomePage() {
                     </div>
                 </div>
                 <div className="flex flex-row justify-center items-center mt-10 w-full text-center">
-                    <Link href="/about" className="flex justify-center items-center bg-brand font-bold rounded-lg w-64 h-12 text-center hover:underline text-4xl">Learn More...</Link>
+                    <Link href="/about" className="flex justify-center items-center bg-brand font-bold rounded-lg w-fit h-full text-center hover:underline text-4xl px-3 py-3">Learn More...</Link>
                 </div>
             </div>
 
-            <div className="bg-brand mt-28 rounded-md w-full h-96 flex flex-row justify-center items-center">
+            <div className="bg-brand mt-28 rounded-md w-full h-full flex flex-row justify-center items-center py-10">
                 <div className="w-2/3 text-center h-5/6 pl-10 pr-10">
                     <header className="font-bold underline text-2xl mb-8">About Us:</header>
                     <span>
@@ -56,7 +56,7 @@ export default function HomePage() {
                 </div>
             </div>
 
-            <div className="bg-brand mt-28 rounded-md w-full h-96 flex flex-row justify-center items-center">
+            <div className="bg-brand mt-28 rounded-md w-full h-full flex flex-row justify-center items-center py-10">
                 <div className="w-1/3 text-center h-5/6 flex justify-center items-center">
                     <FaHandHoldingHeart style={{ fontSize: '15em' }}/>
                 </div>

@@ -14,16 +14,16 @@ export default function AboutWebsite() {
 
             <div className="flex flex-row items-center justify-between text-center">
                 <div className="w-1/3">
-                    <Link href="/" className="bg-brand rounded-lg hover:cursor-pointer hover:underline w-36 h-14 flex flex-row justify-around items-center text-4xl">
+                    <Link href="/" className="bg-brand rounded-lg hover:cursor-pointer hover:underline w-fit h-fit flex flex-row justify-around items-center text-4xl px-3 py-3">
                         <FaArrowLeft style={{ fontSize: '1em' }}/>
-                        Back
+                        <span className="pl-3">Back</span>
                     </Link>
                 </div>
                 <div className="w-1/3 text-4xl text-center font-extrabold">More About ToolShed!</div>
                 <div className="w-1/3"></div>
             </div>
 
-            <div className="border border-brand mt-20 rounded-lg w-full h-96 flex flex-row justify-center items-center">
+            <div className="border border-brand mt-20 rounded-lg w-full h-full flex flex-row justify-center items-center py-5">
                 <div className="w-2/3 text-center h-5/6 pl-10 pr-10">
                     <header className="font-bold underline text-3xl mb-8">What exactly is ToolShed?</header>
                     <span className="text-xl">
@@ -38,7 +38,7 @@ export default function AboutWebsite() {
                 </div>
             </div>
 
-            <div className="border border-brand mt-20 rounded-md w-full h-96 flex flex-row justify-center items-center">
+            <div className="border border-brand mt-20 rounded-md w-full h-full flex flex-row justify-center items-center py-5">
                 <div className="w-1/3 text-center h-5/6 flex justify-center items-center">
                     <FaUsers style={{ fontSize: '15em' }}/>
                 </div>
