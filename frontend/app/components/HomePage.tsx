@@ -33,7 +33,7 @@ export default function HomePage() {
                 </div>
             </div>
 
-            <div className="bg-brand mt-28 rounded-md w-11/12 h-96 flex flex-row justify-center items-center">
+            <div className="bg-brand mt-28 rounded-md w-full h-96 flex flex-row justify-center items-center">
                 <div className="w-2/3 text-center h-5/6 pl-10 pr-10">
                     <header className="font-bold underline text-2xl mb-8">About Us:</header>
                     <span>
@@ -48,13 +48,13 @@ export default function HomePage() {
                     </span>
                 </div>
                 <div className="w-1/3 text-center h-5/6 flex justify-center items-center">
-                    <FaToolbox style={{ fontSize: '8em' }}/>
+                    <FaToolbox style={{ fontSize: '15em' }}/>
                 </div>
             </div>
 
-            <div className="bg-brand mt-28 rounded-md w-11/12 h-96 flex flex-row justify-center items-center">
+            <div className="bg-brand mt-28 rounded-md w-full h-96 flex flex-row justify-center items-center">
                 <div className="w-1/3 text-center h-5/6 flex justify-center items-center">
-                    <FaHandHoldingHeart style={{ fontSize: '7em' }}/>
+                    <FaHandHoldingHeart style={{ fontSize: '15em' }}/>
                 </div>
                 <div className="w-2/3 text-center h-5/6 pl-10 pr-10">
                     <header className="font-bold underline text-2xl mb-8">Our Goal:</header>
