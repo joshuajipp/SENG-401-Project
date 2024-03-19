@@ -33,7 +33,8 @@ def handler(event, context, table=None):
             "rating": data["rating"],
             "ratingCount": 0,
             "bio": data["bio"],
-            "location": data["location"]
+            "location": data["location"],
+            "profilePicture": data["profilePicture"]
             }
         table.put_item(Item=item)
         return {
