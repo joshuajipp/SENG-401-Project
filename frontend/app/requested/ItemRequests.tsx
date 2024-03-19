@@ -13,15 +13,23 @@ interface Item {
   itemID: string;
   description: string;
   imageHashes: [];
-  borrowRequests: string[];
+  borrowRequests: BorrowRequest[];
   itemName: string;
 }
 
-export default function MyComponent() {
+interface BorrowRequest {
+  borrowerID: string;
+  endDate: string;
+  startDate: string;
+  timestamp: number;
+}
+
+export default function ItemRequests() {
   const [requestedItems, setRequestedItems] = useState<Item[]>([]);
 
   useEffect(() => {
     // Fetch user items when component mounts
+    // Fix hardcoded userID: get current user from auth
     async function getLenderItems() {
       const res = await fetch(
         "https://iat6gyr54ckeyk532ukyqqqx6m0blqpr.lambda-url.ca-central-1.on.aws/",
@@ -56,8 +64,10 @@ export default function MyComponent() {
               <Notification
                 key={`${index}-${requestIndex}`}
                 itemName={item.itemName}
-                borrowerID={request}
-                location="Calgary"
+                borrowerID={request.borrowerID}
+                startDate={request.startDate}
+                endDate={request.endDate}
+                timestamp={request.timestamp}
               ></Notification>
             ))
           )}
