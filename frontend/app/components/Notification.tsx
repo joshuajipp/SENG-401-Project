@@ -13,6 +13,7 @@ interface BorrowerDetails {
 }
 interface NotificationProps {
   itemName: string;
+  itemID: string;
   borrowerID: string;
   startDate: string;
   endDate: string;
@@ -21,6 +22,7 @@ interface NotificationProps {
 
 export default function Notification({
   itemName,
+  itemID,
   borrowerID,
   startDate,
   endDate,

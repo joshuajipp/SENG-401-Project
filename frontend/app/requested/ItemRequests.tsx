@@ -87,6 +87,7 @@ export default function ItemRequests() {
               <Notification
                 key={`${index}-${requestIndex}`}
                 itemName={item.itemName}
+                itemID={item.itemID}
                 borrowerID={request.borrowerID}
                 startDate={request.startDate}
                 endDate={request.endDate}
