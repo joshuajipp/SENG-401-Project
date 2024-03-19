@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, Dropdown, DropdownItem } from "flowbite-react";
-import { time } from "console";
 
+interface BorrowerDetails {
+  location: string;
+  rating: number | null;
+  bio: string | null;
+  userID: string;
+  email: string;
+  name: string;
+  ratingCount: number;
+}
 interface NotificationProps {
   itemName: string;
   borrowerID: string;
@@ -17,7 +25,7 @@ export default function Notification({
   endDate,
   timestamp,
 }: NotificationProps) {
-  const [borrowerDetails, setBorrowerDetails] = useState();
+  const [borrowerDetails, setBorrowerDetails] = useState<BorrowerDetails>();
 
   useEffect(() => {
     const fetchUserDetails = async () => {
