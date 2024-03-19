@@ -1,16 +1,27 @@
 'use client';
 import React from "react";
+import Link from "next/link";
 import { AiFillTool } from "react-icons/ai";
 import { FaUsers } from "react-icons/fa";
 import { FaHandHoldingHand } from "react-icons/fa6";
 import { FaHandHoldingHeart } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa6";
 
 export default function AboutWebsite() {
 
     return (
         <>
 
-            <div className="text-6xl text-center font-extrabold">More About ToolShed!</div>
+            <div className="flex flex-row items-center justify-between text-center">
+                <div className="w-1/3">
+                    <Link href="/" className="bg-brand rounded-lg hover:cursor-pointer hover:underline w-36 h-14 flex flex-row justify-around items-center text-4xl">
+                        <FaArrowLeft style={{ fontSize: '1em' }}/>
+                        Back
+                    </Link>
+                </div>
+                <div className="w-1/3 text-4xl text-center font-extrabold">More About ToolShed!</div>
+                <div className="w-1/3"></div>
+            </div>
 
             <div className="border border-brand mt-20 rounded-lg w-full h-96 flex flex-row justify-center items-center">
                 <div className="w-2/3 text-center h-5/6 pl-10 pr-10">
