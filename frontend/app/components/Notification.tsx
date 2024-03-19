@@ -8,6 +8,7 @@ interface BorrowerDetails {
   userID: string;
   email: string;
   name: string;
+  profilePicture: string;
   ratingCount: number;
 }
 interface NotificationProps {
@@ -68,18 +69,21 @@ export default function Notification({
   return (
     <div className="flex bg-brand p-4 border border-gray-700 w-full mx-auto relative">
       <div className="flex p-2">
-        <Dropdown
-          inline
-          label={
-            <Avatar
-              alt="User settings"
-              img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
-              rounded
-            />
-          }
-        >
-          <DropdownItem>View Profile</DropdownItem>
-        </Dropdown>
+        {borrowerDetails && (
+          <Dropdown
+            inline
+            label={
+              <Avatar
+                alt="User settings"
+                // img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
+                img={borrowerDetails.profilePicture}
+                rounded
+              />
+            }
+          >
+            <DropdownItem>View Profile</DropdownItem>
+          </Dropdown>
+        )}
       </div>
       <div className="flex-col flex-grow pl-4 pr-4">
         {borrowerDetails && (
