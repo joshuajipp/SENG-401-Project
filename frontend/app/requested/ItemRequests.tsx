@@ -19,8 +19,8 @@ interface Item {
 
 interface BorrowRequest {
   borrowerID: string;
-  endDate: string; // Assuming endDate is a string representing a date
-  startDate: string; // Assuming startDate is a string representing a date
+  endDate: string;
+  startDate: string;
   timestamp: number;
 }
 
@@ -65,6 +65,9 @@ export default function ItemRequests() {
                 itemName={item.itemName}
                 borrowerID={request.borrowerID}
                 location={item.location}
+                startDate={request.startDate}
+                endDate={request.endDate}
+                timestamp={request.timestamp}
               ></Notification>
             ))
           )}

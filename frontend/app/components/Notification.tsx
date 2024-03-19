@@ -5,12 +5,18 @@ interface NotificationProps {
   itemName: string;
   borrowerID: string;
   location: string;
+  startDate: string;
+  endDate: string;
+  timestamp: number;
 }
 
 export default function Notification({
   itemName,
   borrowerID,
   location,
+  startDate,
+  endDate,
+  timestamp
 }: NotificationProps) {
   const [borrowerDetails, setBorrowerDetails] = useState(null);
 
