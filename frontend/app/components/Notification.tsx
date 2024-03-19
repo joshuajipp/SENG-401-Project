@@ -56,6 +56,12 @@ export default function Notification({
   } else {
     formattedTimeAgo = `${Math.floor(timeDifference / 86400)} days ago`;
   }
+
+  const startDateObj = new Date(Number(startDate) * 1000);
+  const endDateObj = new Date(Number(endDate) * 1000);
+  const formattedStartDate = startDateObj.toISOString().split('T')[0];
+  const formattedEndDate = endDateObj.toISOString().split('T')[0];
+  
   return (
     <div className="flex bg-brand p-4 border border-gray-700 w-full mx-auto relative">
       <div className="flex">
@@ -76,7 +82,10 @@ export default function Notification({
         <p className="text-white text-lg mb-4 pr-4">
           {borrowerID} has Requested your {itemName}!
         </p>
-        <div className="flex">
+        <p className="text-sm">
+          {formattedStartDate} - {formattedEndDate}
+        </p>
+        <div className="flex pt-2">
           <button className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-md mr-2">
             Decline
           </button>
