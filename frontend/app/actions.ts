@@ -18,7 +18,7 @@ const GET_BORROWED_ITEMS_URL = process.env.GET_BORROWED_ITEMS_URL as string;
 const GET_ITEM_FROM_ID_URL = process.env.GET_ITEM_FROM_ID_URL as string;
 const UPDATE_ACCOUNT_LOCATION_URL = process.env
   .UPDATE_ACCOUNT_LOCATION_URL as string;
-
+const UPDATE_LISTING_URL = process.env.UPDATE_LISTING_URL as string;
 export const createListing = async (formData: FormData) => {
   try {
     const session = await getServerSession(authOptions);
@@ -407,4 +407,50 @@ export const searchItemsRedirect = async (formData: FormData) => {
     searchQuery += `location=${location}&`;
   }
   redirect(`/listings${searchQuery}`);
+};
+
+// Waiting for backend to update.
+export const updateListing = async (formData: FormData) => {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      console.error("No session found. Please log in to continue.");
+      return;
+    }
+    const rawFormData = Object.fromEntries(formData.entries());
+
+    const images = String(rawFormData.images).split(",");
+    const modifiedArray = images.map((item) => (item === "" ? null : item));
+    const myBody = {
+      itemID: rawFormData.itemID,
+      category: rawFormData.category,
+      condition: rawFormData.condition,
+      listingTitle: rawFormData.listingTitle,
+      description: rawFormData.description,
+      tags: rawFormData.tags,
+      images: modifiedArray,
+      location: rawFormData.location,
+      lenderID: rawFormData.lenderID,
+    };
+    console.log(myBody);
+    const response = await fetch(UPDATE_LISTING_URL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(myBody),
+    });
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error("Failed to update listing:", errorResponse);
+      const errorMessage = `Failed to update listing. Status code: ${
+        response.status
+      }, Error: ${errorResponse.message || response.statusText}`;
+      return Promise.reject(new Error(errorMessage));
+    }
+    return { status: "success" };
+  } catch (error) {
+    console.error("Error updating listing:", error);
+    return `Error updating listing: ${error}`;
+  }
 };
