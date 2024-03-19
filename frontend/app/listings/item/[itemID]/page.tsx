@@ -9,10 +9,16 @@ import Disclaimer from "@/app/components/Disclaimer";
 import SubmitButton from "@/app/components/SubmitButton";
 import RequestFields from "@/app/components/RequestFields";
 import RentalFormHeader from "@/app/components/RentalFormHeader";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/utils/authOptions";
+import EditItemModal from "./EditItemModal";
 
 export default async function page({ params }: { params: { itemID: string } }) {
   const res = await getItemFromID(params.itemID);
   const item: ItemsGetListI = res.items;
+  const user = await getServerSession(authOptions);
+  // @ts-ignore
+  const userID = user.userData.userID;
   const ExtraInfoComponent = () => {
     return (
       <div className="flex flex-col p-4 bg-white dark:bg-slate-800 rounded-lg">
@@ -62,18 +68,22 @@ export default async function page({ params }: { params: { itemID: string } }) {
             <ImageViewer images={item.images} />
             <ExtraInfoComponent />
           </div>
-          <div className="w-1/2">
-            <RequestRentalForm>
-              <RentalFormHeader itemID={item.itemID} />
-              <RequestFields />
-              <SubmitButton
-                pending="Requesting item..."
-                success="Request has been made successfully!"
-                error="Error requesting item. Please try again later."
-                title="Request Item"
-              />
-              <Disclaimer></Disclaimer>
-            </RequestRentalForm>
+          <div className="w-1/2 bg-white dark:bg-slate-800 p-8 rounded-lg">
+            {userID !== item.lenderID ? (
+              <RequestRentalForm>
+                <RentalFormHeader itemID={item.itemID} />
+                <RequestFields />
+                <SubmitButton
+                  pending="Requesting item..."
+                  success="Request has been made successfully!"
+                  error="Error requesting item. Please try again later."
+                  title="Request Item"
+                />
+                <Disclaimer></Disclaimer>
+              </RequestRentalForm>
+            ) : (
+              <EditItemModal item={item} />
+            )}
           </div>
         </div>
       </div>

@@ -22,7 +22,8 @@ export default function BorrowedItemsContainer() {
   return (
     <table className="table-auto">
       <TableHeader></TableHeader>
-      <TableBody></TableBody>
+      {/* disabled for now... need to implement after spencer's notifications is done. */}
+      {/* <TableBody></TableBody> */}
     </table>
   );
 }

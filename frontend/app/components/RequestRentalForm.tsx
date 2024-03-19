@@ -30,7 +30,7 @@ export default function RequestRentalForm({
       action={async (formData) => {
         notify(formData);
       }}
-      className=" bg-white dark:bg-slate-800 p-8 rounded-lg gap-2 flex flex-col"
+      className="  gap-2 flex flex-col"
     >
       {children}
     </form>
