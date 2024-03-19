@@ -37,7 +37,7 @@ export default function ItemRequests() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            lenderID: "663b6585-2f65-4088-a346-9fe2ec9a9000",
+            lenderID: "8e2a0428-3b39-4e0a-b86e-be2b77936c68",
           }
         }
       );
