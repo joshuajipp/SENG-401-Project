@@ -66,7 +66,8 @@ def handler(event, context):
             "borrowerID": borrowerID,
             "timestamp": timestamp,
             "startDate": startDate,
-            "endDate": endDate
+            "endDate": endDate, 
+            "status": "pending" 
         }
 
         response = update_borrow_requests(table, itemID, data)
