@@ -1,12 +1,19 @@
 
 import boto3
 import json
+from decimal import Decimal
 
 def get_dynamodb_table(table_name):
     """Initialize a DynamoDB resource and get the table."""
     dynamodb = boto3.resource('dynamodb', region_name='ca-central-1')
     table = dynamodb.Table(table_name)
     return table
+
+def decimal_default(obj):
+    """Convert Decimal objects to float. Can be passed as the 'default' parameter to json.dumps()."""
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError
 
 
 def remove_item(table, itemID):
@@ -26,11 +33,11 @@ def handler(event, context):
         itemID = headers.get("itemid", "")
         
         response = remove_item(table, itemID)
-        
+        response = json.dumps(response, default=decimal_default)
         
         return {
             'statusCode': 200,
-            'body': json.dumps(response)
+            'body': response
         }
     except Exception as e:
         return {

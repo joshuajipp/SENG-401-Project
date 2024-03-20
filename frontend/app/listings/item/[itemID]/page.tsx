@@ -5,6 +5,10 @@ import { BiCategory } from "react-icons/bi";
 import { CiViewList } from "react-icons/ci";
 import { getItemFromID } from "@/app/actions";
 import { ItemsGetListI } from "@/app/interfaces/ListItemI";
+import Disclaimer from "@/app/components/Disclaimer";
+import SubmitButton from "@/app/components/SubmitButton";
+import RequestFields from "@/app/components/RequestFields";
+import RentalFormHeader from "@/app/components/RentalFormHeader";
 
 export default async function page({ params }: { params: { itemID: string } }) {
   const res = await getItemFromID(params.itemID);
@@ -59,7 +63,17 @@ export default async function page({ params }: { params: { itemID: string } }) {
             <ExtraInfoComponent />
           </div>
           <div className="w-1/2">
-            <RequestRentalForm itemID={item.itemID} />
+            <RequestRentalForm>
+              <RentalFormHeader itemID={item.itemID} />
+              <RequestFields />
+              <SubmitButton
+                pending="Requesting item..."
+                success="Request has been made successfully!"
+                error="Error requesting item. Please try again later."
+                title="Request Item"
+              />
+              <Disclaimer></Disclaimer>
+            </RequestRentalForm>
           </div>
         </div>
       </div>
