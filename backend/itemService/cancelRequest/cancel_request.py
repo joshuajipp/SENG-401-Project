@@ -29,6 +29,17 @@ def set_borrower_to_borrow_requests(table, itemID, data):
     )
     return response
 
+def delete_borrow_request_array(table, itemID):
+    """Delete a borrowerID from the borrowRequests array in the DynamoDB table."""
+    response = table.update_item(
+        Key={
+            'itemID': itemID
+        },
+        UpdateExpression="REMOVE borrowRequests",
+        ReturnValues="UPDATED_NEW"
+    )
+    return response
+
 def handler(event, context):
     try:
         table_name = 'items-30144999'
@@ -62,7 +73,11 @@ def handler(event, context):
             }
         
         else:
-            response = set_borrower_to_borrow_requests(table, itemID, requests)
+            if requests == []:
+                delete_borrow_request_array(table, itemID)
+
+            else:
+                response = set_borrower_to_borrow_requests(table, itemID, requests)
 
             return {
                 'statusCode': 200,
