@@ -62,14 +62,15 @@ def handler(event, context):
                     'message': 'BorrowerID not found in borrowRequests'
                 })
             }
-
-        return {
-            'statusCode': 200,
-            'body': json.dumps({
-                'message': 'BorrowerID removed successfully',
-                'updatedAttributes': json.dumps(response)
-            })
-        }
+        
+        else:
+            return {
+                'statusCode': 200,
+                'body': json.dumps({
+                    'message': 'BorrowerID removed successfully',
+                    'updatedAttributes': json.dumps(response)
+                })
+            }
     except Exception as e:
         return {
             'statusCode': 500,
