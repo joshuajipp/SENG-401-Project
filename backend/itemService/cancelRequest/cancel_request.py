@@ -40,11 +40,16 @@ def delete_borrow_request_array(table, itemID):
 
 def move_borrow_request_to_past_requests(table, itemID, data):
     """Move a borrow request to the pastRequests array in the DynamoDB table."""
+    item = table.get_item(Key={'itemID': itemID})
+    borrow_requests = item.get('Item', {}).get('pastRequests', [])
+
+    borrow_requests.append(data)
+
     response = table.update_item(
         Key={
             'itemID': itemID
         },
-        UpdateExpression="SET pastRequests = list_append(pastRequests, :b)",
+        UpdateExpression="SET pastRequests = :br",
         ExpressionAttributeValues={
             ':b': data
         },
