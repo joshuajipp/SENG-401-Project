@@ -49,7 +49,7 @@ const cancelRequest = async (itemID: string, borrowerID: string) => {
   const response = await fetch(
     "https://kwvu2ae5lllfz77k5znkrvnrii0brzuf.lambda-url.ca-central-1.on.aws/",
     {
-      method: "DELETE",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
@@ -146,7 +146,12 @@ export default function Notification({
           {formattedStartDate} - {formattedEndDate}
         </p>
         <div className="flex pt-2">
-          <button className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-md mr-2">
+          <button
+            onClick={() => {
+              cancelRequest(itemID, borrowerID);
+            }}
+            className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-md mr-2"
+          >
             Decline
           </button>
           <button
