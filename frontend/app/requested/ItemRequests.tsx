@@ -26,7 +26,7 @@ interface BorrowRequest {
 
 export default function ItemRequests() {
   const [requestedItems, setRequestedItems] = useState<Item[]>([]);
-  const [numRequests, setNumRequests] = useState<Number>(0);
+  const [numRequests, setNumRequests] = useState<number>(0);
 
   const handleAcceptRequest = (itemID: string, borrowerID: string) => {
     setRequestedItems((prevItems) =>
@@ -38,11 +38,13 @@ export default function ItemRequests() {
           if (index !== -1) {
             if (item.borrowRequests.length === 1) {
               // Remove the entire item if it only has one borrow request
+              setNumRequests((prevNumRequests) => prevNumRequests - 1);
               return false;
             } else {
               // Remove the specific borrow request from the borrowRequests array
               const updatedBorrowRequests = [...item.borrowRequests];
               updatedBorrowRequests.splice(index, 1);
+              setNumRequests((prevNumRequests) => prevNumRequests - 1);
               return {
                 ...item,
                 borrowRequests: updatedBorrowRequests,
@@ -108,7 +110,7 @@ export default function ItemRequests() {
       }
     };
     fetchSession();
-  }, []);
+  }, [numRequests]);
 
   return (
     <div>
