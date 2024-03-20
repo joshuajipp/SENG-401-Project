@@ -27,9 +27,30 @@ interface BorrowRequest {
 export default function ItemRequests() {
   const [requestedItems, setRequestedItems] = useState<Item[]>([]);
 
-  const handleAcceptRequest = (itemID: string) => {
+  const handleAcceptRequest = (itemID: string, borrowerID: string) => {
     setRequestedItems((prevItems) =>
-      prevItems.filter((item) => item.itemID !== itemID)
+      prevItems.filter((item) => {
+        if (item.itemID === itemID) {
+          const index = item.borrowRequests.findIndex(
+            (request) => request.borrowerID === borrowerID
+          );
+          if (index !== -1) {
+            if (item.borrowRequests.length === 1) {
+              // Remove the entire item if it only has one borrow request
+              return false;
+            } else {
+              // Remove the specific borrow request from the borrowRequests array
+              const updatedBorrowRequests = [...item.borrowRequests];
+              updatedBorrowRequests.splice(index, 1);
+              return {
+                ...item,
+                borrowRequests: updatedBorrowRequests,
+              };
+            }
+          }
+        }
+        return true; // Keep the item unchanged if it doesn't match the condition
+      })
     );
   };
 
@@ -98,6 +119,7 @@ export default function ItemRequests() {
                 startDate={request.startDate}
                 endDate={request.endDate}
                 timestamp={request.timestamp}
+                handleAccept={handleAcceptRequest}
               ></Notification>
             ))
           )}
