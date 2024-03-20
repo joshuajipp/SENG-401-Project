@@ -144,6 +144,7 @@ jobs:
         run: |
           cd ./backend/itemService/cancelRequest
           zip -r ../../../infra/cancelRequest.zip .
+          cd -
       
       - name: Install Python dependencies getLenderItems
         run: |
