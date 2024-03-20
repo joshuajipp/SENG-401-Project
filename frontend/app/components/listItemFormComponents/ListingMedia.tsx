@@ -14,7 +14,6 @@ export default function ListingMedia({ item }: { item?: ItemsGetListI }) {
           tall (we recommend at least 1000px.)
         </h3>
         <h3>Max image size is: 5 MB </h3>
-        <h3>Click on a frame to upload an image.</h3>
       </div>
       <UploadImageComponent item={item} />
     </ListItemFormTemplate>
