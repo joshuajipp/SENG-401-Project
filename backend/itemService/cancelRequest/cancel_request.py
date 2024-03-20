@@ -53,8 +53,6 @@ def handler(event, context):
             else:
                 cancelled = True
 
-        response = set_borrower_to_borrow_requests(table, itemID, requests)
-        
         if not cancelled:
             return {
                 'statusCode': 404,
@@ -64,6 +62,8 @@ def handler(event, context):
             }
         
         else:
+            response = set_borrower_to_borrow_requests(table, itemID, requests)
+
             return {
                 'statusCode': 200,
                 'body': json.dumps({
