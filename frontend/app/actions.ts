@@ -420,7 +420,6 @@ export const updateListing = async (formData: FormData) => {
       return;
     }
     const rawFormData = Object.fromEntries(formData.entries());
-
     const images = String(rawFormData.images).split(",");
     const modifiedArray = images.map((item) => (item === "" ? null : item));
     const myBody = {
@@ -431,10 +430,12 @@ export const updateListing = async (formData: FormData) => {
       description: rawFormData.description,
       tags: rawFormData.tags,
       images: modifiedArray,
-      location: rawFormData.location,
-      lenderID: rawFormData.lenderID,
+      // @ts-ignore
+      location: session.userData.location,
+      // @ts-ignore
+      lenderID: session.userData.userID,
     };
-    console.log(myBody);
+    console.log(JSON.stringify(myBody));
     const response = await fetch(UPDATE_LISTING_URL, {
       method: "PUT",
       headers: {
@@ -444,10 +445,10 @@ export const updateListing = async (formData: FormData) => {
     });
     if (!response.ok) {
       const errorResponse = await response.json();
-      console.error("Failed to update listing:", errorResponse);
       const errorMessage = `Failed to update listing. Status code: ${
         response.status
       }, Error: ${errorResponse.message || response.statusText}`;
+      console.log(errorMessage);
       return Promise.reject(new Error(errorMessage));
     }
     return { status: "success" };
