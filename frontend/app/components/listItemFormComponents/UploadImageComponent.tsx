@@ -1,15 +1,20 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Button } from "flowbite-react";
 import { FaTimes } from "react-icons/fa";
+import { ItemsGetListI } from "@/app/interfaces/ListItemI";
 
-export default function UploadImageComponent() {
+export default function UploadImageComponent({
+  item,
+}: {
+  item?: ItemsGetListI;
+}) {
   const [images, setImages] = useState<(File | undefined)[]>(
     Array.from({ length: 8 })
   );
   const [imageURLs, setImageURLs] = useState<string[]>(
-    Array.from({ length: 8 })
+    item?.images || Array.from({ length: 8 })
   );
   const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
   const handleAddImage = (newImage: File, index: number) => {

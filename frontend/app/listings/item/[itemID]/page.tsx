@@ -46,17 +46,27 @@ export default async function page({ params }: { params: { itemID: string } }) {
     const currentDate = new Date();
     const diffTime = Math.abs(currentDate.getTime() - date.getTime());
     return (
-      <div className=" bg-white dark:bg-slate-800 dark:text-white p-4 rounded-lg">
-        <h1 className=" font-bold text-2xl dark:text-white">{item.itemName}</h1>
-        <div className="flex flex-row items-center gap-4">
-          <div className="rounded-full opacity-80 p-2 bg-brand">
-            <FaLocationDot size={25} />
-          </div>
-          <div className="">
-            <p>{Math.ceil(diffTime / (1000 * 60 * 60 * 24))} days ago</p>
-            <p>Location: {item.location}</p>
+      <div className=" bg-white dark:bg-slate-800 dark:text-white p-4 rounded-lg flex flex-row gap-2 justify-between">
+        <div className="">
+          <h1 className=" font-bold text-2xl dark:text-white">
+            {item.itemName}
+          </h1>
+          <div className="flex flex-row items-center gap-4">
+            <div className="rounded-full opacity-80 p-2 bg-brand">
+              <FaLocationDot size={25} />
+            </div>
+            <div className="">
+              <p>{Math.ceil(diffTime / (1000 * 60 * 60 * 24))} days ago</p>
+              <p>Location: {item.location}</p>
+            </div>
           </div>
         </div>
+        {userID === item.lenderID && (
+          <div className=" flex flex-col gap-1">
+            <EditItemModal item={item} />
+            <DeleteItemModal item={item}></DeleteItemModal>
+          </div>
+        )}
       </div>
     );
   };
@@ -66,11 +76,12 @@ export default async function page({ params }: { params: { itemID: string } }) {
         <div className="flex flex-row justify-between gap-4">
           <div className=" w-full flex flex-col gap-4">
             <HeaderComponent />
+
             <ImageViewer images={item.images} />
             <ExtraInfoComponent />
           </div>
-          <div className="w-1/2 bg-white dark:bg-slate-800 p-8 rounded-lg">
-            {userID !== item.lenderID ? (
+          {userID !== item.lenderID && (
+            <div className="w-1/2 bg-white dark:bg-slate-800 p-8 rounded-lg">
               <RequestRentalForm>
                 <RentalFormHeader itemID={item.itemID} />
                 <RequestFields />
@@ -82,14 +93,8 @@ export default async function page({ params }: { params: { itemID: string } }) {
                 />
                 <Disclaimer></Disclaimer>
               </RequestRentalForm>
-            ) : (
-              <div className=" flex flex-col gap-2">
-                <div className=" text-xl font-bold">Options:</div>
-                <EditItemModal item={item} />
-                <DeleteItemModal item={item}></DeleteItemModal>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </>

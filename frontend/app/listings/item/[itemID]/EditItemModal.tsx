@@ -48,8 +48,8 @@ export default function EditItemModal({ item }: { item: ItemsGetListI }) {
           <Modal.Header>Editing item</Modal.Header>
           <Modal.Body>
             <div className="space-y-6">
-              <ListingDetails></ListingDetails>
-              <ListingMedia></ListingMedia>
+              <ListingDetails item={item}></ListingDetails>
+              <ListingMedia item={item}></ListingMedia>
             </div>
           </Modal.Body>
           <Modal.Footer>

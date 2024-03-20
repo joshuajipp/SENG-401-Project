@@ -26,7 +26,12 @@ export default function ImageViewer({ images }: { images: string[] }) {
   }) => {
     return (
       <div className=" size-[120px] relative">
-        <Image alt="product image" src={imageLink} fill />
+        <Image
+          alt="product image"
+          src={imageLink}
+          fill
+          className="object-contain"
+        />
       </div>
     );
   };

@@ -1,29 +1,31 @@
 import { Select, Label, TextInput, Textarea } from "flowbite-react";
-import { Condition } from "@/app/interfaces/ListItemI";
+import { Condition, ItemsGetListI } from "@/app/interfaces/ListItemI";
 import ListItemFormTemplate from "./ListItemFormTemplate";
 import TagsComponent from "./TagsComponent";
 import CategorySelect from "../CategorySelect";
 import { CiViewList } from "react-icons/ci";
 
-export default function ListingDetails() {
+export default function ListingDetails({ item }: { item?: ItemsGetListI }) {
   return (
     <ListItemFormTemplate formNumber={1} formHeader={"ListingDetails"}>
       <div>
         <div className="mb-2 block font-bold">
           <Label htmlFor="category" value="Category: " />
         </div>
-        <CategorySelect />
+        <CategorySelect item={item} />
       </div>
       <div>
         <div className="mb-2 block font-bold">
           <Label htmlFor="condition" value="Condition: " />
         </div>
         <Select icon={CiViewList} id="condition" name="condition" required>
-          <option selected disabled hidden>
-            Choose a condition
-          </option>
+          {!item && (
+            <option selected disabled hidden>
+              Choose a condition
+            </option>
+          )}
           {Object.values(Condition).map((cond) => (
-            <option key={cond} value={cond}>
+            <option key={cond} value={cond} selected={cond == item?.condition}>
               {cond}
             </option>
           ))}
@@ -33,7 +35,13 @@ export default function ListingDetails() {
         <div className="mb-2 block font-bold">
           <Label htmlFor="listingTitle" value="Listing title" />
         </div>
-        <TextInput id="listingTitle" type="text" required name="listingTitle" />
+        <TextInput
+          id="listingTitle"
+          type="text"
+          required
+          name="listingTitle"
+          defaultValue={item?.itemName}
+        />
       </div>
       <div>
         <div className="mb-2 block font-bold">
@@ -44,6 +52,7 @@ export default function ListingDetails() {
           placeholder="Enter a description"
           rows={4}
           name="description"
+          defaultValue={item?.description}
         />
       </div>
       <TagsComponent></TagsComponent>
