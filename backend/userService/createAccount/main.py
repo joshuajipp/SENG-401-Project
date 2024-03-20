@@ -25,6 +25,13 @@ def handler(event, context, table=None):
                     "message": "Email already exists"
                 })
             }
+
+        if data['profilePicture'] != "" and data['profilePicture'] is not None:
+            pfp = data['profilePicture']
+
+        else:
+            pfp = "https://media.discordapp.net/attachments/1202289104428224542/1219726258964004946/Pastamania.jpg?ex=660c5999&is=65f9e499&hm=a7e0a40bf13fb54656820c9bb294d6716db4b7db5bdd1e9a8d703948fc82f25c&=&format=png"
+
         # if email doesn't exist, create new user
         item={
             "userID": str(uuid.uuid4()),
@@ -34,7 +41,7 @@ def handler(event, context, table=None):
             "ratingCount": 0,
             "bio": data["bio"],
             "location": data["location"],
-            "profilePicture": data["profilePicture"]
+            "profilePicture": pfp
             }
         table.put_item(Item=item)
         return {
