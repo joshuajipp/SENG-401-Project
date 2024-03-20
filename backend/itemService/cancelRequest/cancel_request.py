@@ -51,12 +51,12 @@ def handler(event, context):
                 'itemID': itemID
             }
         )
-        
+
         if 'Item' not in item:
             return {
                 'statusCode': 404,
                 'body': json.dumps({
-                    'message': f'Item with {itemID} not found'
+                    'message': f'Item {itemID} not found'
                 })
             }
         
@@ -64,7 +64,7 @@ def handler(event, context):
             return {
                 'statusCode': 404,
                 'body': json.dumps({
-                    'message': f'Item "{itemID} has no borrowRequests'
+                    'message': f'Item {itemID} has no borrowRequests'
                 })
             }
         
