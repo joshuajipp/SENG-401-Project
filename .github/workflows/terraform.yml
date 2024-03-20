@@ -139,6 +139,12 @@ jobs:
           cd ./backend/itemService/requestItem
           zip -r ../../../infra/requestItem.zip .
           cd -
+
+      - name: Zip create cancelRequest function
+        run: |
+          cd ./backend/itemService/cancelRequest
+          zip -r ../../../infra/cancelRequest.zip .
+          cd -
       
       - name: Install Python dependencies getLenderItems
         run: |
