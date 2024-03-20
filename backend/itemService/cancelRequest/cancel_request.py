@@ -51,8 +51,25 @@ def handler(event, context):
                 'itemID': itemID
             }
         )
-
-        borrowRequests = item['Item']['borrowRequests']
+        
+        if 'Item' not in item:
+            return {
+                'statusCode': 404,
+                'body': json.dumps({
+                    'message': f'Item with {itemID} not found'
+                })
+            }
+        
+        if 'borrowRequests' not in item['Item']:
+            return {
+                'statusCode': 404,
+                'body': json.dumps({
+                    'message': f'Item "{itemID} has no borrowRequests'
+                })
+            }
+        
+        else:
+            borrowRequests = item['Item']['borrowRequests']
 
         requests = []
         cancelled = False
