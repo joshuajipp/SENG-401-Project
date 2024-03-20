@@ -74,7 +74,7 @@ def handler(event, context):
         
         else:
             if requests == []:
-                delete_borrow_request_array(table, itemID)
+                response = delete_borrow_request_array(table, itemID)
 
             else:
                 response = set_borrower_to_borrow_requests(table, itemID, requests)
