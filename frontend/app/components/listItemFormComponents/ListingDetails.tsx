@@ -18,14 +18,18 @@ export default function ListingDetails({ item }: { item?: ItemsGetListI }) {
         <div className="mb-2 block font-bold">
           <Label htmlFor="condition" value="Condition: " />
         </div>
-        <Select icon={CiViewList} id="condition" name="condition" required>
-          {!item && (
-            <option selected disabled hidden>
-              Choose a condition
-            </option>
-          )}
+        <Select
+          icon={CiViewList}
+          id="condition"
+          name="condition"
+          required
+          defaultValue={item ? item.condition : ""}
+        >
+          <option disabled hidden value="">
+            Choose a condition
+          </option>
           {Object.values(Condition).map((cond) => (
-            <option key={cond} value={cond} selected={cond == item?.condition}>
+            <option key={cond} value={cond}>
               {cond}
             </option>
           ))}
