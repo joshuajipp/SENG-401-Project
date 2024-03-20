@@ -27,6 +27,12 @@ interface BorrowRequest {
 export default function ItemRequests() {
   const [requestedItems, setRequestedItems] = useState<Item[]>([]);
 
+  const handleAcceptRequest = (itemID: string) => {
+    setRequestedItems((prevItems) =>
+      prevItems.filter((item) => item.itemID !== itemID)
+    );
+  };
+
   async function fetchUserDetails(email: string) {
     const response = await fetch(
       "https://v5ezikbdjg4hadx5mqmundbaxq0zjdnj.lambda-url.ca-central-1.on.aws/",
