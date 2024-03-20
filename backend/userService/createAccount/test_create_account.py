@@ -43,7 +43,8 @@ def test_write_user_into_table(dynamodb_mock):
         "email": "john@example.com",
         "rating": 5,
         "bio": "Sample bio",
-        "location": "Sample location"
+        "location": "Sample location",
+        "profilePicture": "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg"
     })}
     context = {}
     response = handler(event, context, table)
