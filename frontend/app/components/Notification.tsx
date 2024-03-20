@@ -18,6 +18,7 @@ interface NotificationProps {
   startDate: string;
   endDate: string;
   timestamp: number;
+  handleAccept: Function;
 }
 
 const borrowItem = async (itemID: string, borrowerID: string) => {
@@ -41,7 +42,6 @@ const borrowItem = async (itemID: string, borrowerID: string) => {
     console.error(errorMessage);
     return errorMessage;
   }
-
   return response;
 };
 
@@ -52,6 +52,7 @@ export default function Notification({
   startDate,
   endDate,
   timestamp,
+  handleAccept,
 }: NotificationProps) {
   const [borrowerDetails, setBorrowerDetails] = useState<BorrowerDetails>();
 
@@ -127,6 +128,7 @@ export default function Notification({
           <button
             onClick={() => {
               borrowItem(itemID, borrowerID);
+              handleAccept(itemID, borrowerID);
             }}
             className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md"
           >
