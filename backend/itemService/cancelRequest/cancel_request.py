@@ -46,12 +46,23 @@ def handler(event, context):
         borrowRequests = item['Item']['borrowRequests']
 
         requests = []
+        cancelled = False
         for request in borrowRequests:
             if request['borrowerID'] != borrowerID:
                 requests.append(request)
+            else:
+                cancelled = True
 
         response = set_borrower_to_borrow_requests(table, itemID, requests)
         
+        if not cancelled:
+            return {
+                'statusCode': 404,
+                'body': json.dumps({
+                    'message': 'BorrowerID not found in borrowRequests'
+                })
+            }
+
         return {
             'statusCode': 200,
             'body': json.dumps({
