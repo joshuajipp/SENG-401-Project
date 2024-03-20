@@ -54,6 +54,11 @@ def handler(event, context):
 
         if startDate > endDate:
             raise ValueError("startDate cannot be after endDate")
+        
+        item = table.get_item(Key={'itemID': itemID})
+    
+        if "borrowRequests" in item["Item"] and borrowerID in item["Item"]["borrowRequests"]:
+            raise ValueError("borrowerID already exists in borrowRequests")
 
         data = {
             "borrowerID": borrowerID,
