@@ -68,9 +68,10 @@ def handler(event, context):
                 'statusCode': 200,
                 'body': json.dumps({
                     'message': 'BorrowerID removed successfully',
-                    'updatedAttributes': json.dumps(response)
+                    'updatedAttributes': json.dumps(response['ResponseMetadata'])
                 })
             }
+        
     except Exception as e:
         return {
             'statusCode': 500,
