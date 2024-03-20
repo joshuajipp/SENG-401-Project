@@ -26,6 +26,7 @@ interface BorrowRequest {
 
 export default function ItemRequests() {
   const [requestedItems, setRequestedItems] = useState<Item[]>([]);
+  const [numRequests, setNumRequests] = useState<Number>(0);
 
   const handleAcceptRequest = (itemID: string, borrowerID: string) => {
     setRequestedItems((prevItems) =>
@@ -67,7 +68,7 @@ export default function ItemRequests() {
     );
     const userData = await response.json();
     return userData;
-  };
+  }
 
   async function getLenderItems(userID: string) {
     const res = await fetch(
@@ -83,10 +84,16 @@ export default function ItemRequests() {
     if (res.status == 200) {
       const itemObject = await res.json();
       const items = itemObject["items"];
-      const filteredItems = items.filter(
-        (item: Item) => item.borrowRequests && item.borrowRequests.length > 0
-      );
+      let totalRequests = 0;
+      const filteredItems = items.filter((item: Item) => {
+        if (item.borrowRequests && item.borrowRequests.length > 0) {
+          totalRequests += item.borrowRequests.length;
+          return true;
+        }
+        return false;
+      });
       setRequestedItems(filteredItems);
+      setNumRequests(totalRequests);
     }
   }
 
