@@ -26,6 +26,36 @@ interface BorrowRequest {
 
 export default function ItemRequests() {
   const [requestedItems, setRequestedItems] = useState<Item[]>([]);
+  const [numRequests, setNumRequests] = useState<number>(0);
+
+  const handleAcceptRequest = (itemID: string, borrowerID: string) => {
+    setRequestedItems((prevItems) =>
+      prevItems.filter((item) => {
+        if (item.itemID === itemID) {
+          const index = item.borrowRequests.findIndex(
+            (request) => request.borrowerID === borrowerID
+          );
+          if (index !== -1) {
+            if (item.borrowRequests.length === 1) {
+              // Remove the entire item if it only has one borrow request
+              setNumRequests((prevNumRequests) => prevNumRequests - 1);
+              return false;
+            } else {
+              // Remove the specific borrow request from the borrowRequests array
+              const updatedBorrowRequests = [...item.borrowRequests];
+              updatedBorrowRequests.splice(index, 1);
+              setNumRequests((prevNumRequests) => prevNumRequests - 1);
+              return {
+                ...item,
+                borrowRequests: updatedBorrowRequests,
+              };
+            }
+          }
+        }
+        return true; // Keep the item unchanged if it doesn't match the condition
+      })
+    );
+  };
 
   async function fetchUserDetails(email: string) {
     const response = await fetch(
@@ -40,7 +70,7 @@ export default function ItemRequests() {
     );
     const userData = await response.json();
     return userData;
-  };
+  }
 
   async function getLenderItems(userID: string) {
     const res = await fetch(
@@ -56,10 +86,16 @@ export default function ItemRequests() {
     if (res.status == 200) {
       const itemObject = await res.json();
       const items = itemObject["items"];
-      const filteredItems = items.filter(
-        (item: Item) => item.borrowRequests && item.borrowRequests.length > 0
-      );
+      let totalRequests = 0;
+      const filteredItems = items.filter((item: Item) => {
+        if (item.borrowRequests && item.borrowRequests.length > 0) {
+          totalRequests += item.borrowRequests.length;
+          return true;
+        }
+        return false;
+      });
       setRequestedItems(filteredItems);
+      setNumRequests(totalRequests);
     }
   }
 
@@ -74,7 +110,7 @@ export default function ItemRequests() {
       }
     };
     fetchSession();
-  }, []);
+  }, [numRequests]);
 
   return (
     <div>
@@ -87,10 +123,12 @@ export default function ItemRequests() {
               <Notification
                 key={`${index}-${requestIndex}`}
                 itemName={item.itemName}
+                itemID={item.itemID}
                 borrowerID={request.borrowerID}
                 startDate={request.startDate}
                 endDate={request.endDate}
                 timestamp={request.timestamp}
+                handleAccept={handleAcceptRequest}
               ></Notification>
             ))
           )}

@@ -13,18 +13,46 @@ interface BorrowerDetails {
 }
 interface NotificationProps {
   itemName: string;
+  itemID: string;
   borrowerID: string;
   startDate: string;
   endDate: string;
   timestamp: number;
+  handleAccept: Function;
 }
+
+const borrowItem = async (itemID: string, borrowerID: string) => {
+  const response = await fetch(
+    "https://kjqor37l3b7q6yymuewr7enudy0dvgef.lambda-url.ca-central-1.on.aws/",
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        itemID: itemID,
+        borrowerID: borrowerID,
+      }),
+    }
+  );
+
+  if (response.status !== 200) {
+    const errorMessage =
+      "Failed to borrow item. Status code: " + response.status;
+    console.error(errorMessage);
+    return errorMessage;
+  }
+  return response;
+};
 
 export default function Notification({
   itemName,
+  itemID,
   borrowerID,
   startDate,
   endDate,
   timestamp,
+  handleAccept,
 }: NotificationProps) {
   const [borrowerDetails, setBorrowerDetails] = useState<BorrowerDetails>();
 
@@ -52,7 +80,7 @@ export default function Notification({
 
   let formattedTimeAgo;
   if (timeDifference < 60) {
-    formattedTimeAgo = `${timeDifference} seconds ago`;
+    formattedTimeAgo = `${Math.floor(timeDifference)} seconds ago`;
   } else if (timeDifference < 3600) {
     formattedTimeAgo = `${Math.floor(timeDifference / 60)} minutes ago`;
   } else if (timeDifference < 86400) {
@@ -75,7 +103,6 @@ export default function Notification({
             label={
               <Avatar
                 alt="User settings"
-                // img="https://flowbite.com/docs/images/people/profile-picture-5.jpg"
                 img={borrowerDetails.profilePicture}
                 rounded
               />
@@ -98,7 +125,13 @@ export default function Notification({
           <button className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-md mr-2">
             Decline
           </button>
-          <button className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md">
+          <button
+            onClick={() => {
+              borrowItem(itemID, borrowerID);
+              handleAccept(itemID, borrowerID);
+            }}
+            className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md"
+          >
             Accept
           </button>
         </div>
