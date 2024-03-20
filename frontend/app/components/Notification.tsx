@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, Dropdown, DropdownItem } from "flowbite-react";
+import { cancelRequest } from "../actions";
 
 interface BorrowerDetails {
   location: string;
@@ -18,7 +19,7 @@ interface NotificationProps {
   startDate: string;
   endDate: string;
   timestamp: number;
-  handleAccept: Function;
+  handleRemove: Function;
 }
 
 const borrowItem = async (itemID: string, borrowerID: string) => {
@@ -45,6 +46,8 @@ const borrowItem = async (itemID: string, borrowerID: string) => {
   return response;
 };
 
+
+
 export default function Notification({
   itemName,
   itemID,
@@ -52,7 +55,7 @@ export default function Notification({
   startDate,
   endDate,
   timestamp,
-  handleAccept,
+  handleRemove,
 }: NotificationProps) {
   const [borrowerDetails, setBorrowerDetails] = useState<BorrowerDetails>();
 
@@ -122,13 +125,19 @@ export default function Notification({
           {formattedStartDate} - {formattedEndDate}
         </p>
         <div className="flex pt-2">
-          <button className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-md mr-2">
+          <button
+            onClick={() => {
+              cancelRequest(itemID, borrowerID);
+              handleRemove(itemID, borrowerID);
+            }}
+            className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-md mr-2"
+          >
             Decline
           </button>
           <button
             onClick={() => {
               borrowItem(itemID, borrowerID);
-              handleAccept(itemID, borrowerID);
+              handleRemove(itemID, borrowerID);
             }}
             className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md"
           >
