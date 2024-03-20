@@ -28,7 +28,7 @@ export default function ItemRequests() {
   const [requestedItems, setRequestedItems] = useState<Item[]>([]);
   const [numRequests, setNumRequests] = useState<number>(0);
 
-  const handleAcceptRequest = (itemID: string, borrowerID: string) => {
+  const handleRemoveRequest = (itemID: string, borrowerID: string) => {
     setRequestedItems((prevItems) =>
       prevItems.filter((item) => {
         if (item.itemID === itemID) {
@@ -128,7 +128,7 @@ export default function ItemRequests() {
                 startDate={request.startDate}
                 endDate={request.endDate}
                 timestamp={request.timestamp}
-                handleAccept={handleAcceptRequest}
+                handleRemove={handleRemoveRequest}
               ></Notification>
             ))
           )}
