@@ -19,13 +19,11 @@ export default function UploadImageComponent({
       alert("Image is too large. Please upload an image smaller than 5MB.");
       return;
     }
-    console.log(index);
     const reader = new FileReader();
     reader.onload = (e) => {
       if (e.target?.result) {
         let imageString = e.target.result as string;
         let URLArray = imageString.split(",");
-        console.log(URLArray[1]);
         setImageURLs((prevURLs) => {
           const updatedURLs = [...prevURLs];
           updatedURLs[index] = URLArray[1]; // Assuming you want to store only the Base64 content without the data URL prefix
