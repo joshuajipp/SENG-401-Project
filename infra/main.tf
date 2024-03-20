@@ -585,7 +585,7 @@ resource "aws_lambda_function_url" "url_request_item" {
 }
 
 resource "aws_lambda_function_url" "url_cancel_request" {
-  function_name      = aws_lambda_function.request_item_lambda.function_name
+  function_name      = aws_lambda_function.cancel_request_lambda.function_name
   authorization_type = "NONE"
 
   cors {
