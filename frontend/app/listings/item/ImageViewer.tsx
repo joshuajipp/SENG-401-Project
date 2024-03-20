@@ -10,7 +10,12 @@ export default function ImageViewer({ images }: { images: string[] }) {
   }) => {
     return (
       <div className=" size-[360px] relative">
-        <Image alt="product image" src={imageLink} fill />
+        <Image
+          alt="product image"
+          src={imageLink}
+          fill
+          className="object-contain"
+        />
       </div>
     );
   };
@@ -21,14 +26,19 @@ export default function ImageViewer({ images }: { images: string[] }) {
   }) => {
     return (
       <div className=" size-[120px] relative">
-        <Image alt="product image" src={imageLink} fill />
+        <Image
+          alt="product image"
+          src={imageLink}
+          fill
+          className="object-contain"
+        />
       </div>
     );
   };
   return (
     <>
       <div className=" bg-white rounded-lg dark:bg-slate-800 gap-1 grid grid-cols-3 px-2">
-        {images.length > 0 ? (
+        {images?.length > 0 ? (
           <>
             <div className=" col-span-2 self-center flex justify-center items-center">
               <LargeImageElement imageLink={images[0]} />

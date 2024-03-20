@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import TableBody from "../borrowed/TableBody";
 
 export default function ActiveListingsContainer() {
@@ -23,7 +23,9 @@ export default function ActiveListingsContainer() {
   return (
     <table className="table-auto">
       <TableHeader></TableHeader>
-      <TableBody></TableBody>
+      <Suspense fallback={<div>Loading...</div>}>
+        <TableBody></TableBody>
+      </Suspense>
     </table>
   );
 }

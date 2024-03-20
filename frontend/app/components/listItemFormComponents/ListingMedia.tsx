@@ -1,6 +1,7 @@
+import { ItemsGetListI } from "@/app/interfaces/ListItemI";
 import ListItemFormTemplate from "./ListItemFormTemplate";
 import UploadImageComponent from "./UploadImageComponent";
-export default function ListingMedia() {
+export default function ListingMedia({ item }: { item?: ItemsGetListI }) {
   return (
     <ListItemFormTemplate formNumber={2} formHeader={"Media"}>
       <div className=" flex flex-col gap-2.5 text-sm text-brand font-medium">
@@ -13,9 +14,8 @@ export default function ListingMedia() {
           tall (we recommend at least 1000px.)
         </h3>
         <h3>Max image size is: 5 MB </h3>
-        <h3>Click on a frame to upload an image.</h3>
       </div>
-      <UploadImageComponent />
+      <UploadImageComponent item={item} />
     </ListItemFormTemplate>
   );
 }

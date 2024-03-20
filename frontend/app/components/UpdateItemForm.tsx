@@ -1,22 +1,19 @@
 "use client";
-import React from "react";
-import { requestItem } from "../actions";
+import { updateListing } from "../actions";
+import { useRef } from "react";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
-export default function RequestRentalForm({
+export default function UpdateItemForm({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
-
+  const ref = useRef<HTMLFormElement>(null);
   const notify = (formData: FormData) =>
-    toast.promise(requestItem(formData), {
-      pending: "Requesting item...",
+    toast.promise(updateListing(formData), {
+      pending: "Listing is being updated...",
       success: {
         render() {
-          router.push("/");
-          return "Item has been requested!";
+          return "Listing has been updated!";
         },
       },
       error: {
@@ -25,12 +22,15 @@ export default function RequestRentalForm({
         },
       },
     });
+
   return (
     <form
+      ref={ref}
+      className="flex flex-col gap-4 text-brand"
       action={async (formData) => {
+        ref.current?.reset();
         notify(formData);
       }}
-      className="  gap-2 flex flex-col"
     >
       {children}
     </form>

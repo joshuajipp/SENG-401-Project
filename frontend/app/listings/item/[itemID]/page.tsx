@@ -9,10 +9,17 @@ import Disclaimer from "@/app/components/Disclaimer";
 import SubmitButton from "@/app/components/SubmitButton";
 import RequestFields from "@/app/components/RequestFields";
 import RentalFormHeader from "@/app/components/RentalFormHeader";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/utils/authOptions";
+import EditItemModal from "./EditItemModal";
+import DeleteItemModal from "./DeleteItemModal";
 
 export default async function page({ params }: { params: { itemID: string } }) {
   const res = await getItemFromID(params.itemID);
   const item: ItemsGetListI = res.items;
+  const user = await getServerSession(authOptions);
+  // @ts-ignore
+  const userID = user.userData.userID;
   const ExtraInfoComponent = () => {
     return (
       <div className="flex flex-col p-4 bg-white dark:bg-slate-800 rounded-lg">
@@ -39,17 +46,27 @@ export default async function page({ params }: { params: { itemID: string } }) {
     const currentDate = new Date();
     const diffTime = Math.abs(currentDate.getTime() - date.getTime());
     return (
-      <div className=" bg-white dark:bg-slate-800 dark:text-white p-4 rounded-lg">
-        <h1 className=" font-bold text-2xl dark:text-white">{item.itemName}</h1>
-        <div className="flex flex-row items-center gap-4">
-          <div className="rounded-full opacity-80 p-2 bg-brand">
-            <FaLocationDot size={25} />
-          </div>
-          <div className="">
-            <p>{Math.ceil(diffTime / (1000 * 60 * 60 * 24))} days ago</p>
-            <p>Location: {item.location}</p>
+      <div className=" bg-white dark:bg-slate-800 dark:text-white p-4 rounded-lg flex flex-row gap-2 justify-between">
+        <div className="">
+          <h1 className=" font-bold text-2xl dark:text-white">
+            {item.itemName}
+          </h1>
+          <div className="flex flex-row items-center gap-4">
+            <div className="rounded-full opacity-80 p-2 bg-brand">
+              <FaLocationDot size={25} />
+            </div>
+            <div className="">
+              <p>{Math.ceil(diffTime / (1000 * 60 * 60 * 24))} days ago</p>
+              <p>Location: {item.location}</p>
+            </div>
           </div>
         </div>
+        {userID === item.lenderID && (
+          <div className=" flex flex-col gap-1">
+            <EditItemModal item={item} />
+            <DeleteItemModal item={item}></DeleteItemModal>
+          </div>
+        )}
       </div>
     );
   };
@@ -59,22 +76,25 @@ export default async function page({ params }: { params: { itemID: string } }) {
         <div className="flex flex-row justify-between gap-4">
           <div className=" w-full flex flex-col gap-4">
             <HeaderComponent />
+
             <ImageViewer images={item.images} />
             <ExtraInfoComponent />
           </div>
-          <div className="w-1/2">
-            <RequestRentalForm>
-              <RentalFormHeader itemID={item.itemID} />
-              <RequestFields />
-              <SubmitButton
-                pending="Requesting item..."
-                success="Request has been made successfully!"
-                error="Error requesting item. Please try again later."
-                title="Request Item"
-              />
-              <Disclaimer></Disclaimer>
-            </RequestRentalForm>
-          </div>
+          {userID !== item.lenderID && (
+            <div className="w-1/2 bg-white dark:bg-slate-800 p-8 rounded-lg">
+              <RequestRentalForm>
+                <RentalFormHeader itemID={item.itemID} />
+                <RequestFields />
+                <SubmitButton
+                  pending="Requesting item..."
+                  success="Request has been made successfully!"
+                  error="Error requesting item. Please try again later."
+                  title="Request Item"
+                />
+                <Disclaimer></Disclaimer>
+              </RequestRentalForm>
+            </div>
+          )}
         </div>
       </div>
     </>
