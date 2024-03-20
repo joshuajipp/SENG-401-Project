@@ -51,7 +51,7 @@ def move_borrow_request_to_past_requests(table, itemID, data):
         },
         UpdateExpression="SET pastRequests = :br",
         ExpressionAttributeValues={
-            ':b': data
+            ':br': data
         },
         ReturnValues="UPDATED_NEW"
     )
