@@ -161,6 +161,16 @@ resource "aws_lambda_function" "request_item_lambda" {
   source_code_hash = filebase64sha256("./requestItem.zip")
 }
 
+resource "aws_lambda_function" "cancel_request_lambda" {
+  filename         = "./cancelRequest.zip"
+  function_name    = "cancel-request-30144999"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "cancel_request.handler"
+  runtime          = "python3.9"
+  timeout = 300
+  source_code_hash = filebase64sha256("./cancelRequest.zip")
+}
+
 resource "aws_lambda_function" "get_lender_items_lambda" {
   filename         = "./getLenderItems.zip"
   function_name    = "get-lender-items-30144999"
