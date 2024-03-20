@@ -77,9 +77,11 @@ resource "aws_iam_policy" "ses_send_email_policy" {
   })
 }
 
+
 resource "aws_ses_email_identity" "email_identity" {
   email = "toolshed.notifications@gmail.com"
 }
+
 
 resource "aws_lambda_function" "send_ses_verification_lambda" {
   filename         = "./sendSESVerification.zip"
@@ -201,6 +203,7 @@ resource "aws_lambda_function" "get_item_from_id_lambda" {
   source_code_hash = filebase64sha256("./getItemFromID.zip")
 }
 
+
 resource "aws_dynamodb_table" "items_dynamodb_table" {
   name         = "items-30144999"
   billing_mode = "PROVISIONED"
@@ -265,6 +268,7 @@ resource "aws_dynamodb_table" "items_dynamodb_table" {
   }
 }
 
+
 resource "aws_lambda_function" "send_borrowed_item_email_lambda" {
   filename         = "./sendBorrowedItemEmail.zip"
   function_name    = "send-borrowed-item-email-30144999"
@@ -274,7 +278,6 @@ resource "aws_lambda_function" "send_borrowed_item_email_lambda" {
   timeout = 300
   source_code_hash = filebase64sha256("./sendBorrowedItemEmail.zip")
 }
-
 
 resource "aws_lambda_function" "create_account_lambda" {
   filename         = "./createAccount.zip"
@@ -335,6 +338,8 @@ resource "aws_lambda_function" "update_account_location_lambda" {
   timeout = 300
   source_code_hash = filebase64sha256("./updateAccountLocation.zip")
 }
+
+
 resource "aws_dynamodb_table" "users_dynamodb_table" {
   name         = "users-30144999"
   billing_mode = "PROVISIONED"
@@ -411,6 +416,7 @@ resource "aws_iam_policy" "parameter_store_policy" {
     ]
   })
 }
+
 
 resource "aws_iam_role_policy_attachment" "dynamodb_policy_attachment" {
   policy_arn = aws_iam_policy.dynamodb_policy.arn
@@ -578,6 +584,18 @@ resource "aws_lambda_function_url" "url_request_item" {
   }
 }
 
+resource "aws_lambda_function_url" "url_cancel_request" {
+  function_name      = aws_lambda_function.request_item_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["PUT"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
 
 resource "aws_lambda_function_url" "url_get_lender_items" {
   function_name      = aws_lambda_function.get_lender_items_lambda.function_name
