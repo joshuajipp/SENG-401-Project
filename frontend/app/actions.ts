@@ -5,6 +5,7 @@ import { authOptions } from "./utils/authOptions";
 import { LocationInfo } from "./interfaces/LocationI";
 import { GetItemPageAPIResponse } from "./interfaces/ListItemI";
 import { revalidatePath } from "next/cache";
+import { SuperSession } from "./interfaces/UserI";
 
 const GET_USER_URL = process.env.GET_USER_URL as string;
 const CREATE_USER_URL = process.env.CREATE_USER_URL as string;
@@ -20,6 +21,7 @@ const GET_ITEM_FROM_ID_URL = process.env.GET_ITEM_FROM_ID_URL as string;
 const UPDATE_ACCOUNT_LOCATION_URL = process.env
   .UPDATE_ACCOUNT_LOCATION_URL as string;
 const UPDATE_LISTING_URL = process.env.UPDATE_LISTING_URL as string;
+const UPDATE_ACCOUNT_URL = process.env.UPDATE_ACCOUNT_URL as string;
 export const createListing = async (formData: FormData) => {
   try {
     const session = await getServerSession(authOptions);
@@ -64,14 +66,13 @@ export const createListing = async (formData: FormData) => {
 };
 
 export const updateAccountLocation = async (newLocation: LocationInfo) => {
-  const session = await getServerSession(authOptions);
+  const session: SuperSession | null = await getServerSession(authOptions);
   if (!session) {
     console.log("No session found");
     return;
   }
   console.log("updateAccountLocation");
   const locationString = `${newLocation.city}, ${newLocation.province}, ${newLocation.country}`;
-  // @ts-ignore
   const body = { location: locationString, userID: session.userData.userID };
   console.log(body);
   const response = await fetch(UPDATE_ACCOUNT_LOCATION_URL, {
@@ -126,7 +127,39 @@ export const getUser = async (email: string) => {
   });
   return response;
 };
+export const getUserByID = async (userID: string) => {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      console.error("No session found. Please log in to continue.");
+      return null; // Or throw new Error("No session found");
+    }
 
+    // @ts-ignore
+    const response = await fetch(GET_USER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        userID: userID,
+      },
+    });
+
+    const data = await response.json(); // Parse JSON response once
+
+    if (!response.ok) {
+      console.error(
+        `Failed to get user. Status code: ${response.status}`,
+        data
+      );
+      return null; // Or throw new Error(`Failed to get lender items. Status code: ${response.status}`);
+    }
+
+    return data; // Successfully return the parsed data
+  } catch (error) {
+    console.error("Error getting user:", error);
+    return null; // Or throw error; depending on how you want to handle errors
+  }
+};
 export const authenticateUser = async (session: Session) => {
   if (!session.user?.email) {
     return;
@@ -414,7 +447,7 @@ export const searchItemsRedirect = async (formData: FormData) => {
 // Waiting for backend to update.
 export const updateListing = async (formData: FormData) => {
   try {
-    const session = await getServerSession(authOptions);
+    const session: SuperSession | null = await getServerSession(authOptions);
     if (!session) {
       console.error("No session found. Please log in to continue.");
       return;
@@ -430,9 +463,7 @@ export const updateListing = async (formData: FormData) => {
       description: rawFormData.description,
       tags: rawFormData.tags,
       images: modifiedArray,
-      // @ts-ignore
       location: session.userData.location,
-      // @ts-ignore
       lenderID: session.userData.userID,
     };
     console.log(JSON.stringify(myBody));
@@ -480,4 +511,42 @@ export const cancelRequest = async (itemID: string, borrowerID: string) => {
     return errorMessage;
   }
   return response;
+};
+
+export const updateAccount = async (formData: FormData) => {
+  try {
+    const session: SuperSession | null = await getServerSession(authOptions);
+    if (!session) {
+      console.error("No session found. Please log in to continue.");
+      return;
+    }
+    const rawFormData = Object.fromEntries(formData.entries());
+    const myBody = {
+      name: session.user?.name,
+      email: session.user?.email,
+      bio: rawFormData.bio,
+      location: session.userData.location,
+      userID: session.userData.userID,
+    };
+    console.log(myBody);
+    const response = await fetch(UPDATE_ACCOUNT_URL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(myBody),
+    });
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      const errorMessage = `Failed to update account. Status code: ${
+        response.status
+      }, Error: ${errorResponse.message || response.statusText}`;
+      console.error(errorMessage);
+      return Promise.reject(new Error(errorMessage));
+    }
+    return { status: "success" };
+  } catch (error) {
+    console.error("Error updating listing:", error);
+    return `Error updating listing: ${error}`;
+  }
 };

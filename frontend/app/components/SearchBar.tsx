@@ -5,12 +5,11 @@ import { searchItemsRedirect } from "../actions";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../utils/authOptions";
 import CategorySelect from "./CategorySelect";
+import { SuperSession } from "../interfaces/UserI";
 
 export default async function SearchBar() {
-  const res = await getServerSession(authOptions);
-  // @ts-ignore
-  const location = res?.userData?.location || "Loading...";
-  // console.log(location);
+  const session: SuperSession | null = await getServerSession(authOptions);
+  const location = session?.userData?.location || "Loading...";
   return (
     <div className="flex dark:text-white order-2 md:order-none gap-4 place-items-center justify-center items-center">
       <form action={searchItemsRedirect} className="flex flex-row gap-2">

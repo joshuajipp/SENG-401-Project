@@ -8,7 +8,6 @@ export default function CategorySelect({ item }: { item?: ItemsGetListI }) {
       icon={BiCategory}
       id="category"
       name="category"
-      required
       defaultValue={item ? item.category : ""}
     >
       {!item && (
