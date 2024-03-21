@@ -10,14 +10,11 @@ export default function AcceptReturnModal({
   borrowedState: string;
 }) {
   const [openModal, setOpenModal] = useState(false);
-  const [childData, setChildData] = useState(0);
+  const [rating, setRating] = useState<boolean[]>(Array(5).fill(false));
   const acceptHandler = () => {
-    console.log("Accepting return" + childData);
+    console.log("Accepting return" + rating.filter((r) => r).length);
     setOpenModal(false);
     // Add logic to accept the return of the item
-  };
-  const handleChildData = (data: number) => {
-    setChildData(data);
   };
   return (
     <>
@@ -29,7 +26,7 @@ export default function AcceptReturnModal({
         <Modal.Body>
           <div>
             <div className="flex flex-col gap-8">
-              <RatingForm onChildData={handleChildData} />
+              <RatingForm setRating={setRating} rating={rating} />
               <p>Are you sure you want to accept the return of this item?</p>
               <p>
                 By pressing {'"'}I accept{'"'}, You are responsible for the

@@ -1,20 +1,14 @@
 "use client";
 import { Rating, RatingStar } from "flowbite-react";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
 export default function RatingForm({
-  onChildData,
+  rating,
+  setRating,
 }: {
-  onChildData: (data: number) => void;
+  rating: boolean[];
+  setRating: Dispatch<SetStateAction<boolean[]>>;
 }) {
-  const [rating, setRating] = useState(Array(5).fill(false));
-  useEffect(() => {
-    const sendDataToParent = () => {
-      onChildData(rating.filter((r) => r).length);
-    };
-
-    sendDataToParent();
-  }, [rating, onChildData]);
   return (
     <div className="flex flex-col gap-4">
       <div className="">
