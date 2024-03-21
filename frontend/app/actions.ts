@@ -558,19 +558,18 @@ export const updateAccount = async (formData: FormData) => {
     }
     return { status: "success" };
   } catch (error) {
-    console.error("Error updating listing:", error);
-    return `Error updating listing: ${error}`;
+    const errorMessage = `Error updating account: ${error}`;
+    console.error(errorMessage);
+    return errorMessage;
   }
 };
-export const updateRating = async (formData: FormData) => {
+export const updateRating = async (newRating: number, userID: string) => {
   try {
     const session: SuperSession | null = await getServerSession(authOptions);
     if (!session) {
       console.error("No session found. Please log in to continue.");
       return;
     }
-    const newRating = formData.get("newRating");
-    const userID = formData.get("userID");
     const myBody = {
       newRating: newRating,
       userID: userID,
@@ -593,7 +592,8 @@ export const updateRating = async (formData: FormData) => {
     }
     return { status: "success" };
   } catch (error) {
-    console.error("Error updating rating:", error);
-    return `Error updating rating: ${error}`;
+    const errorMessage = `Error updating rating: ${error}`;
+    console.error(errorMessage);
+    return errorMessage;
   }
 };
