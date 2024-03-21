@@ -52,6 +52,9 @@ export interface ItemsGetListI {
   imageHashes?: string[];
   borrowRequests?: BorrowRequest[];
   itemName: string;
+  endDate?: number;
+  startDate?: number;
+  borrowerID?: string;
 }
 
 export interface GetItemPageAPIResponse {
