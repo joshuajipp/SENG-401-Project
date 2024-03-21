@@ -116,11 +116,11 @@ def handler(event, context):
         for raw_image in raw_images:
             if raw_image is not None and raw_image != "null":
                 if raw_image.startswith("https://res.cloudinary.com"):
-                    image_urls = raw_image
+                    image_url = raw_image
 
                 else:
                     image_bytes = base64.b64decode(raw_image)
-                    
+
                     # Save the image to a temp file
                     filename = "/tmp/img.png"
                     stringtime = str(timestamp)
