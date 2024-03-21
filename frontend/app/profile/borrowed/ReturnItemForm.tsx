@@ -16,11 +16,7 @@ export default function UpdateItemForm({
           return "Item has been returned!";
         },
       },
-      error: {
-        render({ data }) {
-          return `${data}`;
-        },
-      },
+      error: "Issue returning item. Please try again later.",
     });
   };
 

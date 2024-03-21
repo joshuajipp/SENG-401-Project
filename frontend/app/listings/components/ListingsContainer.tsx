@@ -23,7 +23,7 @@ export default async function ListingsContainer({
   return (
     <ul className="flex flex-col gap-3 ">
       <div className="flex flex-row justify-between items-center">
-        <div className="text-black text-2xl">
+        <div className="text-2xl">
           Results 1-{listings.length} of {listings.length}
         </div>
         <SortListingsButton />
@@ -46,9 +46,7 @@ export default async function ListingsContainer({
 
             <div className=" flex flex-col gap-2">
               <Link href={`/listings/item/${listing.itemID}`}>
-                <h1 className="text-gray-950 text-xl font-semibold">
-                  {listing.itemName}
-                </h1>
+                <h1 className=" text-xl font-semibold">{listing.itemName}</h1>
               </Link>
 
               <h2 className=" text-sm font-bold">{listing.location}</h2>
