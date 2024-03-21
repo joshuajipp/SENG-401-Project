@@ -10,7 +10,7 @@ export default async function Biography() {
       <div className="flex flex-row justify-between">
         <h1 className="text-xl font-medium">Biography</h1>
         {/* @ts-ignore */}
-        <BiographyModal bio={session?.userData?.biography} />
+        <BiographyModal bio={session?.userData?.bio} />
       </div>
       <div className="flex flex-col gap-4 text-black dark:text-white">
         <div className="max-w-md">
@@ -20,7 +20,7 @@ export default async function Biography() {
             rows={12}
             className=" bg-purple-200 text-brand shadow "
             // @ts-ignore
-            defaultValue={session?.userData?.biography || ""}
+            value={session?.userData?.bio || ""}
           />
         </div>
       </div>

@@ -29,14 +29,13 @@ export default function BiographyModal({ bio }: { bio: string }) {
                 <div className="mb-2 block">
                   <Label htmlFor="bio" value="Your bio" />
                 </div>
-                <Textarea name="bio" id="bio" rows={12} value={bio} />
+                <Textarea name="bio" id="bio" rows={12} defaultValue={bio} />
               </div>
               <div className="w-full">
                 <Button
                   type="submit"
                   onClick={() => {
                     buttonRef.current?.click();
-
                     setOpenModal(false);
                   }}
                   color={"primary"}
