@@ -8,18 +8,22 @@ export default async function TableBody() {
   const res = await getLenderItems();
   const items: ItemsGetListI[] = res.items || [];
   const LenderRowEntry: React.FC<{ item: ItemsGetListI }> = ({ item }) => {
-    const startDate = new Date("2024-02-14").toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-    const endDate = new Date("2024-02-28").toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
+    const startDate = item.startDate
+      ? new Date(item.startDate * 1000).toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
+      : "";
+    const endDate = item.endDate
+      ? new Date(item.endDate * 1000).toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
+      : " ";
     const lenderName = "Joseph Stalin";
-    const borrowedState = "Unreturned";
+    const borrowedState = item.borrowerID && "Unreturned";
     const itemName = item.itemName;
     const toolImage = item.images[0] || "/missingImage.jpg";
     const profileImage = "https://via.placeholder.com/55x48";
@@ -57,17 +61,19 @@ export default async function TableBody() {
           <div>{endDate}</div>
         </td>
         <td className="p-4">
-          <AcceptReturnModal borrowedState={borrowedState}></AcceptReturnModal>
+          <AcceptReturnModal
+            borrowerID={item.borrowerID}
+            borrowedState={borrowedState}
+          />
         </td>
       </tr>
     );
   };
   return (
     <tbody>
-      {items &&
-        items.map((item, index) => {
-          return <LenderRowEntry key={index} item={item}></LenderRowEntry>;
-        })}
+      {items.map((item, index) => {
+        return <LenderRowEntry key={index} item={item} />;
+      })}
     </tbody>
   );
 }
