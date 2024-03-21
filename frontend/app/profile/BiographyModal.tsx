@@ -4,7 +4,7 @@ import { Button, Label, Modal, Textarea } from "flowbite-react";
 import { useRef, useState } from "react";
 import UpdateBiographyForm from "./components/UpdateBiographyForm";
 
-export default function BiographyModal({ bio }: { bio: string }) {
+export default function BiographyModal({ bio }: { bio?: string }) {
   const [openModal, setOpenModal] = useState(false);
 
   function onCloseModal() {

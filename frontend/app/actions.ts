@@ -5,6 +5,7 @@ import { authOptions } from "./utils/authOptions";
 import { LocationInfo } from "./interfaces/LocationI";
 import { GetItemPageAPIResponse } from "./interfaces/ListItemI";
 import { revalidatePath } from "next/cache";
+import { SuperSession } from "./interfaces/UserI";
 
 const GET_USER_URL = process.env.GET_USER_URL as string;
 const CREATE_USER_URL = process.env.CREATE_USER_URL as string;
@@ -65,14 +66,13 @@ export const createListing = async (formData: FormData) => {
 };
 
 export const updateAccountLocation = async (newLocation: LocationInfo) => {
-  const session = await getServerSession(authOptions);
+  const session: SuperSession | null = await getServerSession(authOptions);
   if (!session) {
     console.log("No session found");
     return;
   }
   console.log("updateAccountLocation");
   const locationString = `${newLocation.city}, ${newLocation.province}, ${newLocation.country}`;
-  // @ts-ignore
   const body = { location: locationString, userID: session.userData.userID };
   console.log(body);
   const response = await fetch(UPDATE_ACCOUNT_LOCATION_URL, {
@@ -447,7 +447,7 @@ export const searchItemsRedirect = async (formData: FormData) => {
 // Waiting for backend to update.
 export const updateListing = async (formData: FormData) => {
   try {
-    const session = await getServerSession(authOptions);
+    const session: SuperSession | null = await getServerSession(authOptions);
     if (!session) {
       console.error("No session found. Please log in to continue.");
       return;
@@ -463,9 +463,7 @@ export const updateListing = async (formData: FormData) => {
       description: rawFormData.description,
       tags: rawFormData.tags,
       images: modifiedArray,
-      // @ts-ignore
       location: session.userData.location,
-      // @ts-ignore
       lenderID: session.userData.userID,
     };
     console.log(JSON.stringify(myBody));
@@ -517,7 +515,7 @@ export const cancelRequest = async (itemID: string, borrowerID: string) => {
 
 export const updateAccount = async (formData: FormData) => {
   try {
-    const session = await getServerSession(authOptions);
+    const session: SuperSession | null = await getServerSession(authOptions);
     if (!session) {
       console.error("No session found. Please log in to continue.");
       return;
@@ -527,9 +525,7 @@ export const updateAccount = async (formData: FormData) => {
       name: session.user?.name,
       email: session.user?.email,
       bio: rawFormData.bio,
-      // @ts-ignore
       location: session.userData.location,
-      // @ts-ignore
       userID: session.userData.userID,
     };
     console.log(myBody);
