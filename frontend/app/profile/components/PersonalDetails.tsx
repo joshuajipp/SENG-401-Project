@@ -15,11 +15,11 @@ export default async function PersonalDetails() {
       <h1 className="text-xl font-medium">Personal Details</h1>
       <div className="flex flex-row gap-4">
         <Image
-          src="/missingImage.jpg"
+          src={session?.user?.image || "/missingImage.jpg"}
           alt="profileImage"
           width={180}
           height={200}
-          className="rounded-xl object-fill shadow-lg"
+          className="rounded-xl object-fill shadow-lg border p-4"
         />
         <div className="flex flex-col gap-4 text-black dark:text-white">
           <DetailField title={"Name"} value={name} />
