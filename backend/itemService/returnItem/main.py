@@ -42,6 +42,34 @@ def remove_start_end_dates_from_item(table, itemID):
     )
     return response
 
+def update_past_requests_to_returned(table, itemID):
+    """Update the pastRequests array in the DynamoDB table."""
+    past_requests = table.get_item(Key={"itemID": itemID})["Item"].get("pastRequests", [])
+    borrowerID = table.get_item(Key={"itemID": itemID})["Item"].get("borrowerID", None)
+
+    if borrowerID is None:
+        raise ValueError("Item is not currently being borrowed")
+
+    borrowerID_index = next((i for i, d in enumerate(past_requests) if d["borrowerID"] == borrowerID), None)
+    if borrowerID_index is None:
+        raise ValueError("BorrowerID was not found in borrow requests")
+
+    request = past_requests[borrowerID_index]
+    request["status"] = "returned"
+
+    response = table.update_item(
+        Key={
+            'itemID': itemID
+        },
+        UpdateExpression="SET pastRequests[{}] :b"
+        .format(borrowerID_index),
+        ExpressionAttributeValues={
+            ':b': request
+        },
+        ReturnValues="UPDATED_NEW"
+    )
+    return response
+
 
 def handler(event, context):
     try:
@@ -49,15 +77,21 @@ def handler(event, context):
         table = get_dynamodb_table(table_name)
         body = parse_event_body(event["body"])
         itemID = body["itemID"]
+        responses = []
 
-        response = remove_start_end_dates_from_item(table, itemID)
-        
-        response = remove_borrowerID_from_item(table, itemID)
-        
-        
+
+
+
+        # change the status of the past request to returned
+        responses.append(update_past_requests_to_returned(table, itemID))
+
+        # remove the borrowerID and start and end dates attribute from the item
+        responses.append(remove_start_end_dates_from_item(table, itemID))
+        responses.append(remove_borrowerID_from_item(table, itemID))
+
         return {
             'statusCode': 200,
-            'body': json.dumps(response, default=decimal_default)
+            'body': json.dumps(responses, default=decimal_default)
         }
     except Exception as e:
         return {
