@@ -22,6 +22,7 @@ const UPDATE_ACCOUNT_LOCATION_URL = process.env
   .UPDATE_ACCOUNT_LOCATION_URL as string;
 const UPDATE_LISTING_URL = process.env.UPDATE_LISTING_URL as string;
 const UPDATE_ACCOUNT_URL = process.env.UPDATE_ACCOUNT_URL as string;
+const UPDATE_RATING_URL = process.env.UPDATE_RATING_URL as string;
 export const createListing = async (formData: FormData) => {
   try {
     const session = await getServerSession(authOptions);
@@ -559,5 +560,40 @@ export const updateAccount = async (formData: FormData) => {
   } catch (error) {
     console.error("Error updating listing:", error);
     return `Error updating listing: ${error}`;
+  }
+};
+export const updateRating = async (formData: FormData) => {
+  try {
+    const session: SuperSession | null = await getServerSession(authOptions);
+    if (!session) {
+      console.error("No session found. Please log in to continue.");
+      return;
+    }
+    const newRating = formData.get("newRating");
+    const userID = formData.get("userID");
+    const myBody = {
+      newRating: newRating,
+      userID: userID,
+    };
+    console.log(myBody);
+    const response = await fetch(UPDATE_RATING_URL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(myBody),
+    });
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      const errorMessage = `Failed to update rating. Status code: ${
+        response.status
+      }, Error: ${errorResponse.message || response.statusText}`;
+      console.error(errorMessage);
+      return Promise.reject(new Error(errorMessage));
+    }
+    return { status: "success" };
+  } catch (error) {
+    console.error("Error updating rating:", error);
+    return `Error updating rating: ${error}`;
   }
 };

@@ -1,6 +1,4 @@
-import { authOptions } from "@/app/utils/authOptions";
 import { Rating, RatingStar } from "flowbite-react";
-import { getServerSession } from "next-auth";
 import React from "react";
 
 export default function RatingDetails({ rating }: { rating?: number | null }) {
@@ -14,7 +12,7 @@ export default function RatingDetails({ rating }: { rating?: number | null }) {
               <RatingStar key={i} className="text-brand" />
             ))}
           {!rating &&
-            Array.from({ length: 5 - rating }).map((_, i) => (
+            Array.from({ length: 5 }).map((_, i) => (
               <RatingStar key={i} filled={false} />
             ))}
           <p className="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">
