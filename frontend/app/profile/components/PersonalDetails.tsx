@@ -3,12 +3,14 @@ import Image from "next/image";
 import { DetailField } from "./DetailField";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/utils/authOptions";
-export default async function PersonalDetails() {
+export default async function PersonalDetails({
+  location,
+  name,
+}: {
+  location: string;
+  name?: string | null;
+}) {
   const session = await getServerSession(authOptions);
-  const name = session?.user?.name;
-  const location =
-    // @ts-ignore
-    session?.userData?.location || "Please enable location services";
 
   return (
     <div className="flex flex-col gap-4 ">

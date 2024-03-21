@@ -5,7 +5,8 @@ import { authOptions } from "@/app/utils/authOptions";
 
 export default async function ContactDetails() {
   const session = await getServerSession(authOptions);
-  const phoneNum = "123-456-7890";
+  // @ts-ignore
+  const phoneNum = session?.userData?.phoneNum || "123-456-7890";
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-medium">Contact Details</h1>

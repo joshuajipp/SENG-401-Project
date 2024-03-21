@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/utils/authOptions";
 import BiographyModal from "../BiographyModal";
 
-export default async function Biography() {
+export default async function Biography({ bio }: { bio: string }) {
   const session = await getServerSession(authOptions);
   return (
     <div className="flex flex-col gap-4">
@@ -20,7 +20,7 @@ export default async function Biography() {
             rows={12}
             className=" bg-purple-200 text-brand shadow "
             // @ts-ignore
-            value={session?.userData?.bio || ""}
+            value={bio}
           />
         </div>
       </div>

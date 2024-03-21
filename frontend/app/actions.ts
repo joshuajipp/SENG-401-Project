@@ -127,7 +127,39 @@ export const getUser = async (email: string) => {
   });
   return response;
 };
+export const getUserByID = async (userID: string) => {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      console.error("No session found. Please log in to continue.");
+      return null; // Or throw new Error("No session found");
+    }
 
+    // @ts-ignore
+    const response = await fetch(GET_USER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        userID: userID,
+      },
+    });
+
+    const data = await response.json(); // Parse JSON response once
+
+    if (!response.ok) {
+      console.error(
+        `Failed to get user. Status code: ${response.status}`,
+        data
+      );
+      return null; // Or throw new Error(`Failed to get lender items. Status code: ${response.status}`);
+    }
+
+    return data; // Successfully return the parsed data
+  } catch (error) {
+    console.error("Error getting user:", error);
+    return null; // Or throw error; depending on how you want to handle errors
+  }
+};
 export const authenticateUser = async (session: Session) => {
   if (!session.user?.email) {
     return;

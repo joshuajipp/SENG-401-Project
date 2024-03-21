@@ -1,8 +1,7 @@
 import { Rating, RatingStar } from "flowbite-react";
 import React from "react";
 
-export default function RatingDetails() {
-  const rating = 4.1;
+export default function RatingDetails({ rating }: { rating: number }) {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-medium">Contact Details</h1>
