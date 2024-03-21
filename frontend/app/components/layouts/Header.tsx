@@ -11,6 +11,7 @@ import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/utils/authOptions";
 import SearchBar from "../SearchBar";
+import { SuperSession } from "@/app/interfaces/UserI";
 
 function Logo() {
   return (
@@ -29,19 +30,8 @@ function Logo() {
   );
 }
 
-function UserProfile({
-  sessionUser,
-}: {
-  sessionUser:
-    | {
-        name?: string | null | undefined;
-        email?: string | null | undefined;
-        image?: string | null | undefined;
-      }
-    | null
-    | undefined;
-}) {
-  const imageSrc = sessionUser?.image || "";
+function UserProfile({ session }: { session: SuperSession }) {
+  const imageSrc = session?.user?.image || "/missinImage.png";
   return (
     <Dropdown
       inline
@@ -56,21 +46,24 @@ function UserProfile({
       }
     >
       <DropdownHeader>
-        <span className="block text-sm">{sessionUser?.name}</span>
+        <span className="block text-sm">{session.user?.name}</span>
         <span className="block truncate text-sm font-medium">
-          {sessionUser?.email}
+          {session.userData.email}
         </span>
       </DropdownHeader>
-      <Link href="/profile">
+      <Link href={`/profile/${session.userData.userID}`}>
         <DropdownItem>My Profile</DropdownItem>
       </Link>
       <Link href="/requested">
         <DropdownItem>Requested Tools</DropdownItem>
       </Link>
-      <Link href="listings">
+      <Link href="/profile/activeListings">
         <DropdownItem>Active Listings</DropdownItem>
       </Link>
-      {/* <DropdownItem>Disputes</DropdownItem> */}
+      <Link href="/profile/borrowed">
+        <DropdownItem>Borrowed Items</DropdownItem>
+      </Link>
+
       <DropdownDivider />
       <Link href="/api/auth/signout">
         <DropdownItem>Sign out</DropdownItem>
@@ -80,15 +73,14 @@ function UserProfile({
 }
 
 export default async function Header() {
-  const session = await getServerSession(authOptions);
-  const sessionUser = session && session.user;
+  const session: SuperSession | null = await getServerSession(authOptions);
   return (
     <Navbar fluid rounded>
       <Logo />
       <SearchBar />
       <div className="flex flex-row gap-4 place-items-center place-content-center">
         {session ? (
-          <UserProfile sessionUser={sessionUser} />
+          <UserProfile session={session} />
         ) : (
           <Link href="/api/auth/signin">
             <Button

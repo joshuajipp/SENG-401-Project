@@ -17,6 +17,7 @@ export default async function ListingsContainer({
     category: searchParams.category,
     search: searchParams.search,
   });
+  // @ts-ignore
   const listings: ItemsGetListI[] | undefined = res?.items;
   if (!listings) return <div>No listings found</div>;
   return (

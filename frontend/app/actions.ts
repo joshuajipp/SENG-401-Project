@@ -4,14 +4,14 @@ import { redirect } from "next/navigation";
 import { authOptions } from "./utils/authOptions";
 import { LocationInfo } from "./interfaces/LocationI";
 import { GetItemPageAPIResponse } from "./interfaces/ListItemI";
+import { revalidatePath } from "next/cache";
+import { SuperSession } from "./interfaces/UserI";
 
 const GET_USER_URL = process.env.GET_USER_URL as string;
 const CREATE_USER_URL = process.env.CREATE_USER_URL as string;
 const CREATE_LISTING_URL = process.env.CREATE_LISTING_URL as string;
-// unclear if this is to confirm a borrow request or to create a new borrow request
-// const CREATE_BORROW_REQUEST_URL = process.env
-//   .CREATE_BORROW_REQUEST_URL as string;
-const DELETE_ITEM_URL = process.env.DELETE_ITEM_URL as string;
+const BORROW_ITEM_URL = process.env.BORROW_ITEM_URL as string;
+const DELETE_LISTING_URL = process.env.DELETE_LISTING_URL as string;
 const RETURN_ITEM_URL = process.env.RETURN_ITEM_URL as string;
 const GET_ITEM_PAGE_URL = process.env.GET_ITEM_PAGE_URL as string;
 const GET_LENDER_ITEMS_URL = process.env.GET_LENDER_ITEMS_URL as string;
@@ -20,43 +20,59 @@ const GET_BORROWED_ITEMS_URL = process.env.GET_BORROWED_ITEMS_URL as string;
 const GET_ITEM_FROM_ID_URL = process.env.GET_ITEM_FROM_ID_URL as string;
 const UPDATE_ACCOUNT_LOCATION_URL = process.env
   .UPDATE_ACCOUNT_LOCATION_URL as string;
-const BORROW_ITEM_URL = process.env.BORROW_ITEM_URL as string;
-
+const UPDATE_LISTING_URL = process.env.UPDATE_LISTING_URL as string;
+const UPDATE_ACCOUNT_URL = process.env.UPDATE_ACCOUNT_URL as string;
 export const createListing = async (formData: FormData) => {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    console.log("No session found");
-    return;
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      console.error("No session found. Please log in to continue.");
+      return;
+    }
+    const rawFormData = Object.fromEntries(formData.entries());
+
+    const images = String(rawFormData.images).split(",");
+    const modifiedArray = images.map((item) => (item === "" ? null : item));
+    const myBody = {
+      category: rawFormData.category,
+      condition: rawFormData.condition,
+      listingTitle: rawFormData.listingTitle,
+      description: rawFormData.description,
+      tags: rawFormData.tags,
+      images: modifiedArray,
+      location: rawFormData.location,
+      lenderID: rawFormData.lenderID,
+    };
+    const response = await fetch(CREATE_LISTING_URL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(myBody),
+    });
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error("Failed to create listing:", errorResponse);
+      const errorMessage = `Failed to create item. Status code: ${
+        response.status
+      }, Error: ${errorResponse.message || response.statusText}`;
+      return Promise.reject(new Error(errorMessage));
+    }
+    return { status: "success" };
+  } catch (error) {
+    console.error("Error creating listing:", error);
+    return `Error creating listing: ${error}`;
   }
-  const rawFormData = Object.fromEntries(formData.entries());
-  console.log(rawFormData);
-  const response = await fetch(CREATE_LISTING_URL, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(rawFormData),
-  });
-  if (response.status !== 200) {
-    const errorMessage =
-      "Failed to update account location. Status code: " + response.status;
-    console.error(errorMessage);
-    return errorMessage;
-  }
-  console.log(await response.json());
-  return response.json();
-  // redirect("/");
 };
 
 export const updateAccountLocation = async (newLocation: LocationInfo) => {
-  const session = await getServerSession(authOptions);
+  const session: SuperSession | null = await getServerSession(authOptions);
   if (!session) {
     console.log("No session found");
     return;
   }
   console.log("updateAccountLocation");
   const locationString = `${newLocation.city}, ${newLocation.province}, ${newLocation.country}`;
-  // @ts-ignore
   const body = { location: locationString, userID: session.userData.userID };
   console.log(body);
   const response = await fetch(UPDATE_ACCOUNT_LOCATION_URL, {
@@ -66,11 +82,11 @@ export const updateAccountLocation = async (newLocation: LocationInfo) => {
     },
     body: JSON.stringify(body),
   });
-  if (response.status !== 200) {
+  if (!response.ok) {
     const errorMessage =
       "Failed to update account location. Status code: " + response.status;
     console.error(errorMessage);
-    return errorMessage;
+    return Promise.reject(new Error(errorMessage));
   }
   return response.json();
 };
@@ -92,11 +108,11 @@ export const createUser = async (name: string, email: string) => {
     },
     body: JSON.stringify(body),
   });
-  if (response.status !== 200) {
+  if (!response.ok) {
     const errorMessage =
       "Failed to update account location. Status code: " + response.status;
     console.error(errorMessage);
-    return errorMessage;
+    return Promise.reject(new Error(errorMessage));
   }
   return response.json();
 };
@@ -111,7 +127,39 @@ export const getUser = async (email: string) => {
   });
   return response;
 };
+export const getUserByID = async (userID: string) => {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      console.error("No session found. Please log in to continue.");
+      return null; // Or throw new Error("No session found");
+    }
 
+    // @ts-ignore
+    const response = await fetch(GET_USER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        userID: userID,
+      },
+    });
+
+    const data = await response.json(); // Parse JSON response once
+
+    if (!response.ok) {
+      console.error(
+        `Failed to get user. Status code: ${response.status}`,
+        data
+      );
+      return null; // Or throw new Error(`Failed to get lender items. Status code: ${response.status}`);
+    }
+
+    return data; // Successfully return the parsed data
+  } catch (error) {
+    console.error("Error getting user:", error);
+    return null; // Or throw error; depending on how you want to handle errors
+  }
+};
 export const authenticateUser = async (session: Session) => {
   if (!session.user?.email) {
     return;
@@ -139,33 +187,46 @@ function convertDateToUnixTime(dateStr: string) {
   return timestampInSeconds;
 }
 export const requestItem = async (formData: FormData) => {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    console.log("No session found");
-    return;
-  }
-  const rawFormData = Object.fromEntries(formData.entries());
-  const borrowDate = formData.get("startDate") as string;
-  const returnDate = formData.get("endDate") as string;
-  const borrowDateUnixTime = convertDateToUnixTime(borrowDate);
-  const returnDateUnixTime = convertDateToUnixTime(returnDate);
-  rawFormData.startDate = JSON.stringify(borrowDateUnixTime);
-  rawFormData.endDate = JSON.stringify(returnDateUnixTime);
-  console.log(rawFormData);
-  const response = await fetch(REQUEST_ITEM_URL, {
-    method: "PUT",
-    body: JSON.stringify(rawFormData),
-  });
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      console.error("No session found. Please log in.");
+      return;
+    }
 
-  if (response.status !== 200) {
-    const errorMessage =
-      "Failed to request item. Status code: " + response.status;
-    console.error(errorMessage);
-    return errorMessage;
+    const rawFormData = Object.fromEntries(formData.entries());
+
+    const newBody = {
+      itemID: rawFormData.itemID,
+      borrowerID: rawFormData.borrowerID,
+      startDate: Math.floor(
+        new Date(rawFormData.borrowDate as string).getTime() / 1000
+      ),
+      endDate: Math.floor(
+        new Date(rawFormData.returnDate as string).getTime() / 1000
+      ),
+    };
+
+    const response = await fetch(REQUEST_ITEM_URL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newBody),
+    });
+
+    if (!response.ok) {
+      const errorResponse = await response.text(); // It's better to await here for consistency
+      const errorMessage = `Failed to request item. Status code: ${response.status}, Error: ${errorResponse}`;
+      console.error(errorMessage);
+      return Promise.reject(new Error(errorMessage));
+    }
+
+    return { status: "success", response: await response.json() }; // Assuming JSON response, adjust as needed
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return `An error occurred: ${error || "Unknown error"}`;
   }
-  // log response
-  console.log(await response.json());
-  return { status: response.status, message: response.statusText };
 };
 
 export const getBorrowedItems = async (borrowerID: string) => {
@@ -192,29 +253,39 @@ export const getBorrowedItems = async (borrowerID: string) => {
   return borrowedItems;
 };
 
-export const getLenderItems = async (lenderID: string) => {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    console.log("No session found");
-    return;
-  }
-  const response = await fetch(GET_LENDER_ITEMS_URL, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      lenderID: lenderID,
-    },
-  });
+export const getLenderItems = async () => {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      console.error("No session found. Please log in to continue.");
+      return null; // Or throw new Error("No session found");
+    }
 
-  if (response.status !== 200) {
-    const errorMessage =
-      "Failed to get lender item. Status code: " + response.status;
-    console.error(errorMessage);
-    return errorMessage;
-  }
+    // @ts-ignore
+    const lenderID = session.userData.userID;
+    const response = await fetch(GET_LENDER_ITEMS_URL, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        lenderID: lenderID, // Ensure headers are correctly named and valued
+      },
+    });
 
-  const lenderItems = await response.json();
-  return lenderItems;
+    const data = await response.json(); // Parse JSON response once
+
+    if (response.status !== 200) {
+      console.error(
+        `Failed to get lender items. Status code: ${response.status}`,
+        data
+      );
+      return null; // Or throw new Error(`Failed to get lender items. Status code: ${response.status}`);
+    }
+
+    return data; // Successfully return the parsed data
+  } catch (error) {
+    console.error("Error fetching lender items:", error);
+    return null; // Or throw error; depending on how you want to handle errors
+  }
 };
 
 export const deleteItem = async (itemID: string) => {
@@ -223,7 +294,7 @@ export const deleteItem = async (itemID: string) => {
     console.log("No session found");
     return;
   }
-  const response = await fetch(DELETE_ITEM_URL, {
+  const response = await fetch(DELETE_LISTING_URL, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -231,14 +302,15 @@ export const deleteItem = async (itemID: string) => {
     },
   });
 
-  if (response.status !== 200) {
-    const errorMessage =
-      "Failed to delete item. Status code: " + response.status;
+  if (!response.ok) {
+    const errorMessage = `Failed to delete item. Status code: ${response.status}`;
     console.error(errorMessage);
     return errorMessage;
   }
+  revalidatePath(`/listings/item`);
+  revalidatePath(`/listings/item/[itemID]`, "page");
 
-  return response;
+  return { message: "Item deleted successfully" };
 };
 
 export const borrowItem = async (itemID: string, borrowerID: string) => {
@@ -295,7 +367,7 @@ export const returnItem = async (itemID: string) => {
 };
 
 export const getItemPage = async ({
-  location = "Calgary",
+  location = "Calgary, Alberta, Canada",
   pageCount = "10",
   category = "",
   lastItem = "",
@@ -312,11 +384,13 @@ export const getItemPage = async ({
     console.log("No session found");
     return;
   }
+  // @ts-ignore
+  const userLocation = session.userData.location || location;
   const response = await fetch(GET_ITEM_PAGE_URL, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      location: location,
+      location: userLocation,
       pageCount: pageCount,
       category: category,
       lastItem: lastItem,
@@ -379,4 +453,111 @@ export const searchItemsRedirect = async (formData: FormData) => {
     searchQuery += `location=${location}&`;
   }
   redirect(`/listings${searchQuery}`);
+};
+
+// Waiting for backend to update.
+export const updateListing = async (formData: FormData) => {
+  try {
+    const session: SuperSession | null = await getServerSession(authOptions);
+    if (!session) {
+      console.error("No session found. Please log in to continue.");
+      return;
+    }
+    const rawFormData = Object.fromEntries(formData.entries());
+    const images = String(rawFormData.images).split(",");
+    const modifiedArray = images.map((item) => (item === "" ? null : item));
+    const myBody = {
+      itemID: rawFormData.itemID,
+      category: rawFormData.category,
+      condition: rawFormData.condition,
+      listingTitle: rawFormData.listingTitle,
+      description: rawFormData.description,
+      tags: rawFormData.tags,
+      images: modifiedArray,
+      location: session.userData.location,
+      lenderID: session.userData.userID,
+    };
+    console.log(JSON.stringify(myBody));
+    const response = await fetch(UPDATE_LISTING_URL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(myBody),
+    });
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      const errorMessage = `Failed to update listing. Status code: ${
+        response.status
+      }, Error: ${errorResponse.message || response.statusText}`;
+      console.log(errorMessage);
+      return Promise.reject(new Error(errorMessage));
+    }
+    return { status: "success" };
+  } catch (error) {
+    console.error("Error updating listing:", error);
+    return `Error updating listing: ${error}`;
+  }
+};
+
+export const cancelRequest = async (itemID: string, borrowerID: string) => {
+  const response = await fetch(
+    "https://kwvu2ae5lllfz77k5znkrvnrii0brzuf.lambda-url.ca-central-1.on.aws/",
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        itemID: itemID,
+        borrowerID: borrowerID,
+      }),
+    }
+  );
+
+  if (response.status !== 200) {
+    const errorMessage =
+      "Failed to decline request. Status code: " + response.status;
+    console.error(errorMessage);
+    return errorMessage;
+  }
+  return response;
+};
+
+export const updateAccount = async (formData: FormData) => {
+  try {
+    const session: SuperSession | null = await getServerSession(authOptions);
+    if (!session) {
+      console.error("No session found. Please log in to continue.");
+      return;
+    }
+    const rawFormData = Object.fromEntries(formData.entries());
+    const myBody = {
+      name: session.user?.name,
+      email: session.user?.email,
+      bio: rawFormData.bio,
+      location: session.userData.location,
+      userID: session.userData.userID,
+    };
+    console.log(myBody);
+    const response = await fetch(UPDATE_ACCOUNT_URL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(myBody),
+    });
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      const errorMessage = `Failed to update account. Status code: ${
+        response.status
+      }, Error: ${errorResponse.message || response.statusText}`;
+      console.error(errorMessage);
+      return Promise.reject(new Error(errorMessage));
+    }
+    return { status: "success" };
+  } catch (error) {
+    console.error("Error updating listing:", error);
+    return `Error updating listing: ${error}`;
+  }
 };

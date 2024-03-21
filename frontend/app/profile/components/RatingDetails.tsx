@@ -3,10 +3,7 @@ import { Rating, RatingStar } from "flowbite-react";
 import { getServerSession } from "next-auth";
 import React from "react";
 
-export default async function RatingDetails() {
-  const res = await getServerSession(authOptions);
-  // @ts-ignore
-  const rating: number = res?.userData.rating;
+export default function RatingDetails({ rating }: { rating?: number | null }) {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-medium">Rating</h1>

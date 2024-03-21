@@ -62,7 +62,34 @@ def items_table(dynamodb_mock):
     )
     return table
 
-def test_append_borrower_to_borrow_requests(items_table):
+def test_update_borrow_requests(items_table):
+    items_table.put_item(
+        Item={
+            'itemID': '1',
+            'borrowRequests': [{
+                'borrowerID': 'AGJKL',
+                'timestamp': 123,
+                'startDate': '1700482400',
+                'endDate': '1710482400'
+            }],
+            'timestamp': 123,
+            'location': 'Toronto'
+        }
+    )
+    
+    new_data = {
+        'borrowerID': 'AGJKL',
+        'timestamp': 124,
+        'startDate': '1700482401',
+        'endDate': '1710482401'
+    }
+    update_borrow_requests(items_table, '1', new_data)
+    response = items_table.get_item(Key={'itemID': '1'})
+    updated_data = response['Item']['borrowRequests'][0]
+    
+    assert updated_data['timestamp'] == new_data['timestamp'], "Should update the existing borrowerID with new data."
+
+def test_handler_success(items_table):
     items_table.put_item(
         Item={
             'itemID': '1',
@@ -71,24 +98,13 @@ def test_append_borrower_to_borrow_requests(items_table):
             'location': 'Toronto'
         }
     )
-    
-    append_borrower_to_borrow_requests(items_table, '1', 'AGJKL')
-    response = items_table.get_item(Key={'itemID': '1'})
-    assert response['Item']['borrowRequests'] == ['AGJKL'], "Should append a borrowerID to the borrowRequests array."
-
-def test_handler_success(items_table):
-    items_table.put_item(
-        Item={
-            'itemID': '1',
-            'borrowRequests': ["JX152"],
-            'timestamp': 123,
-            'location': 'Toronto'
-        }
-    )
     event = {
-        "body": '{"itemID": "1", "borrowerID": "AGJKL"}'
+        "body": '{"itemID": "1", "borrowerID": "AGJKL", "startDate": "1700382400", "endDate": "1710482400"}'
     }
     context = None
     response = handler(event, context)
-    assert response['statusCode'] == 200, "Should return a 200 status code."
-    assert json.loads(response['body'])['updatedAttributes']['borrowRequests'] == ['JX152','AGJKL'], "Should append a borrowerID to the borrowRequests array."
+    assert response['statusCode'] == 200, "Should return a success status code."
+        
+    updated_data = json.loads(response['body'])["updatedAttributes"]["borrowRequests"]
+
+    assert len(updated_data) == 1 and updated_data[0]["borrowerID"] == "AGJKL", "Should update the borrowRequests array with the new data."
