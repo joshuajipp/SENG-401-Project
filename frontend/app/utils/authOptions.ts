@@ -1,6 +1,7 @@
 import { AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { authenticateUser } from "../actions";
+import { SuperSession } from "../interfaces/UserI";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -16,7 +17,7 @@ export const authOptions: AuthOptions = {
         // Ensure res is a fetch response and has .json() method
         if (res && typeof res.json === "function") {
           const userData = await res.json();
-          const newSession = { ...session, userData };
+          const newSession: SuperSession = { ...session, userData };
           return newSession;
         } else {
           console.error(
