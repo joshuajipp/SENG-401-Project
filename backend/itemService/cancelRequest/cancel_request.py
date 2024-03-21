@@ -107,24 +107,25 @@ def handler(event, context):
             }
         
         else:
+            responses = []
             if requests == []:
-                response = delete_borrow_request_array(table, itemID)
+                responses.append(delete_borrow_request_array(table, itemID))
 
             else:
-                response = set_borrower_to_borrow_requests(table, itemID, requests)
+                responses.append(set_borrower_to_borrow_requests(table, itemID, requests))
 
             cancelled_request = {
                 'request': cancelled,
                 'status': 'cancelled'
             }
 
-            response2 = move_borrow_request_to_past_requests(table, itemID, cancelled)
+            responses.append(move_borrow_request_to_past_requests(table, itemID, cancelled_request))
 
             return {
                 'statusCode': 200,
                 'body': json.dumps({
                     'message': 'BorrowerID removed successfully',
-                    'updatedAttributes': json.dumps([response, response2])
+                    'updatedAttributes': json.dumps(responses)
                 })
             }
         
