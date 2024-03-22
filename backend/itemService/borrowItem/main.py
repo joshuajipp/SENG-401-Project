@@ -61,6 +61,25 @@ def remove_borrower_id_from_borrow_requests(table, itemID, borrowerID_index):
     )
     return response
 
+def move_borrow_request_to_past_requests(table, itemID, data):
+    """Move a borrow request to the pastRequests array in the DynamoDB table."""
+    item = table.get_item(Key={'itemID': itemID})
+    borrow_requests = item.get('Item', {}).get('pastRequests', [])
+
+    borrow_requests.append(data)
+
+    response = table.update_item(
+        Key={
+            'itemID': itemID
+        },
+        UpdateExpression="SET pastRequests = :br",
+        ExpressionAttributeValues={
+            ':br': borrow_requests
+        },
+        ReturnValues="UPDATED_NEW"
+    )
+    return response
+
 def handler(event, context):
     try:
         table_name = 'items-30144999'
@@ -82,14 +101,23 @@ def handler(event, context):
         borrowerID_item = borrow_requests[borrowerID_index]
         startDate = Decimal(borrowerID_item['startDate'])
         endDate = Decimal(borrowerID_item['endDate'])
-        response = remove_borrower_id_from_borrow_requests(table, itemID, borrowerID_index)
 
-        response = update_start_end_dates_in_table(table, itemID, startDate, endDate)
+        data = {
+            'borrowerID': borrowerID,
+            'startDate': startDate,
+            'endDate': endDate,
+            'status': "active"
+        }
 
-        response = update_item_in_table(table, itemID, borrowerID)
+        responses = []
+        responses.append(remove_borrower_id_from_borrow_requests(table, itemID, borrowerID_index))
+        responses.append(update_start_end_dates_in_table(table, itemID, startDate, endDate))
+        responses.append(update_item_in_table(table, itemID, borrowerID))
+        responses.append(move_borrow_request_to_past_requests(table, itemID, data))
+
         return {
             'statusCode': 200,
-            'body': json.dumps(response, default=decimal_default)
+            'body': json.dumps(responses, default=decimal_default)
         }
     except Exception as e:
         return {
