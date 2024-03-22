@@ -49,11 +49,11 @@ def handler(event, context):
         
         items = get_items_by_lender_id(table, lenderID, gsi_name)
         
-        items_converted = json.loads(json.dumps(items, default=decimal_default))
 
         table = get_dynamodb_table('users-30144999')
         items_converted = add_borrower_obj_to_items(table, items_converted)
-
+        items_converted = json.loads(json.dumps(items, default=decimal_default))
+        
         return {
             'statusCode': 200,
             'body': json.dumps({
