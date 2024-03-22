@@ -59,7 +59,7 @@ def handler(event, context):
         
 
         table = get_dynamodb_table('users-30144999')
-        items_converted = add_lender_obj_to_items(table, items_converted)
+        items_converted = add_lender_obj_to_items(table, items)
 
         items_converted = json.loads(json.dumps(items, default=decimal_default))
         return {
