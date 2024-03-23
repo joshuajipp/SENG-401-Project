@@ -1,8 +1,12 @@
 import { Textarea } from "flowbite-react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/utils/authOptions";
-import BiographyModal from "../BiographyModal";
 import { SuperSession } from "@/app/interfaces/UserI";
+import dynamic from "next/dynamic";
+
+const BiographyModal = dynamic(() => import("../BiographyModal"), {
+  ssr: false,
+});
 
 export default async function Biography({ bio }: { bio: string }) {
   const session: SuperSession | null = await getServerSession(authOptions);

@@ -1,5 +1,5 @@
 import React from "react";
-import TableBody from "./TableBody";
+import TableBody from "./TableBodyComponent";
 export default function BorrowedItemsContainer() {
   const TableHeader = () => {
     const tableHeaders = [

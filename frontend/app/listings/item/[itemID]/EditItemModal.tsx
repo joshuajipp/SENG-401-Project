@@ -1,12 +1,33 @@
 "use client";
 
 import UpdateItemForm from "@/app/components/UpdateItemForm";
-import ListingDetails from "@/app/components/listItemFormComponents/ListingDetails";
-import ListingMedia from "@/app/components/listItemFormComponents/ListingMedia";
 import { ItemsGetListI } from "@/app/interfaces/ListItemI";
 import { Button, Modal } from "flowbite-react";
+import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
-
+import Skeleton from "react-loading-skeleton";
+const ListingDetails = dynamic(
+  () => import("@/app/components/listItemFormComponents/ListingDetails"),
+  {
+    ssr: false,
+    loading: () => (
+      <p className="text-9xl">
+        <Skeleton className="w-full" />
+      </p>
+    ),
+  }
+);
+const ListingMedia = dynamic(
+  () => import("@/app/components/listItemFormComponents/ListingMedia"),
+  {
+    ssr: false,
+    loading: () => (
+      <p className="text-9xl">
+        <Skeleton className="w-full" />
+      </p>
+    ),
+  }
+);
 export default function EditItemModal({ item }: { item: ItemsGetListI }) {
   const [openModal, setOpenModal] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
