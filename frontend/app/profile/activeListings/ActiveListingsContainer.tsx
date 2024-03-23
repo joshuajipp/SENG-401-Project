@@ -1,5 +1,4 @@
 import React, { Suspense } from "react";
-import Skeleton from "react-loading-skeleton";
 import { Table, TableHead, TableHeadCell } from "flowbite-react";
 import TableBodyComponent from "../borrowed/TableBodyComponent";
 
