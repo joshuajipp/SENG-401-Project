@@ -3,24 +3,8 @@ import { FaLocationDot } from "react-icons/fa6";
 import { SuperSession } from "@/app/interfaces/UserI";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/utils/authOptions";
-import dynamic from "next/dynamic";
-import Skeleton from "react-loading-skeleton";
-const EditItemModal = dynamic(() => import("./EditItemModal"), {
-  ssr: false,
-  loading: () => (
-    <div className=" w-28 text-3xl">
-      <Skeleton />
-    </div>
-  ),
-});
-const DeleteItemModal = dynamic(() => import("./DeleteItemModal"), {
-  ssr: false,
-  loading: () => (
-    <div className=" w-28 text-3xl">
-      <Skeleton />
-    </div>
-  ),
-});
+import EditItemModal from "./EditItemModal";
+import DeleteItemModal from "./DeleteItemModal";
 export default async function HeaderComponent({
   item,
 }: {
@@ -47,7 +31,7 @@ export default async function HeaderComponent({
       {user?.userData.userID === item.lenderID && (
         <div className=" flex flex-col gap-1">
           <EditItemModal item={item} />
-          <DeleteItemModal item={item}></DeleteItemModal>
+          <DeleteItemModal item={item} />
         </div>
       )}
     </div>
