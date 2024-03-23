@@ -1,5 +1,7 @@
 import React, { Suspense } from "react";
-import TableBody from "../borrowed/TableBody";
+import Skeleton from "react-loading-skeleton";
+import { Table, TableHead, TableHeadCell } from "flowbite-react";
+import TableBodyComponent from "../borrowed/TableBodyComponent";
 
 export default function ActiveListingsContainer() {
   const TableHeader = () => {
@@ -11,21 +13,17 @@ export default function ActiveListingsContainer() {
       "Status",
     ];
     return (
-      <thead className=" bg-[#634C9F] rounded shadow text-white ">
-        <tr>
-          {tableHeaders.map((header, index) => {
-            return <th key={index}>{header}</th>;
-          })}
-        </tr>
-      </thead>
+      <TableHead>
+        {tableHeaders.map((header, index) => {
+          return <TableHeadCell key={index}>{header}</TableHeadCell>;
+        })}
+      </TableHead>
     );
   };
   return (
-    <table className="table-auto">
-      <TableHeader></TableHeader>
-      <Suspense fallback={<div>Loading...</div>}>
-        <TableBody></TableBody>
-      </Suspense>
-    </table>
+    <Table striped hoverable>
+      <TableHeader />
+      <TableBodyComponent />
+    </Table>
   );
 }

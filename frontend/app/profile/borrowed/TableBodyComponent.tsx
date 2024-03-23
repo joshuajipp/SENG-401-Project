@@ -4,7 +4,8 @@ import Link from "next/link";
 import AcceptReturnModal from "./AcceptReturnModal";
 import { getLenderItems } from "@/app/actions";
 import { ItemsGetListI } from "@/app/interfaces/ListItemI";
-export default async function TableBody() {
+import { TableBody, TableRow, TableCell } from "flowbite-react";
+export default async function TableBodyComponent() {
   const res = await getLenderItems();
   const items: ItemsGetListI[] = res.items || [];
   const LenderRowEntry: React.FC<{ item: ItemsGetListI }> = ({ item }) => {
@@ -28,8 +29,8 @@ export default async function TableBody() {
     const toolImage = item.images[0] || "/missingImage.jpg";
     const profileImage = "https://via.placeholder.com/55x48";
     return (
-      <tr className=" bg-[#DDD8E9] rounded transition duration-300 ease-in-out transform hover:scale-[1.02] shadow dark:text-black">
-        <td className="p-4">
+      <TableRow className=" transition duration-300 ease-in-out transform hover:scale-[1.02] ">
+        <TableCell>
           <Link
             href={`/listings/item/${item.itemID}`}
             className="flex flex-row gap-2 items-center"
@@ -37,43 +38,45 @@ export default async function TableBody() {
             <Image alt="Tool Image" src={toolImage} width={66} height={47} />
             <div>{itemName}</div>
           </Link>
-        </td>
-        <td className="p-4">
-          <Link
-            href={`/listings/item/${item.itemID}`}
-            className="flex flex-row gap-2 items-center"
-          >
-            <div className=" size-12 relative">
-              <Image
-                alt="Profile Image"
-                src={profileImage}
-                className="rounded-full"
-                fill
-              />
-            </div>
-            <div>{lenderName}</div>
-          </Link>
-        </td>
-        <td className="p-4">
+        </TableCell>
+        <TableCell>
+          <td className="p-4">
+            <Link
+              href={`/listings/item/${item.itemID}`}
+              className="flex flex-row gap-2 items-center"
+            >
+              <div className=" size-12 relative">
+                <Image
+                  alt="Profile Image"
+                  src={profileImage}
+                  className="rounded-full"
+                  fill
+                />
+              </div>
+              <div>{lenderName}</div>
+            </Link>
+          </td>
+        </TableCell>
+        <TableCell>
           <div>{startDate}</div>
-        </td>
-        <td className="p-4">
+        </TableCell>
+        <TableCell>
           <div>{endDate}</div>
-        </td>
-        <td className="p-4">
+        </TableCell>
+        <TableCell>
           <AcceptReturnModal
             borrowerID={item.borrowerID}
             borrowedState={borrowedState}
           />
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
     );
   };
   return (
-    <tbody>
+    <TableBody>
       {items.map((item, index) => {
         return <LenderRowEntry key={index} item={item} />;
       })}
-    </tbody>
+    </TableBody>
   );
 }
