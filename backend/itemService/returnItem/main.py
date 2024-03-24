@@ -61,7 +61,7 @@ def update_past_requests_to_returned(table, itemID):
         Key={
             'itemID': itemID
         },
-        UpdateExpression="SET pastRequests[{}] :b"
+        UpdateExpression="SET pastRequests[{}] = :b"
         .format(borrowerID_index),
         ExpressionAttributeValues={
             ':b': request
