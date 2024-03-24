@@ -5,9 +5,12 @@ import AcceptReturnModal from "./AcceptReturnModal";
 import { getLenderItems } from "@/app/actions";
 import { ItemsGetListI } from "@/app/interfaces/ListItemI";
 import { TableBody, TableRow, TableCell } from "flowbite-react";
+import { FaUserCircle } from "react-icons/fa";
+
 export default async function TableBodyComponent() {
   const res = await getLenderItems();
   const items: ItemsGetListI[] = res.items || [];
+  console.log(items);
   const LenderRowEntry: React.FC<{ item: ItemsGetListI }> = ({ item }) => {
     const startDate = item.startDate
       ? new Date(item.startDate * 1000).toLocaleDateString("en-US", {
@@ -23,7 +26,7 @@ export default async function TableBodyComponent() {
           year: "numeric",
         })
       : " ";
-    const lenderName = "Joseph Stalin";
+    const lenderName = item.borrower?.name;
     const borrowedState = item.borrowerID && "Unreturned";
     const itemName = item.itemName;
     const toolImage = item.images[0] || "/missingImage.jpg";
@@ -43,15 +46,18 @@ export default async function TableBodyComponent() {
           <td className="p-4">
             <Link
               href={`/listings/item/${item.itemID}`}
-              className="flex flex-row gap-2 items-center"
+              className="flex flex-row gap-2 items-center "
             >
               <div className=" size-12 relative">
-                <Image
-                  alt="Profile Image"
-                  src={profileImage}
-                  className="rounded-full"
-                  fill
-                />
+                {item.borrower && (
+                  // <Image
+                  //   alt="Profile Image"
+                  //   src={profileImage}
+                  //   className="rounded-full"
+                  //   fill
+                  // />
+                  <FaUserCircle className="text-gray-500 size-full" />
+                )}
               </div>
               <div>{lenderName}</div>
             </Link>
