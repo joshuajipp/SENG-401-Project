@@ -1,4 +1,5 @@
 import { Session } from "next-auth";
+import { JWT } from "next-auth/jwt";
 
 export interface UserI {
   location: string;
@@ -12,4 +13,5 @@ export interface UserI {
 }
 export interface SuperSession extends Session {
   userData: UserI;
+  token: JWT;
 }
