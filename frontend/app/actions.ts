@@ -558,6 +558,7 @@ export const updateAccount = async (formData: FormData) => {
       console.error(errorMessage);
       return Promise.reject(new Error(errorMessage));
     }
+    revalidatePath(`/profile/${session.userData.userID}`);
     return { status: "success" };
   } catch (error) {
     const errorMessage = `Error updating account: ${error}`;

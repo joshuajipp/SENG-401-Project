@@ -10,7 +10,6 @@ import { FaUserCircle } from "react-icons/fa";
 export default async function TableBodyComponent() {
   const res = await getLenderItems();
   const items: ItemsGetListI[] = res.items || [];
-  console.log(items);
   const LenderRowEntry: React.FC<{ item: ItemsGetListI }> = ({ item }) => {
     const startDate = item.startDate
       ? new Date(item.startDate * 1000).toLocaleDateString("en-US", {
@@ -45,7 +44,7 @@ export default async function TableBodyComponent() {
         <TableCell>
           <td className="p-4">
             <Link
-              href={`/listings/item/${item.itemID}`}
+              href={`/profile/${item.borrowerID}`}
               className="flex flex-row gap-2 items-center "
             >
               <div className=" size-12 relative">
