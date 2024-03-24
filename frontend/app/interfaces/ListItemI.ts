@@ -59,6 +59,7 @@ export interface ItemsGetListI {
   borrowerID?: string;
   pastRequests?: {};
   borrower?: UserI;
+  lender?: UserI;
 }
 
 export interface GetItemPageAPIResponse {

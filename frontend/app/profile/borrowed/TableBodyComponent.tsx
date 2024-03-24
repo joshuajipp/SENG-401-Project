@@ -56,23 +56,25 @@ export default async function TableBodyComponent({
           </Link>
         </TableCell>
         <TableCell>
-          <td className="p-4">
-            <Link
-              href={`/profile/${
-                session?.userData.userID != item.borrowerID
-                  ? item.borrowerID
-                  : item.lenderID
-              }`}
-              className="flex flex-row gap-2 items-center "
-            >
-              <div className=" size-12 relative">
-                {item.borrower && (
-                  <FaUserCircle className="text-gray-500 size-full" />
-                )}
+          <Link
+            href={`/profile/${
+              session?.userData.userID != item.borrowerID
+                ? item.borrowerID
+                : item.lenderID
+            }`}
+            className="flex flex-row gap-2 items-center "
+          >
+            {(item.borrower || item.lender) && (
+              <div className={`size-12 relative`}>
+                <FaUserCircle className="text-gray-500 size-full" />
               </div>
-              <div>{lenderName}</div>
-            </Link>
-          </td>
+            )}
+            <div>
+              {session?.userData.userID != item.borrowerID
+                ? item.borrower?.name
+                : item.lender?.name}
+            </div>
+          </Link>
         </TableCell>
         <TableCell>
           <div>{startDate}</div>
