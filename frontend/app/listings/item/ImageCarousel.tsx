@@ -9,8 +9,8 @@ const CarouselItem = ({
   alt: string;
 }) => {
   return (
-    <div className="flex h-full items-center justify-center bg-gray-400 dark:bg-gray-700 dark:text-white">
-      <Image src={src} alt={alt} width={400} height={400} />
+    <div className="relative flex h-full items-center justify-center bg-gray-400 dark:bg-gray-700 dark:text-white">
+      <Image src={src} alt={alt} fill className="object-contain" />
     </div>
   );
 };
