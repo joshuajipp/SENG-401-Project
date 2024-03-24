@@ -1,8 +1,13 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { Table, TableHead, TableHeadCell } from "flowbite-react";
 import TableBodyComponent from "../borrowed/TableBodyComponent";
+import { getLenderItems } from "@/app/actions";
+import { ItemsGetListI } from "@/app/interfaces/ListItemI";
 
-export default function ActiveListingsContainer() {
+export default async function ActiveListingsContainer() {
+  const res = await getLenderItems();
+  const items: ItemsGetListI[] = res.items || [];
+
   const TableHeader = () => {
     const tableHeaders = [
       "Item Name",
@@ -22,7 +27,7 @@ export default function ActiveListingsContainer() {
   return (
     <Table striped hoverable>
       <TableHeader />
-      <TableBodyComponent />
+      <TableBodyComponent items={items} />
     </Table>
   );
 }

@@ -1,6 +1,15 @@
 import React from "react";
-import TableBody from "./TableBodyComponent";
-export default function BorrowedItemsContainer() {
+import { Table, TableHead, TableHeadCell } from "flowbite-react";
+import { getBorrowedItems } from "@/app/actions";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/utils/authOptions";
+import { SuperSession } from "@/app/interfaces/UserI";
+import { ItemsGetListI } from "@/app/interfaces/ListItemI";
+import TableBodyComponent from "./TableBodyComponent";
+export default async function BorrowedItemsContainer() {
+  const session: SuperSession | null = await getServerSession(authOptions);
+  const res = await getBorrowedItems(session?.userData.userID || "");
+  const items: ItemsGetListI[] = res.items || [];
   const TableHeader = () => {
     const tableHeaders = [
       "Item Name",
@@ -10,20 +19,17 @@ export default function BorrowedItemsContainer() {
       "Status",
     ];
     return (
-      <thead className=" bg-[#634C9F] rounded shadow text-white ">
-        <tr>
-          {tableHeaders.map((header, index) => {
-            return <th key={index}>{header}</th>;
-          })}
-        </tr>
-      </thead>
+      <TableHead>
+        {tableHeaders.map((header, index) => {
+          return <TableHeadCell key={index}>{header}</TableHeadCell>;
+        })}
+      </TableHead>
     );
   };
   return (
-    <table className="table-auto">
-      <TableHeader></TableHeader>
-      {/* disabled for now... need to implement after spencer's notifications is done. */}
-      {/* <TableBody></TableBody> */}
-    </table>
+    <Table striped hoverable>
+      <TableHeader />
+      <TableBodyComponent items={items} />
+    </Table>
   );
 }
