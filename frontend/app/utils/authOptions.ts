@@ -17,7 +17,7 @@ export const authOptions: AuthOptions = {
         // Ensure res is a fetch response and has .json() method
         if (res && typeof res.json === "function") {
           const userData = await res.json();
-          const newSession: SuperSession = { ...session, userData };
+          const newSession: SuperSession = { ...session, userData, token };
           return newSession;
         } else {
           console.error(
@@ -32,6 +32,13 @@ export const authOptions: AuthOptions = {
         // Return the session unmodified or handle error as needed
         return session;
       }
+    },
+    async jwt({ token, account }) {
+      // Initial sign in
+      if (account) {
+        token.accessToken = account.access_token;
+      }
+      return token;
     },
   },
 };

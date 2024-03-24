@@ -25,7 +25,7 @@ const UPDATE_ACCOUNT_URL = process.env.UPDATE_ACCOUNT_URL as string;
 const UPDATE_RATING_URL = process.env.UPDATE_RATING_URL as string;
 export const createListing = async (formData: FormData) => {
   try {
-    const session = await getServerSession(authOptions);
+    const session: SuperSession | null = await getServerSession(authOptions);
     if (!session) {
       console.error("No session found. Please log in to continue.");
       return;
@@ -43,7 +43,9 @@ export const createListing = async (formData: FormData) => {
       images: modifiedArray,
       location: rawFormData.location,
       lenderID: rawFormData.lenderID,
+      accessToken: session.token.accessToken,
     };
+    console.log(myBody);
     const response = await fetch(CREATE_LISTING_URL, {
       method: "PUT",
       headers: {
