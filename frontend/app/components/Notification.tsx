@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, Dropdown, DropdownItem } from "flowbite-react";
 import { cancelRequest } from "../actions";
+import Link from "next/link";
 
 interface BorrowerDetails {
   location: string;
@@ -45,8 +46,6 @@ const borrowItem = async (itemID: string, borrowerID: string) => {
   }
   return response;
 };
-
-
 
 export default function Notification({
   itemName,
@@ -111,7 +110,9 @@ export default function Notification({
               />
             }
           >
-            <DropdownItem>View Profile</DropdownItem>
+            <Link href={`/profile/${borrowerID}`}>
+              <DropdownItem>My Profile</DropdownItem>
+            </Link>
           </Dropdown>
         )}
       </div>
