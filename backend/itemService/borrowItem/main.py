@@ -64,7 +64,7 @@ def remove_borrower_id_from_borrow_requests(table, itemID, borrowerID_index):
 def move_borrow_request_to_past_requests(table, itemID, data):
     """Move a borrow request to the pastRequests array in the DynamoDB table."""
     item = table.get_item(Key={'itemID': itemID})
-    past_requests = item.get('Item', {}).get('pastRequests', [])['request']
+    past_requests = item.get('Item', {}).get('pastRequests', [])
 
     past_requests.append(data)
 
@@ -91,6 +91,9 @@ def handler(event, context):
         current_item = table.get_item(
             Key={'itemID': itemID}
         )
+
+        if 'Item' not in current_item:
+            raise ValueError(f"Item {itemID} found in table")
 
         borrow_requests = current_item['Item']['borrowRequests']
 
