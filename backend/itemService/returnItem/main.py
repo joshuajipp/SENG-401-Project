@@ -46,11 +46,12 @@ def update_past_requests_to_returned(table, itemID):
     """Update the pastRequests array in the DynamoDB table."""
     past_requests = table.get_item(Key={"itemID": itemID})["Item"].get("pastRequests", [])
     borrowerID = table.get_item(Key={"itemID": itemID})["Item"].get("borrowerID", None)
+    startDate = table.get_item(Key={"itemID": itemID})["Item"].get("startDate", None)
 
     if borrowerID is None:
         raise ValueError("Item is not currently being borrowed")
 
-    borrowerID_index = next((i for i, d in enumerate(past_requests) if d["borrowerID"] == borrowerID), None)
+    borrowerID_index = next((i for i, d in enumerate(past_requests) if d["borrowerID"] == borrowerID and d['startDate'] == startDate), None)
     if borrowerID_index is None:
         raise ValueError("BorrowerID was not found in borrow requests")
 
