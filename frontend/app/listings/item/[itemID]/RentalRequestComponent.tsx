@@ -8,6 +8,7 @@ import { SuperSession } from "@/app/interfaces/UserI";
 import { authOptions } from "@/app/utils/authOptions";
 import { getServerSession } from "next-auth";
 import React from "react";
+import UserInfoSnippet from "../../components/UserInfoSnippet";
 
 export default async function RentalRequestComponent({
   item,
@@ -26,6 +27,7 @@ export default async function RentalRequestComponent({
       {session.userData.userID !== item.lenderID && (
         <div className="w-1/2 bg-white dark:bg-slate-800 p-8 rounded-lg">
           <RequestRentalForm>
+            <UserInfoSnippet userID={item.lenderID} />
             <RentalFormHeader itemID={item.itemID} />
             <RequestFields />
             <SubmitButton

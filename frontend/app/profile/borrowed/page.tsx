@@ -4,9 +4,9 @@ import BorrowedItemsContainer from "./BorrowedItemsContainer";
 export default function page() {
   return (
     <div className="">
-      <Suspense fallback={<div>Loading...</div>}>
-        <BorrowedItemsContainer />
-      </Suspense>
+      <div className=" text-3xl p-4 flex justify-center">Borrowed Items</div>
+
+      <BorrowedItemsContainer />
     </div>
   );
 }

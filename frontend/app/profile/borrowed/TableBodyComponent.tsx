@@ -2,16 +2,21 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import AcceptReturnModal from "./AcceptReturnModal";
-import { getLenderItems } from "@/app/actions";
 import { ItemsGetListI } from "@/app/interfaces/ListItemI";
 import { TableBody, TableRow, TableCell } from "flowbite-react";
 import { FaUserCircle } from "react-icons/fa";
+import { authOptions } from "@/app/utils/authOptions";
+import { getServerSession } from "next-auth";
+import { SuperSession } from "@/app/interfaces/UserI";
 
-export default async function TableBodyComponent() {
-  const res = await getLenderItems();
-  const items: ItemsGetListI[] = res.items || [];
-  console.log(items);
-  const LenderRowEntry: React.FC<{ item: ItemsGetListI }> = ({ item }) => {
+export default async function TableBodyComponent({
+  items,
+}: {
+  items: ItemsGetListI[];
+}) {
+  // TableRowEntry displays lender info by default.
+  const session: SuperSession | null = await getServerSession(authOptions);
+  const TableRowEntry: React.FC<{ item: ItemsGetListI }> = ({ item }) => {
     const startDate = item.startDate
       ? new Date(item.startDate * 1000).toLocaleDateString("en-US", {
           month: "long",
@@ -30,7 +35,15 @@ export default async function TableBodyComponent() {
     const borrowedState = item.borrowerID && "Unreturned";
     const itemName = item.itemName;
     const toolImage = item.images[0] || "/missingImage.jpg";
-    const profileImage = "https://via.placeholder.com/55x48";
+
+    const currentDate = new Date().getTime();
+
+    const differenceInMilliseconds = (item.endDate ?? 0) * 1000 - currentDate;
+
+    const daysRemaining = Math.ceil(
+      differenceInMilliseconds / (1000 * 60 * 60 * 24)
+    );
+
     return (
       <TableRow className=" transition duration-300 ease-in-out transform hover:scale-[1.02] ">
         <TableCell>
@@ -43,25 +56,25 @@ export default async function TableBodyComponent() {
           </Link>
         </TableCell>
         <TableCell>
-          <td className="p-4">
-            <Link
-              href={`/listings/item/${item.itemID}`}
-              className="flex flex-row gap-2 items-center "
-            >
-              <div className=" size-12 relative">
-                {item.borrower && (
-                  // <Image
-                  //   alt="Profile Image"
-                  //   src={profileImage}
-                  //   className="rounded-full"
-                  //   fill
-                  // />
-                  <FaUserCircle className="text-gray-500 size-full" />
-                )}
+          <Link
+            href={`/profile/${
+              session?.userData.userID != item.borrowerID
+                ? item.borrowerID
+                : item.lenderID
+            }`}
+            className="flex flex-row gap-2 items-center "
+          >
+            {(item.borrower || item.lender) && (
+              <div className={`size-12 relative`}>
+                <FaUserCircle className="text-gray-500 size-full" />
               </div>
-              <div>{lenderName}</div>
-            </Link>
-          </td>
+            )}
+            <div>
+              {session?.userData.userID != item.borrowerID
+                ? item.borrower?.name
+                : item.lender?.name}
+            </div>
+          </Link>
         </TableCell>
         <TableCell>
           <div>{startDate}</div>
@@ -70,10 +83,23 @@ export default async function TableBodyComponent() {
           <div>{endDate}</div>
         </TableCell>
         <TableCell>
-          <AcceptReturnModal
-            borrowerID={item.borrowerID}
-            borrowedState={borrowedState}
-          />
+          {session?.userData.userID != item.borrowerID ? (
+            <AcceptReturnModal
+              borrowerID={item.borrowerID}
+              borrowedState={borrowedState}
+            />
+          ) : (
+            <div
+              className={`flex flex-col gap-1  ${
+                daysRemaining > 3 ? "text-emerald-500" : "text-red-500"
+              }`}
+            >
+              <div className="">{borrowedState}</div>
+              <div>
+                {daysRemaining} day{daysRemaining != 1 && "s"} left to return!
+              </div>
+            </div>
+          )}
         </TableCell>
       </TableRow>
     );
@@ -81,7 +107,7 @@ export default async function TableBodyComponent() {
   return (
     <TableBody>
       {items.map((item, index) => {
-        return <LenderRowEntry key={index} item={item} />;
+        return <TableRowEntry key={index} item={item} />;
       })}
     </TableBody>
   );

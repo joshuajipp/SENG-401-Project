@@ -22,7 +22,7 @@ export default async function page({ params }: { params: { userID: string } }) {
         <ContactDetails email={email} phoneNum={phoneNum} />
         <RatingDetails rating={rating} />
       </div>
-      <Biography bio={bio} />
+      <Biography userID={res.userID} bio={bio} />
     </div>
   );
 }
