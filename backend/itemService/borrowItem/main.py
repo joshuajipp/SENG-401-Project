@@ -80,6 +80,17 @@ def move_borrow_request_to_past_requests(table, itemID, data):
     )
     return response
 
+def delete_borrow_request_array(table, itemID):
+    """Delete a borrowerID from the borrowRequests array in the DynamoDB table."""
+    response = table.update_item(
+        Key={
+            'itemID': itemID
+        },
+        UpdateExpression="REMOVE borrowRequests",
+        ReturnValues="UPDATED_NEW"
+    )
+    return response
+
 def handler(event, context):
     try:
         table_name = 'items-30144999'
@@ -117,6 +128,9 @@ def handler(event, context):
         responses.append(update_start_end_dates_in_table(table, itemID, startDate, endDate))
         responses.append(update_item_in_table(table, itemID, borrowerID))
         responses.append(move_borrow_request_to_past_requests(table, itemID, data))
+        
+        if table.get_item(Key={'itemID': itemID})['Item'].get('borrowRequests', []) == []:
+            responses.append(delete_borrow_request_array(table, itemID))
 
         return {
             'statusCode': 200,
