@@ -132,8 +132,8 @@ def handler(event, context):
                 'statusCode': 200,
                 'body': json.dumps({
                     'message': 'BorrowerID removed successfully',
-                    'updatedAttributes': json.dumps(responses)
-                }, default=decimal_default)
+                    'updatedAttributes': json.dumps(responses, default=decimal_default)
+                })
             }
         
     except Exception as e:
