@@ -49,9 +49,7 @@ def move_borrow_request_to_past_requests(table, itemID, data):
     """Move a borrow request to the pastRequests array in the DynamoDB table."""
     item = table.get_item(Key={'itemID': itemID})
     past_requests = item.get('Item', {}).get('pastRequests', [])
-    print(f'Before {past_requests}')
     past_requests.append(data)
-    print(f'After {past_requests}')
 
     response = table.update_item(
         Key={
@@ -123,9 +121,7 @@ def handler(event, context):
                 responses.append(set_borrower_to_borrow_requests(table, itemID, requests))
 
             for cancelled_request in cancelled:
-                print(cancelled_request)
                 cancelled_request['status'] = 'cancelled'
-                print(f'After {cancelled_request}')
                 responses.append(move_borrow_request_to_past_requests(table, itemID, cancelled_request))
                 
             return {
