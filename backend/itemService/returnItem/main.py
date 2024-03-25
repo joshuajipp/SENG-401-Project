@@ -70,7 +70,6 @@ def update_past_requests_to_returned(table, itemID):
     )
     return response
 
-
 def handler(event, context):
     try:
         table_name = 'items-30144999'
@@ -78,9 +77,6 @@ def handler(event, context):
         body = parse_event_body(event["body"])
         itemID = body["itemID"]
         responses = []
-
-
-
 
         # change the status of the past request to returned
         responses.append(update_past_requests_to_returned(table, itemID))

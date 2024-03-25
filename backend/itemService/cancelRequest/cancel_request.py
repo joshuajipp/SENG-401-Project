@@ -1,5 +1,6 @@
 import boto3
 import json
+from decimal import Decimal
 
 def get_dynamodb_table(table_name):
     """Initialize a DynamoDB resource and get the table."""
@@ -12,6 +13,12 @@ def parse_event_body(event_body):
     if isinstance(event_body, str):
         return json.loads(event_body)
     return event_body
+
+def decimal_default(obj):
+    """Convert Decimal objects to float. Can be passed as the 'default' parameter to json.dumps()."""
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError
 
 def set_borrower_to_borrow_requests(table, itemID, data):
     """Append a borrowerID to the borrowRequests array in the DynamoDB table."""
@@ -126,7 +133,7 @@ def handler(event, context):
                 'body': json.dumps({
                     'message': 'BorrowerID removed successfully',
                     'updatedAttributes': json.dumps(responses)
-                })
+                }, default=decimal_default)
             }
         
     except Exception as e:
