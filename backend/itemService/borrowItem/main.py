@@ -64,9 +64,9 @@ def remove_borrower_id_from_borrow_requests(table, itemID, borrowerID_index):
 def move_borrow_request_to_past_requests(table, itemID, data):
     """Move a borrow request to the pastRequests array in the DynamoDB table."""
     item = table.get_item(Key={'itemID': itemID})
-    borrow_requests = item.get('Item', {}).get('pastRequests', [])
+    past_requests = item.get('Item', {}).get('pastRequests', [])
 
-    borrow_requests.append(data)
+    past_requests.append(data)
 
     response = table.update_item(
         Key={
@@ -74,7 +74,7 @@ def move_borrow_request_to_past_requests(table, itemID, data):
         },
         UpdateExpression="SET pastRequests = :br",
         ExpressionAttributeValues={
-            ':br': borrow_requests
+            ':br': past_requests
         },
         ReturnValues="UPDATED_NEW"
     )
