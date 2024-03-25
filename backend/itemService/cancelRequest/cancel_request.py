@@ -49,7 +49,7 @@ def move_borrow_request_to_past_requests(table, itemID, data):
     """Move a borrow request to the pastRequests array in the DynamoDB table."""
     item = table.get_item(Key={'itemID': itemID})
     past_requests = item.get('Item', {}).get('pastRequests', [])
-
+    print(past_requests)
     past_requests.append(data)
 
     response = table.update_item(
