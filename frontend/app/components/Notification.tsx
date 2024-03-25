@@ -111,7 +111,7 @@ export default function Notification({
             }
           >
             <Link href={`/profile/${borrowerID}`}>
-              <DropdownItem>My Profile</DropdownItem>
+              <DropdownItem>View Profile</DropdownItem>
             </Link>
           </Dropdown>
         )}
