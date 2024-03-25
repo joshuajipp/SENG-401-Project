@@ -124,7 +124,7 @@ def handler(event, context):
 
             for cancelled_request in cancelled:
                 print(cancelled_request)
-                cancelled_request['request']['status'] = 'cancelled'
+                cancelled_request['status'] = 'cancelled'
                 print(f'After {cancelled_request}')
                 responses.append(move_borrow_request_to_past_requests(table, itemID, cancelled_request))
                 
