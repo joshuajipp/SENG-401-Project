@@ -1,5 +1,6 @@
 import boto3
 import json
+import os
 
 def get_dynamodb_table(table_name):
     """Initialize a DynamoDB resource and get the table."""
@@ -41,6 +42,8 @@ def remove_borrower_id_from_borrow_requests(table, itemID, borrowerID_index):
 
 def handler(event, context):
     try:
+        if os.environ.get('ENV') == 'testing':
+            raise Exception('This is testing env')
         table_name = 'items-30144999'
         table = get_dynamodb_table(table_name)
         body = parse_event_body(event["body"])
