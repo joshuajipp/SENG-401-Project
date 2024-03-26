@@ -4,6 +4,7 @@ import React from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { Rating, RatingStar } from "flowbite-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default async function UserInfoSnippet({ userID }: { userID: string }) {
   const lender: UserI = await getUserByID(userID);
@@ -15,7 +16,18 @@ export default async function UserInfoSnippet({ userID }: { userID: string }) {
         href={`/profile/${lender.userID}`}
         className=" flex flex-row gap-2 items-center"
       >
-        <FaUserCircle size={40} />
+        {lender.profilePicture ? (
+          <div className=" relative size-10">
+            <Image
+              src={lender.profilePicture}
+              alt="Profile Picture"
+              fill
+              className="rounded-full "
+            />
+          </div>
+        ) : (
+          <FaUserCircle size={40} />
+        )}
         <div className="text-xl">{lender.name}</div>
       </Link>
       <Rating>

@@ -33,7 +33,7 @@ export default async function Biography({
             }
             rows={12}
             className=" bg-purple-200 text-brand shadow "
-            value={bio}
+            defaultValue={bio}
             disabled={userID != session?.userData.userID}
           />
         </div>

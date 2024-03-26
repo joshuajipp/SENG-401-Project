@@ -14,6 +14,7 @@ export default async function HeaderComponent({
   const date = new Date(item.timestamp * 1000);
   const currentDate = new Date();
   const diffTime = Math.abs(currentDate.getTime() - date.getTime());
+  const daysAgo = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   return (
     <div className=" bg-white dark:bg-slate-800 dark:text-white p-4 rounded-lg flex flex-row gap-2 justify-between">
       <div className="">
@@ -23,7 +24,9 @@ export default async function HeaderComponent({
             <FaLocationDot size={25} />
           </div>
           <div className="">
-            <p>{Math.ceil(diffTime / (1000 * 60 * 60 * 24))} days ago</p>
+            <p>
+              {daysAgo} day{daysAgo != 1 && "s"} ago
+            </p>
             <p>Location: {item.location}</p>
           </div>
         </div>

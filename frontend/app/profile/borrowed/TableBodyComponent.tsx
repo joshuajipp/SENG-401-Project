@@ -31,19 +31,15 @@ export default async function TableBodyComponent({
           year: "numeric",
         })
       : " ";
-    const lenderName = item.borrower?.name;
     const borrowedState = item.borrowerID && "Unreturned";
-    const itemName = item.itemName;
     const toolImage = item.images[0] || "/missingImage.jpg";
-
     const currentDate = new Date().getTime();
-
     const differenceInMilliseconds = (item.endDate ?? 0) * 1000 - currentDate;
-
     const daysRemaining = Math.ceil(
       differenceInMilliseconds / (1000 * 60 * 60 * 24)
     );
-
+    const profilePicture =
+      item.borrower?.profilePicture || item.lender?.profilePicture || null;
     return (
       <TableRow className=" transition duration-300 ease-in-out transform hover:scale-[1.02] ">
         <TableCell>
@@ -52,7 +48,7 @@ export default async function TableBodyComponent({
             className="flex flex-row gap-2 items-center"
           >
             <Image alt="Tool Image" src={toolImage} width={66} height={47} />
-            <div>{itemName}</div>
+            <div>{item.itemName}</div>
           </Link>
         </TableCell>
         <TableCell>
@@ -66,7 +62,16 @@ export default async function TableBodyComponent({
           >
             {(item.borrower || item.lender) && (
               <div className={`size-12 relative`}>
-                <FaUserCircle className="text-gray-500 size-full" />
+                {profilePicture ? (
+                  <Image
+                    src={profilePicture}
+                    fill
+                    className="rounded-full"
+                    alt="profile picture"
+                  />
+                ) : (
+                  <FaUserCircle className="text-gray-500 size-full" />
+                )}
               </div>
             )}
             <div>
