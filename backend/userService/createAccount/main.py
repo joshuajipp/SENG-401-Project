@@ -37,7 +37,7 @@ def handler(event, context, table=None):
             "userID": str(uuid.uuid4()),
             "name": data["name"],
             "email": data["email"],
-            "rating": data["rating"],
+            "rating": 0,
             "ratingCount": 0,
             "bio": data["bio"],
             "location": data["location"],
