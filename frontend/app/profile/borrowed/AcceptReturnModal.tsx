@@ -8,18 +8,17 @@ import ReturnItemForm from "./ReturnItemForm";
 export default function AcceptReturnModal({
   borrowedState,
   borrowerID,
+  itemID,
 }: {
+  itemID?: string;
   borrowerID?: string;
   borrowedState?: string;
 }) {
   const [openModal, setOpenModal] = useState(false);
   const [rating, setRating] = useState<boolean[]>(Array(5).fill(false));
   const acceptHandler = () => {
-    console.log("Accepting return" + rating.filter((r) => r).length);
     buttonRef.current?.click();
-    // updateRating(rating.filter((r) => r).length, borrowerID || "");
     setOpenModal(false);
-    // Add logic to accept the return of the item
   };
   const buttonRef = useRef<HTMLButtonElement>(null);
   return (
@@ -39,6 +38,7 @@ export default function AcceptReturnModal({
               name="rating"
               value={rating.filter((r) => r).length}
             />
+            <input type="hidden" name="itemID" value={itemID} />
             <div className="flex flex-col gap-8">
               <RatingForm setRating={setRating} rating={rating} />
               <p>Are you sure you want to accept the return of this item?</p>

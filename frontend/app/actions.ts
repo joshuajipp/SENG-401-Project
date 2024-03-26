@@ -336,32 +336,6 @@ export const borrowItem = async (itemID: string, borrowerID: string) => {
   return response;
 };
 
-export const returnItem = async (itemID: string) => {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    console.log("No session found");
-    return;
-  }
-  const response = await fetch(RETURN_ITEM_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      itemID: itemID,
-    }),
-  });
-
-  if (response.status !== 200) {
-    const errorMessage =
-      "Failed to return item. Status code: " + response.status;
-    console.error(errorMessage);
-    return errorMessage;
-  }
-
-  return response;
-};
-
 export const getItemPage = async ({
   location = "Calgary, Alberta, Canada",
   pageCount = "10",
@@ -563,8 +537,9 @@ export const updateRating = async (newRating: number, userID: string) => {
   try {
     const session: SuperSession | null = await getServerSession(authOptions);
     if (!session) {
-      console.error("No session found. Please log in to continue.");
-      return;
+      const noSessionError = "No session found. Please log in to continue.";
+      console.error(noSessionError);
+      return Promise.reject(new Error(noSessionError));
     }
     const myBody = {
       newRating: newRating,
@@ -589,6 +564,38 @@ export const updateRating = async (newRating: number, userID: string) => {
     return { status: "success" };
   } catch (error) {
     const errorMessage = `Error updating rating: ${error}`;
+    console.error(errorMessage);
+    return Promise.reject(new Error(errorMessage));
+  }
+};
+export const returnItem = async (itemID: string) => {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      console.log("No session found");
+      return;
+    }
+    const response = await fetch(RETURN_ITEM_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        itemID: itemID,
+      }),
+    });
+
+    if (response.status !== 200) {
+      const errorMessage =
+        "Failed to return item. Status code: " + response.status;
+      console.error(errorMessage);
+      return errorMessage;
+    }
+
+    revalidatePath(`/profile/activeListings`);
+    return { status: "success" };
+  } catch (error) {
+    const errorMessage = `Error returning item: ${error}`;
     console.error(errorMessage);
     return errorMessage;
   }

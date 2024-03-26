@@ -92,6 +92,7 @@ export default async function TableBodyComponent({
             <AcceptReturnModal
               borrowerID={item.borrowerID}
               borrowedState={borrowedState}
+              itemID={item.itemID}
             />
           ) : (
             <div

@@ -1,5 +1,5 @@
 "use client";
-import { updateRating } from "@/app/actions";
+import { returnItem, updateRating } from "@/app/actions";
 import { toast } from "react-toastify";
 export default function UpdateItemForm({
   children,
@@ -9,7 +9,17 @@ export default function UpdateItemForm({
   const notify = (formData: FormData) => {
     const rating = Number(formData.get("rating"));
     const userID = String(formData.get("userID"));
+    const itemID = String(formData.get("itemID"));
     toast.promise(updateRating(rating, userID), {
+      pending: "Rating the borrower...",
+      success: {
+        render() {
+          return "Borrower has been rated!";
+        },
+      },
+      error: "Issue rating borrower. Please try again later.",
+    });
+    toast.promise(returnItem(itemID), {
       pending: "Item is being returned...",
       success: {
         render() {
