@@ -44,6 +44,8 @@ jobs:
         pip3 install -r ${{ matrix.test-dir }}requirements.txt
 
     - name: Run tests in ${{ matrix.test-dir }}
+      env:
+        ENV: testing
       run: |
         cd ${{ matrix.test-dir }}
         python3 -m pytest
