@@ -1,6 +1,7 @@
 import { AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { authenticateUser, createUser, getUser } from "../actions";
+import { authenticateUser } from "../actions";
+import { SuperSession } from "../interfaces/UserI";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -13,10 +14,9 @@ export const authOptions: AuthOptions = {
     async session({ session, token }) {
       try {
         const res = await authenticateUser(session);
-        // Ensure res is a fetch response and has .json() method
-        if (res && typeof res.json === "function") {
+        if (res) {
           const userData = await res.json();
-          const newSession = { ...session, userData };
+          const newSession: SuperSession = { ...session, userData, token };
           return newSession;
         } else {
           console.error(
@@ -31,6 +31,13 @@ export const authOptions: AuthOptions = {
         // Return the session unmodified or handle error as needed
         return session;
       }
+    },
+    async jwt({ token, account }) {
+      // Initial sign in
+      if (account) {
+        token.accessToken = account.access_token;
+      }
+      return token;
     },
   },
 };

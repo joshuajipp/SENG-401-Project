@@ -57,16 +57,17 @@ def handler(event, context):
         
         item = table.get_item(Key={'itemID': itemID})
     
-        if "borrowRequests" in item["Item"]:
-            for request in item["Item"]["borrowRequests"]:
-                if request["borrowerID"] == borrowerID:
-                    raise ValueError("borrowerID already exists in borrowRequests")
+        # if "borrowRequests" in item["Item"]:
+        #     for request in item["Item"]["borrowRequests"]:
+        #         if request["borrowerID"] == borrowerID:
+        #             raise ValueError("borrowerID already exists in borrowRequests")
 
         data = {
             "borrowerID": borrowerID,
             "timestamp": timestamp,
             "startDate": startDate,
-            "endDate": endDate
+            "endDate": endDate, 
+            "status": "pending" 
         }
 
         response = update_borrow_requests(table, itemID, data)

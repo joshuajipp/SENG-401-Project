@@ -3,9 +3,10 @@ import { Label, TextInput } from "flowbite-react";
 import { getServerSession } from "next-auth/next";
 import { FaPhone, FaInbox } from "react-icons/fa";
 import ListItemFormTemplate from "./ListItemFormTemplate";
+import { SuperSession } from "@/app/interfaces/UserI";
 
 export default async function ListingContactInformation() {
-  const session = await getServerSession(authOptions);
+  const session: SuperSession | null = await getServerSession(authOptions);
   return (
     <ListItemFormTemplate formNumber={4} formHeader={"Contact information"}>
       <div>
@@ -44,7 +45,6 @@ export default async function ListingContactInformation() {
         <input
           className="hidden"
           name="lenderID"
-          // @ts-ignore
           value={session?.userData?.userID || ""}
           readOnly
         />

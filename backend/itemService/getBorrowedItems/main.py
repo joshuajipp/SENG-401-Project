@@ -27,6 +27,20 @@ def decimal_default(obj):
         return float(obj)
     raise TypeError
 
+def add_lender_obj_to_items(table, items):
+    """Add lender object to each item in the list."""
+    for item in items:
+        lenderID = item.get('lenderID', '')
+        if lenderID:
+            response = table.get_item(
+                Key={
+                    'userID': lenderID
+                }
+            )
+            lender = response.get('Item', {})
+            item['lender'] = lender
+    return items
+
 def handler(event, context):
     try:
         table_name = 'items-30144999'
@@ -43,8 +57,11 @@ def handler(event, context):
             }
         items = get_items_by_borrower_id(table, borrowerID, gsi_name)
         
-        items_converted = json.loads(json.dumps(items, default=decimal_default))
 
+        table = get_dynamodb_table('users-30144999')
+        items_converted = add_lender_obj_to_items(table, items)
+
+        items_converted = json.loads(json.dumps(items, default=decimal_default))
         return {
             'statusCode': 200,
             'body': json.dumps({

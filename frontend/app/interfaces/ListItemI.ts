@@ -1,3 +1,5 @@
+import { UserI } from "./UserI";
+
 export enum Condition {
   New = "New",
   UsedLikeNew = "Used - Like new",
@@ -52,6 +54,12 @@ export interface ItemsGetListI {
   imageHashes?: string[];
   borrowRequests?: BorrowRequest[];
   itemName: string;
+  endDate?: number;
+  startDate?: number;
+  borrowerID?: string;
+  pastRequests?: {};
+  borrower?: UserI;
+  lender?: UserI;
 }
 
 export interface GetItemPageAPIResponse {

@@ -2,6 +2,12 @@ import React from "react";
 import DatepickerRentalForm from "./DatepickerRentalForm";
 
 export default function RequestFields() {
+  const currentDate = new Date();
+  // Note: 1 day = 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
+  const oneWeekFromNow = new Date(
+    currentDate.getTime() + 7 * 24 * 60 * 60 * 1000
+  );
+
   return (
     <div className="w-full flex flex-col font-medium text-sm gap-4">
       <div className=" w-full ">
@@ -10,7 +16,7 @@ export default function RequestFields() {
       </div>
       <div className=" w-full ">
         <label htmlFor="return-date">Return Date *</label>
-        <DatepickerRentalForm name="returnDate" />
+        <DatepickerRentalForm name="returnDate" date={oneWeekFromNow} />
       </div>
       <div className="w-full">
         <label htmlFor="message" className="block mb-2">

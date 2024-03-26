@@ -61,6 +61,36 @@ def remove_borrower_id_from_borrow_requests(table, itemID, borrowerID_index):
     )
     return response
 
+def move_borrow_request_to_past_requests(table, itemID, data):
+    """Move a borrow request to the pastRequests array in the DynamoDB table."""
+    item = table.get_item(Key={'itemID': itemID})
+    past_requests = item.get('Item', {}).get('pastRequests', [])
+
+    past_requests.append(data)
+
+    response = table.update_item(
+        Key={
+            'itemID': itemID
+        },
+        UpdateExpression="SET pastRequests = :br",
+        ExpressionAttributeValues={
+            ':br': past_requests
+        },
+        ReturnValues="UPDATED_NEW"
+    )
+    return response
+
+def delete_borrow_request_array(table, itemID):
+    """Delete a borrowerID from the borrowRequests array in the DynamoDB table."""
+    response = table.update_item(
+        Key={
+            'itemID': itemID
+        },
+        UpdateExpression="REMOVE borrowRequests",
+        ReturnValues="UPDATED_NEW"
+    )
+    return response
+
 def handler(event, context):
     try:
         table_name = 'items-30144999'
@@ -73,6 +103,9 @@ def handler(event, context):
             Key={'itemID': itemID}
         )
 
+        if 'Item' not in current_item:
+            raise ValueError(f"Item {itemID} found in table")
+
         borrow_requests = current_item['Item']['borrowRequests']
 
         borrowerID_index = next((i for i, d in enumerate(borrow_requests) if d["borrowerID"] == borrowerID), None)
@@ -82,14 +115,26 @@ def handler(event, context):
         borrowerID_item = borrow_requests[borrowerID_index]
         startDate = Decimal(borrowerID_item['startDate'])
         endDate = Decimal(borrowerID_item['endDate'])
-        response = remove_borrower_id_from_borrow_requests(table, itemID, borrowerID_index)
 
-        response = update_start_end_dates_in_table(table, itemID, startDate, endDate)
+        data = {
+            'borrowerID': borrowerID,
+            'startDate': startDate,
+            'endDate': endDate,
+            'status': "active"
+        }
 
-        response = update_item_in_table(table, itemID, borrowerID)
+        responses = []
+        responses.append(remove_borrower_id_from_borrow_requests(table, itemID, borrowerID_index))
+        responses.append(update_start_end_dates_in_table(table, itemID, startDate, endDate))
+        responses.append(update_item_in_table(table, itemID, borrowerID))
+        responses.append(move_borrow_request_to_past_requests(table, itemID, data))
+        
+        if table.get_item(Key={'itemID': itemID})['Item'].get('borrowRequests', []) == []:
+            responses.append(delete_borrow_request_array(table, itemID))
+
         return {
             'statusCode': 200,
-            'body': json.dumps(response, default=decimal_default)
+            'body': json.dumps(responses, default=decimal_default)
         }
     except Exception as e:
         return {
