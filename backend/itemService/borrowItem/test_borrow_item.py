@@ -106,5 +106,6 @@ def test_handler_with_valid_borrowerID(items_table):
         "body": '{"itemID": "1", "borrowerID": "JX152"}'
     }
     response = handler(event, None)
+    raise Exception(response)
     assert response['statusCode'] == 200, "Should return a 200 status code."
     assert json.loads(response['body'])['Attributes']['borrowRequests'] == ['JX153'], "Should remove the borrowerID from the borrowRequests array in the table."
