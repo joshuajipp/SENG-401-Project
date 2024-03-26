@@ -13,11 +13,16 @@ export default async function page({ params }: { params: { userID: string } }) {
   const bio = res.bio;
   const email = res.email;
   const phoneNum = res.phoneNum;
-
+  const profilePicture = res.profilePicture;
   return (
     // TODO: responsive design
     <div className="bg-white dark:bg-black w-full p-24 rounded-xl text-brand flex flex-row justify-between">
-      <PersonalDetails userID={params.userID} location={location} name={name} />
+      <PersonalDetails
+        profilePicture={profilePicture}
+        userID={params.userID}
+        location={location}
+        name={name}
+      />
       <div className=" flex flex-col gap-8">
         <ContactDetails email={email} phoneNum={phoneNum} />
         <RatingDetails rating={rating} />

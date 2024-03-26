@@ -8,7 +8,9 @@ export default async function PersonalDetails({
   location,
   name,
   userID,
+  profilePicture,
 }: {
+  profilePicture?: string;
   location: string;
   name?: string | null;
   userID?: string;
@@ -21,10 +23,7 @@ export default async function PersonalDetails({
       <div className="flex  flex-row gap-4">
         <div className="rounded-xl shadow-lg size-52 relative  border">
           <Image
-            src={
-              (userID == session?.userData.userID && session?.user?.image) ||
-              "/missingImage.jpg"
-            }
+            src={profilePicture || "/missingImage.jpg"}
             alt="profileImage"
             fill
             className="object-contain  p-4"
