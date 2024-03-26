@@ -10,6 +10,7 @@ export interface UserI {
   name: string;
   ratingCount: number;
   phoneNum?: string;
+  profilePicture?: string;
 }
 export interface SuperSession extends Session {
   userData: UserI;
