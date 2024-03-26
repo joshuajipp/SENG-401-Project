@@ -14,8 +14,7 @@ export const authOptions: AuthOptions = {
     async session({ session, token }) {
       try {
         const res = await authenticateUser(session);
-        // Ensure res is a fetch response and has .json() method
-        if (res && typeof res.json === "function") {
+        if (res) {
           const userData = await res.json();
           const newSession: SuperSession = { ...session, userData, token };
           return newSession;

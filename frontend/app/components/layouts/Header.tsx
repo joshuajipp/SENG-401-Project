@@ -48,7 +48,7 @@ function UserProfile({ session }: { session: SuperSession }) {
       <DropdownHeader>
         <span className="block text-sm">{session.user?.name}</span>
         <span className="block truncate text-sm font-medium">
-          {session.userData.email}
+          {session.user?.email}
         </span>
       </DropdownHeader>
       <Link href={`/profile/${session.userData.userID}`}>

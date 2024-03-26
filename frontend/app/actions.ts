@@ -94,30 +94,35 @@ export const updateAccountLocation = async (newLocation: LocationInfo) => {
   return response.json();
 };
 
-export const createUser = async (name: string, email: string) => {
-  const body = {
-    name: name,
-    email: email,
-    rating: null,
-    bio: null,
-    location: null,
-    phoneNumber: null,
-  };
-  console.log("createUser");
-  const response = await fetch(CREATE_USER_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-  if (!response.ok) {
-    const errorMessage =
-      "Failed to update account location. Status code: " + response.status;
-    console.error(errorMessage);
-    return Promise.reject(new Error(errorMessage));
+export const createUser = async (session: Session) => {
+  try {
+    const body = {
+      name: session.user?.name,
+      email: session.user?.email,
+      profilePicture: session.user?.image,
+      rating: null,
+      bio: null,
+      location: null,
+      phoneNumber: null,
+    };
+    const response = await fetch(CREATE_USER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    if (!response.ok) {
+      const errorMessage =
+        "Failed to update account location. Status code: " + response.status;
+      console.error(errorMessage);
+      return Promise.reject(new Error(errorMessage));
+    }
+    return response;
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return null;
   }
-  return response.json();
 };
 
 export const getUser = async (email: string) => {
@@ -138,7 +143,6 @@ export const getUserByID = async (userID: string) => {
       return null; // Or throw new Error("No session found");
     }
 
-    // @ts-ignore
     const response = await fetch(GET_USER_URL, {
       method: "POST",
       headers: {
@@ -172,23 +176,12 @@ export const authenticateUser = async (session: Session) => {
     return res;
   } else {
     if (session.user?.name && session.user?.email) {
-      const newRes = await createUser(session.user.name, session.user.email);
+      const newRes = await createUser(session);
       return newRes;
     }
   }
 };
-function convertDateToUnixTime(dateStr: string) {
-  // Parse the date string into a JavaScript Date object
-  const date = new Date(dateStr);
 
-  // Get the Unix timestamp in milliseconds
-  const timestampInMilliseconds = date.getTime();
-
-  // Convert to seconds (optional)
-  const timestampInSeconds = Math.floor(timestampInMilliseconds / 1000);
-
-  return timestampInSeconds;
-}
 export const requestItem = async (formData: FormData) => {
   try {
     const session = await getServerSession(authOptions);

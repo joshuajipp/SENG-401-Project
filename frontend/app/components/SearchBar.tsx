@@ -9,7 +9,8 @@ import { SuperSession } from "../interfaces/UserI";
 
 export default async function SearchBar() {
   const session: SuperSession | null = await getServerSession(authOptions);
-  const location = session?.userData?.location || "Loading...";
+  const location =
+    session?.userData?.location || "Please enable location services";
   return (
     <div className="flex dark:text-white order-2 md:order-none gap-4 place-items-center justify-center items-center">
       <form action={searchItemsRedirect} className="flex flex-row gap-2">
