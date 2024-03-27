@@ -29,7 +29,7 @@ def remove_item(table, itemID):
 
 def handler(event, context):
     try:
-        header = event["headers"]
+        header = event.get("headers", {})
         if os.environ.get('ENV') != 'testing':
             req = requests.get(f'https://www.googleapis.com/oauth2/v1/userinfo?access_token={header["accesstoken"]}',
                         headers={

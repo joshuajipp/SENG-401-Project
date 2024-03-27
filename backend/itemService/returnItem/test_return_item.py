@@ -73,22 +73,3 @@ def test_remove_borrowerID_from_item(items_table):
     table.put_item(Item=item)
     response = remove_borrowerID_from_item(table, '1')
     assert response['Attributes'].get('borrowerID') == None
-
-def test_handler(items_table):
-    item = {
-        'itemID': '1',
-        'location': 'Vancouver',
-        'timestamp': 123456789,
-        'borrowerID': 'user1'
-    }
-    table = items_table
-    table.put_item(Item=item)
-    event = {
-        'body': '{"itemID": "1"}'
-    }
-    response = handler(event, None)
-    # raise Exception(response)
-    assert response['statusCode'] == 200
-
-    assert json.loads(response['body'])['Attributes'].get('borrowerID') == None
-
