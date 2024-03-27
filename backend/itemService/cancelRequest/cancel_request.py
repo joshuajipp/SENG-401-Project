@@ -1,7 +1,7 @@
 import boto3
 import json
 from decimal import Decimal
-import requests
+import requests as requ
 import os
 
 def get_dynamodb_table(table_name):
@@ -69,7 +69,7 @@ def handler(event, context):
     try:
         header = event["headers"]
         if os.environ.get('ENV') != 'testing':
-            req = requests.get(f'https://www.googleapis.com/oauth2/v1/userinfo?access_token={header["accesstoken"]}',
+            req = requ.get(f'https://www.googleapis.com/oauth2/v1/userinfo?access_token={header["accesstoken"]}',
                         headers={
                             "Authorization": f"Bearer {header['accesstoken']}",
                             "Accept": "application/json"
