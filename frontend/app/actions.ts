@@ -495,6 +495,7 @@ export const updateListing = async (formData: FormData) => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        accessToken: JSON.stringify(session.token.accessToken),
       },
       body: JSON.stringify(myBody),
     });
@@ -506,6 +507,7 @@ export const updateListing = async (formData: FormData) => {
       console.log(errorMessage);
       return Promise.reject(new Error(errorMessage));
     }
+    revalidatePath(`/listings/item/${rawFormData.itemID}`);
     return { status: "success" };
   } catch (error) {
     console.error("Error updating listing:", error);
