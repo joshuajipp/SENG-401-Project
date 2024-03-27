@@ -1,32 +1,33 @@
 "use client";
-import React, { MouseEvent } from "react";
+import { toast } from "react-toastify";
+import { borrowItem } from "../actions";
 
-export default function AcceptRequestButton() {
-  const borrowItem = async (itemID: string, borrowerID: string) => {
-    const response = await fetch(process.env.BORROW_ITEM_URL as string, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
+export default function AcceptRequestButton({
+  itemID,
+  borrowerID,
+}: {
+  itemID: string;
+  borrowerID: string;
+}) {
+  const notify = () =>
+    toast.promise(borrowItem(itemID, borrowerID), {
+      pending: "Request is being accepted...",
+      success: {
+        render() {
+          return "Request has been accepted";
+        },
       },
-      body: JSON.stringify({
-        itemID: itemID,
-        borrowerID: borrowerID,
-      }),
+      error: {
+        render({ data }) {
+          return `${data}`;
+        },
+      },
     });
-
-    if (response.status !== 200) {
-      const errorMessage =
-        "Failed to borrow item. Status code: " + response.status;
-      console.error(errorMessage);
-      return errorMessage;
-    }
-    return response;
-  };
 
   return (
     <button
       className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md"
-      onClick={() => borrowItem}
+      onClick={notify}
     >
       Accept
     </button>
