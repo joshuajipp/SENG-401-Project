@@ -26,7 +26,6 @@ interface BorrowRequest {
 
 export default function ItemRequests() {
   const [requestedItems, setRequestedItems] = useState<Item[]>([]);
-  // const [numRequests, setNumRequests] = useState<number>(0);
 
   const handleRemoveRequest = (itemID: string, borrowerID: string) => {
     setRequestedItems((prevItems) => {
