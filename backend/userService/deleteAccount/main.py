@@ -27,41 +27,41 @@ def delete_account(table, userID):
 
 def handler(event, context):
   try:
-        header = event.get("headers", {})
-      if os.environ.get('ENV') != 'testing':
-          req = requests.get(f'https://www.googleapis.com/oauth2/v1/userinfo?access_token={header["accesstoken"]}',
-                      headers={
-                          "Authorization": f"Bearer {header['accesstoken']}",
-                          "Accept": "application/json"
-                      })
-        
-          if req.status_code != 200:
-                return {
-                "statusCode": 401,
-                "body": json.dumps({"message": "Invalid user"})
-                }
-      # Retrieve table
-      table_name = 'users-30144999'
-      table = get_dynamodb_table(table_name)
+    header = event.get("headers", {})
+    if os.environ.get('ENV') != 'testing':
+      req = requests.get(f'https://www.googleapis.com/oauth2/v1/userinfo?access_token={header["accesstoken"]}',
+                  headers={
+                      "Authorization": f"Bearer {header['accesstoken']}",
+                      "Accept": "application/json"
+                  })
+      if req.status_code != 200:
+            return {
+            "statusCode": 401,
+            "body": json.dumps({"message": "Invalid user"})
+            }
       
-      # Retrieve userID
-      headers = event.get("headers", {})
-      userID = headers.get("userid", "")
-      
-      # Check if user exists
-      response = table.get_item(Key={'userID': userID})
-      if 'Item' not in response:
-        return {
-          'statusCode': 404,
-          'body': json.dumps({'error': 'Item not found'})
-        }
-
-      # If user exists then proceed to delete
-      response = delete_account(table, userID)
+    # Retrieve table
+    table_name = 'users-30144999'
+    table = get_dynamodb_table(table_name)
+    
+    # Retrieve userID
+    headers = event.get("headers", {})
+    userID = headers.get("userid", "")
+    
+    # Check if user exists
+    response = table.get_item(Key={'userID': userID})
+    if 'Item' not in response:
       return {
-          'statusCode': 200,
-          'body': json.dumps(response)
+        'statusCode': 404,
+        'body': json.dumps({'error': 'Item not found'})
       }
+
+    # If user exists then proceed to delete
+    response = delete_account(table, userID)
+    return {
+        'statusCode': 200,
+        'body': json.dumps(response)
+    }
       
   # Something went wrong with the delete  
   except Exception as e:
