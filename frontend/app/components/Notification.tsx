@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, Dropdown, DropdownItem } from "flowbite-react";
-// import { cancelRequest } from "../actions";
+import { sendBorrowedItemEmail } from "../actions";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -180,6 +180,7 @@ export default function Notification({
               <button
                 onClick={() => {
                   borrowItem(itemID, borrowerID);
+                  sendBorrowedItemEmail(itemID);
                   handleRemove(itemID, borrowerID);
                 }}
                 className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md"
