@@ -3,6 +3,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { getSession } from "next-auth/react";
 import Notification from "../components/Notification";
+import { getLenderItems } from "../actions";
 interface Item {
   location: string;
   lenderID: string;
@@ -71,39 +72,13 @@ export default function ItemRequests() {
     return userData;
   }
 
-  async function getLenderItems(userID: string) {
-    const res = await fetch(
-      "https://iat6gyr54ckeyk532ukyqqqx6m0blqpr.lambda-url.ca-central-1.on.aws/",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          lenderID: userID,
-        },
-      }
-    );
-    if (res.status == 200) {
-      const itemObject = await res.json();
-      const items = itemObject["items"];
-      let totalRequests = 0;
-      const filteredItems = items.filter((item: Item) => {
-        if (item.borrowRequests && item.borrowRequests.length > 0) {
-          totalRequests += item.borrowRequests.length;
-          return true;
-        }
-        return false;
-      });
-      setRequestedItems(filteredItems);
-    }
-  }
-
   useEffect(() => {
     const fetchSession = async () => {
       const session = await getSession();
       if (session && session.user) {
         if (typeof session.user.email === "string") {
           const userData = await fetchUserDetails(session.user.email);
-          getLenderItems(userData.userID);
+          getLenderItems();
         }
       }
     };
