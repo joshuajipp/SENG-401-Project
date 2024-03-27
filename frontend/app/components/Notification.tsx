@@ -20,7 +20,7 @@ interface NotificationProps {
   borrowerID: string;
   startDate: string;
   endDate: string;
-  timestamp: number;
+  timestamp: string;
   images: string[];
   handleRemove: Function;
 }
@@ -105,7 +105,7 @@ export default function Notification({
   }, [borrowerID]);
 
   const currentTimestamp = Math.floor(Date.now() / 1000);
-  const timeDifference = currentTimestamp - timestamp;
+  const timeDifference = currentTimestamp - parseInt(timestamp, 10);
 
   let formattedTimeAgo;
   if (timeDifference < 60) {
