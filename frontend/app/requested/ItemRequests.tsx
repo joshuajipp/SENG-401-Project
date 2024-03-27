@@ -26,11 +26,10 @@ interface BorrowRequest {
 
 export default function ItemRequests() {
   const [requestedItems, setRequestedItems] = useState<Item[]>([]);
-  const [numRequests, setNumRequests] = useState<number>(0);
+  // const [numRequests, setNumRequests] = useState<number>(0);
 
   const handleRemoveRequest = (itemID: string, borrowerID: string) => {
     setRequestedItems((prevItems) => {
-      // Create a temporary array to store updated items
       const updatedItems: Item[] = prevItems
         .map((item) => {
           if (item.itemID === itemID) {
@@ -41,10 +40,8 @@ export default function ItemRequests() {
               const updatedBorrowRequests = [...item.borrowRequests];
               updatedBorrowRequests.splice(index, 1);
               if (updatedBorrowRequests.length === 0) {
-                setNumRequests((prevNumRequests) => prevNumRequests - 1);
-                return null; // Signal that the item needs to be removed
+                return null;
               } else {
-                setNumRequests((prevNumRequests) => prevNumRequests - 1);
                 return {
                   ...item,
                   borrowRequests: updatedBorrowRequests,
@@ -98,7 +95,6 @@ export default function ItemRequests() {
         return false;
       });
       setRequestedItems(filteredItems);
-      setNumRequests(totalRequests);
     }
   }
 
