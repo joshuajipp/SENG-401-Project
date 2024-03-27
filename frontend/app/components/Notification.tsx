@@ -21,6 +21,7 @@ interface NotificationProps {
   startDate: string;
   endDate: string;
   timestamp: number;
+  images: [];
   handleRemove: Function;
 }
 
@@ -55,6 +56,7 @@ export default function Notification({
   startDate,
   endDate,
   timestamp,
+  images,
   handleRemove,
 }: NotificationProps) {
   const [borrowerDetails, setBorrowerDetails] = useState<BorrowerDetails>();

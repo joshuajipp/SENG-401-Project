@@ -128,6 +128,7 @@ export default function ItemRequests() {
                 startDate={request.startDate}
                 endDate={request.endDate}
                 timestamp={request.timestamp}
+                images={item.images}
                 handleRemove={handleRemoveRequest}
               ></Notification>
             ))
