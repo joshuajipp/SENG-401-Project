@@ -87,7 +87,7 @@ def test_handler(items_table):
         'body': '{"itemID": "1"}'
     }
     response = handler(event, None)
-    raise Exception(response)
+    # raise Exception(response)
     assert response['statusCode'] == 200
 
     assert json.loads(response['body'])['Attributes'].get('borrowerID') == None
