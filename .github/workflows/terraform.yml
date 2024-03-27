@@ -139,7 +139,11 @@ jobs:
           cd ./backend/itemService/requestItem
           zip -r ../../../infra/requestItem.zip .
           cd -
-
+      
+      - name: Install Python dependencies cancelRequest
+        run: |
+          pip3 install -r ./backend/itemService/cancelRequest/requirements.txt -t ./backend/itemService/cancelRequest/
+          
       - name: Zip create cancelRequest function
         run: |
           cd ./backend/itemService/cancelRequest
