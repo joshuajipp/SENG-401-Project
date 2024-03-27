@@ -21,7 +21,7 @@ interface NotificationProps {
   startDate: string;
   endDate: string;
   timestamp: number;
-  images: [];
+  images: string[];
   handleRemove: Function;
 }
 
@@ -99,6 +99,8 @@ export default function Notification({
   const formattedStartDate = startDateObj.toISOString().split("T")[0];
   const formattedEndDate = endDateObj.toISOString().split("T")[0];
 
+  const imageSrc = images.length > 0 ? images[0] : '/missingImage.jpg';
+
   return (
     <div className="flex bg-brand p-4 border border-gray-700 w-full mx-auto relative">
       <div className="flex p-2">
@@ -131,9 +133,9 @@ export default function Notification({
               <Image
                 height={80}
                 width={80}
-                src="/favicon.png"
+                src={imageSrc}
                 className="mr-3 rounded"
-                alt="ToolShed Logo"
+                alt="Item Image"
               />
             </Link>
           </div>

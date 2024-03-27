@@ -9,7 +9,7 @@ interface Item {
   timestamp: number;
   condition: string;
   category: string;
-  images: [];
+  images: string[];
   itemID: string;
   description: string;
   imageHashes: [];
