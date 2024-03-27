@@ -9,7 +9,7 @@ interface Item {
   timestamp: number;
   condition: string;
   category: string;
-  images: [];
+  images: string[];
   itemID: string;
   description: string;
   imageHashes: [];
@@ -128,6 +128,7 @@ export default function ItemRequests() {
                 startDate={request.startDate}
                 endDate={request.endDate}
                 timestamp={request.timestamp}
+                images={item.images}
                 handleRemove={handleRemoveRequest}
               ></Notification>
             ))

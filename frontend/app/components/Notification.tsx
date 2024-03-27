@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, Dropdown, DropdownItem } from "flowbite-react";
 import { cancelRequest } from "../actions";
+import Image from "next/image";
+import Link from "next/link";
 
 interface BorrowerDetails {
   location: string;
@@ -19,6 +21,7 @@ interface NotificationProps {
   startDate: string;
   endDate: string;
   timestamp: number;
+  images: string[];
   handleRemove: Function;
 }
 
@@ -46,8 +49,6 @@ const borrowItem = async (itemID: string, borrowerID: string) => {
   return response;
 };
 
-
-
 export default function Notification({
   itemName,
   itemID,
@@ -55,6 +56,7 @@ export default function Notification({
   startDate,
   endDate,
   timestamp,
+  images,
   handleRemove,
 }: NotificationProps) {
   const [borrowerDetails, setBorrowerDetails] = useState<BorrowerDetails>();
@@ -97,6 +99,8 @@ export default function Notification({
   const formattedStartDate = startDateObj.toISOString().split("T")[0];
   const formattedEndDate = endDateObj.toISOString().split("T")[0];
 
+  const imageSrc = images.length > 0 ? images[0] : '/missingImage.jpg';
+
   return (
     <div className="flex bg-brand p-4 border border-gray-700 w-full mx-auto relative">
       <div className="flex p-2">
@@ -111,7 +115,9 @@ export default function Notification({
               />
             }
           >
-            <DropdownItem>View Profile</DropdownItem>
+            <Link href={`/profile/${borrowerID}`}>
+              <DropdownItem>View Profile</DropdownItem>
+            </Link>
           </Dropdown>
         )}
       </div>
@@ -121,28 +127,43 @@ export default function Notification({
             {borrowerDetails.name} has Requested your {itemName}!
           </p>
         )}
-        <p className="text-sm">
-          {formattedStartDate} - {formattedEndDate}
-        </p>
-        <div className="flex pt-2">
-          <button
-            onClick={() => {
-              cancelRequest(itemID, borrowerID);
-              handleRemove(itemID, borrowerID);
-            }}
-            className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-md mr-2"
-          >
-            Decline
-          </button>
-          <button
-            onClick={() => {
-              borrowItem(itemID, borrowerID);
-              handleRemove(itemID, borrowerID);
-            }}
-            className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md"
-          >
-            Accept
-          </button>
+        <div className="flex flex-row">
+          <div className="pr-8">
+            <Link href={`listings/item/${itemID}`}>
+              <Image
+                height={80}
+                width={80}
+                src={imageSrc}
+                className="mr-3 rounded"
+                alt="Item Image"
+              />
+            </Link>
+          </div>
+          <div>
+            <p className="text-sm">
+              {formattedStartDate} - {formattedEndDate}
+            </p>
+            <div className="flex pt-2">
+              <button
+                onClick={() => {
+                  cancelRequest(itemID, borrowerID);
+                  handleRemove(itemID, borrowerID);
+                }}
+                className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-md mr-2"
+              >
+                Decline
+              </button>
+              <button
+                onClick={() => {
+                  borrowItem(itemID, borrowerID);
+                  handleRemove(itemID, borrowerID);
+                }}
+                className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md"
+              >
+                Accept
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       {borrowerDetails && (
