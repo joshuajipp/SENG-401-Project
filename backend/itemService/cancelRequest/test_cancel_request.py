@@ -1,7 +1,7 @@
 import json
 from decimal import Decimal
 import pytest
-from moto import mock_dynamodb2
+from moto import mock_aws
 from unittest.mock import patch
 
 from cancel_request import *
@@ -24,7 +24,7 @@ def context():
     # Mocked context
     return None
 
-@mock_dynamodb2
+@mock_aws
 @pytest.fixture
 def dynamodb_table():
     # Create a mock DynamoDB table
