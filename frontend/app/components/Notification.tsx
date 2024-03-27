@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, Dropdown, DropdownItem } from "flowbite-react";
 import { cancelRequest } from "../actions";
+import Image from "next/image";
 import Link from "next/link";
 
 interface BorrowerDetails {
@@ -122,28 +123,43 @@ export default function Notification({
             {borrowerDetails.name} has Requested your {itemName}!
           </p>
         )}
-        <p className="text-sm">
-          {formattedStartDate} - {formattedEndDate}
-        </p>
-        <div className="flex pt-2">
-          <button
-            onClick={() => {
-              cancelRequest(itemID, borrowerID);
-              handleRemove(itemID, borrowerID);
-            }}
-            className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-md mr-2"
-          >
-            Decline
-          </button>
-          <button
-            onClick={() => {
-              borrowItem(itemID, borrowerID);
-              handleRemove(itemID, borrowerID);
-            }}
-            className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md"
-          >
-            Accept
-          </button>
+        <div className="flex flex-row">
+          <div className="pr-8">
+            <Link href={`/profile/${borrowerID}`}>
+              <Image
+                height={80}
+                width={80}
+                src="/favicon.png"
+                className="mr-3 rounded"
+                alt="ToolShed Logo"
+              />
+            </Link>
+          </div>
+          <div>
+            <p className="text-sm">
+              {formattedStartDate} - {formattedEndDate}
+            </p>
+            <div className="flex pt-2">
+              <button
+                onClick={() => {
+                  cancelRequest(itemID, borrowerID);
+                  handleRemove(itemID, borrowerID);
+                }}
+                className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-md mr-2"
+              >
+                Decline
+              </button>
+              <button
+                onClick={() => {
+                  borrowItem(itemID, borrowerID);
+                  handleRemove(itemID, borrowerID);
+                }}
+                className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md"
+              >
+                Accept
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       {borrowerDetails && (
