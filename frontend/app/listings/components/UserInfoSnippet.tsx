@@ -8,14 +8,12 @@ import Image from "next/image";
 
 export default async function UserInfoSnippet({ userID }: { userID: string }) {
   const lender: UserI = await getUserByID(userID);
-  console.log(lender);
   const rating = lender.rating;
   return (
     <div className="flex flex-col gap-2">
       <Link
         href={`/profile/${lender.userID}`}
-        className=" flex flex-row gap-2 items-center"
-      >
+        className=" flex flex-row gap-2 items-center">
         {lender.profilePicture ? (
           <div className=" relative size-10">
             <Image
