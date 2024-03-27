@@ -345,39 +345,40 @@ export const borrowItem = async (itemID: string, borrowerID: string) => {
   }
 };
 export const cancelRequest = async (itemID: string, borrowerID: string) => {
-  try{
-  const session: SuperSession | null = await getServerSession(authOptions);
-  if (!session) {
-    console.log("No session found");
-    return;
-  }
-  const response = await fetch(
-    "https://kwvu2ae5lllfz77k5znkrvnrii0brzuf.lambda-url.ca-central-1.on.aws/",
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        accessToken: JSON.stringify(session.token.accessToken),
-      },
-      body: JSON.stringify({
-        itemID: itemID,
-        borrowerID: borrowerID,
-      }),
+  try {
+    const session: SuperSession | null = await getServerSession(authOptions);
+    if (!session) {
+      console.log("No session found");
+      return;
     }
-  );
+    const response = await fetch(
+      "https://kwvu2ae5lllfz77k5znkrvnrii0brzuf.lambda-url.ca-central-1.on.aws/",
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          accessToken: JSON.stringify(session.token.accessToken),
+        },
+        body: JSON.stringify({
+          itemID: itemID,
+          borrowerID: borrowerID,
+        }),
+      }
+    );
 
-  if (!response.ok) {
-    const errorMessage =
-      "Failed to decline request. Status code: " + response.status;
-    console.error(errorMessage);
-    return errorMessage;
+    if (!response.ok) {
+      const errorMessage =
+        "Failed to decline request. Status code: " + response.status;
+      console.error(errorMessage);
+      return errorMessage;
+    }
+    revalidatePath(`/requested`);
+    return "Request declined successfully";
+  } catch (error) {
+    console.error("Error declining request:", error);
+    return `Error declining request: ${error}`;
   }
-  revalidatePath(`/requested`);
-  return "Request declined successfully";
-} catch (error) {
-  console.error("Error declining request:", error);
-  return `Error declining request: ${error}`;
-};}
+};
 
 export const getItemPage = async ({
   location = "Calgary, Alberta, Canada",
@@ -564,7 +565,6 @@ export const updateRating = async (newRating: number, userID: string) => {
       newRating: newRating,
       userID: userID,
     };
-    console.log(myBody);
     const response = await fetch(UPDATE_RATING_URL, {
       method: "PUT",
       headers: {
@@ -579,13 +579,13 @@ export const updateRating = async (newRating: number, userID: string) => {
         response.status
       }, Error: ${errorResponse.message || response.statusText}`;
       console.error(errorMessage);
-      return Promise.reject(new Error(errorMessage));
+      return { status: "error", message: errorMessage };
     }
     return { status: "success" };
   } catch (error) {
     const errorMessage = `Error updating rating: ${error}`;
     console.error(errorMessage);
-    return Promise.reject(new Error(errorMessage));
+    return { status: "error", message: errorMessage };
   }
 };
 export const returnItem = async (itemID: string) => {
