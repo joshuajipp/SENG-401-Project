@@ -340,6 +340,38 @@ export const borrowItem = async (itemID: string, borrowerID: string) => {
   return response;
 };
 
+export const cancelRequest = async (itemID: string, borrowerID: string) => {
+  const session: SuperSession | null = await getServerSession(authOptions);
+  if (!session) {
+    console.log("No session found");
+    return;
+  }
+  console.log("hello");
+  console.log(session.token.accessToken);
+  const response = await fetch(
+    "https://kwvu2ae5lllfz77k5znkrvnrii0brzuf.lambda-url.ca-central-1.on.aws/",
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        accessToken: JSON.stringify(session.token.accessToken),
+      },
+      body: JSON.stringify({
+        itemID: itemID,
+        borrowerID: borrowerID,
+      }),
+    }
+  );
+
+  if (response.status !== 200) {
+    const errorMessage =
+      "Failed to decline request. Status code: " + response.status;
+    console.error(errorMessage);
+    return errorMessage;
+  }
+  return response;
+};
+
 export const getItemPage = async ({
   location = "Calgary, Alberta, Canada",
   pageCount = "10",
@@ -578,6 +610,38 @@ export const returnItem = async (itemID: string) => {
     return { status: "success" };
   } catch (error) {
     const errorMessage = `Error returning item: ${error}`;
+    console.error(errorMessage);
+    return errorMessage;
+  }
+};
+
+export const sendBorrowedItemEmail = async (itemID: string) => {
+  try {
+    const session: SuperSession | null = await getServerSession(authOptions);
+    if (!session) {
+      console.log("No session found");
+      return;
+    }
+    const response = await fetch("https://4ig6rd4axaer54xv3auyvgajq40edups.lambda-url.ca-central-1.on.aws/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        accessToken: JSON.stringify(session.token.accessToken),
+      },
+      body: JSON.stringify({
+        itemID: itemID,
+      }),
+    });
+
+    if (response.status !== 200) {
+      const errorMessage =
+        "Failed to send email confirmation. Status code: " + response.status;
+      console.error(errorMessage);
+      return errorMessage;
+    }
+    return { status: "success" };
+  } catch (error) {
+    const errorMessage = `Error sending email confirmation: ${error}`;
     console.error(errorMessage);
     return errorMessage;
   }
