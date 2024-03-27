@@ -43,13 +43,13 @@ export const createListing = async (formData: FormData) => {
       images: modifiedArray,
       location: rawFormData.location,
       lenderID: rawFormData.lenderID,
-      accessToken: session.token.accessToken,
     };
-    console.log(myBody);
+    console.log(session.token.accessToken)
     const response = await fetch(CREATE_LISTING_URL, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+      "accessToken": JSON.stringify(session.token.accessToken),
       },
       body: JSON.stringify(myBody),
     });
