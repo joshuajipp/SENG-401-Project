@@ -44,12 +44,11 @@ export const createListing = async (formData: FormData) => {
       location: rawFormData.location,
       lenderID: rawFormData.lenderID,
     };
-    console.log(session.token.accessToken)
     const response = await fetch(CREATE_LISTING_URL, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-      "accessToken": JSON.stringify(session.token.accessToken),
+        accessToken: JSON.stringify(session.token.accessToken),
       },
       body: JSON.stringify(myBody),
     });
@@ -82,6 +81,7 @@ export const updateAccountLocation = async (newLocation: LocationInfo) => {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      accessToken: JSON.stringify(session.token.accessToken),
     },
     body: JSON.stringify(body),
   });
@@ -184,7 +184,7 @@ export const authenticateUser = async (session: Session) => {
 
 export const requestItem = async (formData: FormData) => {
   try {
-    const session = await getServerSession(authOptions);
+    const session: SuperSession | null = await getServerSession(authOptions);
     if (!session) {
       console.error("No session found. Please log in.");
       return;
@@ -207,6 +207,7 @@ export const requestItem = async (formData: FormData) => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        accessToken: JSON.stringify(session.token.accessToken),
       },
       body: JSON.stringify(newBody),
     });
@@ -226,7 +227,7 @@ export const requestItem = async (formData: FormData) => {
 };
 
 export const getBorrowedItems = async (borrowerID: string) => {
-  const session = await getServerSession(authOptions);
+  const session: SuperSession | null = await getServerSession(authOptions);
   if (!session) {
     console.log("No session found");
     return;
@@ -235,6 +236,7 @@ export const getBorrowedItems = async (borrowerID: string) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      accessToken: JSON.stringify(session.token.accessToken),
       borrowerID: borrowerID,
     },
   });
@@ -251,18 +253,18 @@ export const getBorrowedItems = async (borrowerID: string) => {
 
 export const getLenderItems = async () => {
   try {
-    const session = await getServerSession(authOptions);
+    const session: SuperSession | null = await getServerSession(authOptions);
     if (!session) {
       console.error("No session found. Please log in to continue.");
       return null; // Or throw new Error("No session found");
     }
 
-    // @ts-ignore
     const lenderID = session.userData.userID;
     const response = await fetch(GET_LENDER_ITEMS_URL, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        accessToken: JSON.stringify(session.token.accessToken),
         lenderID: lenderID, // Ensure headers are correctly named and valued
       },
     });
@@ -285,7 +287,7 @@ export const getLenderItems = async () => {
 };
 
 export const deleteItem = async (itemID: string) => {
-  const session = await getServerSession(authOptions);
+  const session: SuperSession | null = await getServerSession(authOptions);
   if (!session) {
     console.log("No session found");
     return;
@@ -294,6 +296,7 @@ export const deleteItem = async (itemID: string) => {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
+      accessToken: JSON.stringify(session.token.accessToken),
       itemID: itemID,
     },
   });
@@ -310,7 +313,7 @@ export const deleteItem = async (itemID: string) => {
 };
 
 export const borrowItem = async (itemID: string, borrowerID: string) => {
-  const session = await getServerSession(authOptions);
+  const session: SuperSession | null = await getServerSession(authOptions);
   if (!session) {
     console.log("No session found");
     return;
@@ -319,6 +322,7 @@ export const borrowItem = async (itemID: string, borrowerID: string) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      accessToken: JSON.stringify(session.token.accessToken),
     },
     body: JSON.stringify({
       itemID: itemID,
@@ -349,12 +353,11 @@ export const getItemPage = async ({
   lastItem?: string;
   search?: string;
 }) => {
-  const session = await getServerSession(authOptions);
+  const session: SuperSession | null = await getServerSession(authOptions);
   if (!session) {
     console.log("No session found");
     return;
   }
-  // @ts-ignore
   const userLocation = session.userData.location || location;
   const response = await fetch(GET_ITEM_PAGE_URL, {
     method: "GET",
@@ -490,6 +493,7 @@ export const updateAccount = async (formData: FormData) => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        accessToken: JSON.stringify(session.token.accessToken),
       },
       body: JSON.stringify(myBody),
     });
@@ -526,6 +530,7 @@ export const updateRating = async (newRating: number, userID: string) => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        accessToken: JSON.stringify(session.token.accessToken),
       },
       body: JSON.stringify(myBody),
     });
@@ -546,7 +551,7 @@ export const updateRating = async (newRating: number, userID: string) => {
 };
 export const returnItem = async (itemID: string) => {
   try {
-    const session = await getServerSession(authOptions);
+    const session: SuperSession | null = await getServerSession(authOptions);
     if (!session) {
       console.log("No session found");
       return;
@@ -555,6 +560,7 @@ export const returnItem = async (itemID: string) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        accessToken: JSON.stringify(session.token.accessToken),
       },
       body: JSON.stringify({
         itemID: itemID,
