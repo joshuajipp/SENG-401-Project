@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, Dropdown, DropdownItem } from "flowbite-react";
-import { sendBorrowedItemEmail } from "../actions";
+import { cancelRequest, sendBorrowedItemEmail } from "../actions";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -25,29 +25,7 @@ interface NotificationProps {
   handleRemove: Function;
 }
 
-export const cancelRequest = async (itemID: string, borrowerID: string) => {
-  const response = await fetch(
-    "https://kwvu2ae5lllfz77k5znkrvnrii0brzuf.lambda-url.ca-central-1.on.aws/",
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        itemID: itemID,
-        borrowerID: borrowerID,
-      }),
-    }
-  );
 
-  if (response.status !== 200) {
-    const errorMessage =
-      "Failed to decline request. Status code: " + response.status;
-    console.error(errorMessage);
-    return errorMessage;
-  }
-  return response;
-};
 
 const borrowItem = async (itemID: string, borrowerID: string) => {
   const response = await fetch(
