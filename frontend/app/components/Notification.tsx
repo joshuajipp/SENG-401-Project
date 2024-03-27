@@ -125,7 +125,7 @@ export default function Notification({
         )}
         <div className="flex flex-row">
           <div className="pr-8">
-            <Link href={`/profile/${borrowerID}`}>
+            <Link href={`listings/item/${itemID}`}>
               <Image
                 height={80}
                 width={80}
