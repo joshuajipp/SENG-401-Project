@@ -101,12 +101,12 @@ export default function UploadImageComponent({
           />
         );
       })}
-      <Button
-        color={"primary"}
-        className="w-full h-12 flex place-content-center justify-center items-center"
-      >
-        <label htmlFor={`newImage`}>
+        <label
+        
+        className="w-full h-12 flex bg-brand text-white rounded place-content-center justify-center items-center"
+        htmlFor={`newImage`}>
           Add new image
+          </label>
           <input
             id="newImage"
             type="file"
@@ -118,8 +118,6 @@ export default function UploadImageComponent({
               }
             }}
           />
-        </label>
-      </Button>
     </div>
   );
 }

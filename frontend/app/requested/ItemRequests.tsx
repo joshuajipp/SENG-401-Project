@@ -9,7 +9,7 @@ interface Item {
   timestamp: number;
   condition: string;
   category: string;
-  images: [];
+  images: string[];
   itemID: string;
   description: string;
   imageHashes: [];
@@ -26,35 +26,34 @@ interface BorrowRequest {
 
 export default function ItemRequests() {
   const [requestedItems, setRequestedItems] = useState<Item[]>([]);
-  const [numRequests, setNumRequests] = useState<number>(0);
 
   const handleRemoveRequest = (itemID: string, borrowerID: string) => {
-    setRequestedItems((prevItems) =>
-      prevItems.filter((item) => {
-        if (item.itemID === itemID) {
-          const index = item.borrowRequests.findIndex(
-            (request) => request.borrowerID === borrowerID
-          );
-          if (index !== -1) {
-            if (item.borrowRequests.length === 1) {
-              // Remove the entire item if it only has one borrow request
-              setNumRequests((prevNumRequests) => prevNumRequests - 1);
-              return false;
-            } else {
-              // Remove the specific borrow request from the borrowRequests array
+    setRequestedItems((prevItems) => {
+      const updatedItems: Item[] = prevItems
+        .map((item) => {
+          if (item.itemID === itemID) {
+            const index = item.borrowRequests.findIndex(
+              (request) => request.borrowerID === borrowerID
+            );
+            if (index !== -1) {
               const updatedBorrowRequests = [...item.borrowRequests];
               updatedBorrowRequests.splice(index, 1);
-              setNumRequests((prevNumRequests) => prevNumRequests - 1);
-              return {
-                ...item,
-                borrowRequests: updatedBorrowRequests,
-              };
+              if (updatedBorrowRequests.length === 0) {
+                return null;
+              } else {
+                return {
+                  ...item,
+                  borrowRequests: updatedBorrowRequests,
+                };
+              }
             }
           }
-        }
-        return true; // Keep the item unchanged if it doesn't match the condition
-      })
-    );
+          return item;
+        })
+        .filter((item) => item !== null) as Item[];
+
+      return updatedItems;
+    });
   };
 
   async function fetchUserDetails(email: string) {
@@ -95,7 +94,6 @@ export default function ItemRequests() {
         return false;
       });
       setRequestedItems(filteredItems);
-      setNumRequests(totalRequests);
     }
   }
 
@@ -110,7 +108,7 @@ export default function ItemRequests() {
       }
     };
     fetchSession();
-  }, [numRequests]);
+  }, []);
 
   return (
     <div>
@@ -128,6 +126,7 @@ export default function ItemRequests() {
                 startDate={request.startDate}
                 endDate={request.endDate}
                 timestamp={request.timestamp}
+                images={item.images}
                 handleRemove={handleRemoveRequest}
               ></Notification>
             ))
