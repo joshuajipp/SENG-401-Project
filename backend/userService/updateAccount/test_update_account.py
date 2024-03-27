@@ -34,12 +34,10 @@ def test_update_account(dynamodb_mock):
     mock_user = {
         'userID': '123456',
         'name': 'John Doe',
-        'rating': 4,
         'email': 'johndoe@testmail.com', 
         'bio': 'John Doe is a guy whose name is John Doe',
         'location': 'Calgary',
         'profilePicture': 'test.com',
-        'imageHash': 'HASHMAP'
     }
     
     table.put_item(Item=mock_user)
@@ -47,18 +45,15 @@ def test_update_account(dynamodb_mock):
     # assert dummy was successfully added
     assert_user = table.get_item(Key={'userID': '123456'})
     assert assert_user['Item']['name'] == 'John Doe'
-    assert assert_user['Item']['rating'] == 4
     
     # update the old user
     mock_updated_user = {
         'userID': '123456',
         'name': 'Donald Duck',
-        'rating': 5,
         'email': 'donaldduck@testmail.com', 
         'bio': 'Donald Duck is a guy whose name is not John Doe',
         'location': 'Calgary',
         'profilePicture': 'test.com',
-        'imageHash': 'HASHMAP'
     }
     
     userID = '123456'
@@ -71,9 +66,7 @@ def test_update_account(dynamodb_mock):
     assert_updated_user = table.get_item(Key={'userID': '123456'})
     
     assert assert_updated_user['Item']['name'] ==  'Donald Duck'
-    assert assert_updated_user['Item']['rating'] == 5
     assert assert_updated_user['Item']['email'] == 'donaldduck@testmail.com'
     assert assert_updated_user['Item']['bio'] == 'Donald Duck is a guy whose name is not John Doe'
     assert assert_updated_user['Item']['location'] == 'Calgary'
     assert assert_updated_user['Item']['profilePicture'] == 'test.com'
-    assert assert_updated_user['Item']['imageHash'] == 'HASHMAP'
