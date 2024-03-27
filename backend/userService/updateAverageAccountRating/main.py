@@ -2,6 +2,7 @@ import json
 import boto3
 import os
 import requests
+from decimal import Decimal
 
 # Initialize DynamoDB resource and get table
 def get_dynamodb_table(table_name):
@@ -24,8 +25,8 @@ def update_account_ratings(table, user, newRating):
     # New Rating Calculations
     ratingSum = (oldRating * ratingCount)
     ratingCount += 1
-    updatedRating = (ratingSum + newRating) / ratingCount
-    
+    updatedRating = Decimal((ratingSum + newRating) / ratingCount)
+
     # Update table query
     update_expression = "SET #rating = :rating, #ratingCount = :ratingCount"
     expression_attribute_values = {
