@@ -85,8 +85,8 @@ export default async function Notification({
                 {formattedStartDate} - {formattedEndDate}
               </p>
               <div className="flex pt-2">
-                <DeclineRequestButton></DeclineRequestButton>
-                <AcceptRequestButton></AcceptRequestButton>
+                <DeclineRequestButton itemID={itemID} borrowerID={borrowerID} />
+                <AcceptRequestButton itemID={itemID} borrowerID={borrowerID} />
               </div>
             </div>
           </div>
