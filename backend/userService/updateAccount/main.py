@@ -3,6 +3,7 @@ import boto3
 import hashlib
 import base64
 import requests
+import os
 
 # Initialize DynamoDB resource and get table
 def get_dynamodb_table(table_name):
@@ -111,6 +112,19 @@ def update_account(table, userID, old_entry, new_info):
 # ----------------------------------------------------------------------------------------------------------------- #
 def handler(event, context):
   try:
+    header = event["headers"]
+    if os.environ.get('ENV') != 'testing':
+        req = requests.get(f'https://www.googleapis.com/oauth2/v1/userinfo?access_token={header["accesstoken"]}',
+                    headers={
+                          "Authorization": f"Bearer {header['accesstoken']}",
+                          "Accept": "application/json"
+                      })
+        
+        if req.status_code != 200:
+                return {
+                "statusCode": 401,
+                "body": json.dumps({"message": "Invalid user"})
+                }
     # setup connection to dynamodb table
     # and parse event body
     table = get_dynamodb_table(table_name="users-30144999")

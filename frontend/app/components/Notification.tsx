@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, Dropdown, DropdownItem } from "flowbite-react";
-// import { cancelRequest } from "../actions";
+import { cancelRequest, sendBorrowedItemEmail } from "../actions";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -20,34 +20,12 @@ interface NotificationProps {
   borrowerID: string;
   startDate: string;
   endDate: string;
-  timestamp: number;
+  timestamp: string;
   images: string[];
   handleRemove: Function;
 }
 
-export const cancelRequest = async (itemID: string, borrowerID: string) => {
-  const response = await fetch(
-    "https://kwvu2ae5lllfz77k5znkrvnrii0brzuf.lambda-url.ca-central-1.on.aws/",
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        itemID: itemID,
-        borrowerID: borrowerID,
-      }),
-    }
-  );
 
-  if (response.status !== 200) {
-    const errorMessage =
-      "Failed to decline request. Status code: " + response.status;
-    console.error(errorMessage);
-    return errorMessage;
-  }
-  return response;
-};
 
 const borrowItem = async (itemID: string, borrowerID: string) => {
   const response = await fetch(
@@ -105,7 +83,7 @@ export default function Notification({
   }, [borrowerID]);
 
   const currentTimestamp = Math.floor(Date.now() / 1000);
-  const timeDifference = currentTimestamp - timestamp;
+  const timeDifference = currentTimestamp - parseInt(timestamp, 10);
 
   let formattedTimeAgo;
   if (timeDifference < 60) {
@@ -180,6 +158,7 @@ export default function Notification({
               <button
                 onClick={() => {
                   borrowItem(itemID, borrowerID);
+                  sendBorrowedItemEmail(itemID);
                   handleRemove(itemID, borrowerID);
                 }}
                 className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md"
