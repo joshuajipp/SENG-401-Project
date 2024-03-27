@@ -582,3 +582,35 @@ export const returnItem = async (itemID: string) => {
     return errorMessage;
   }
 };
+
+export const sendBorrowedItemEmail = async (itemID: string) => {
+  try {
+    const session: SuperSession | null = await getServerSession(authOptions);
+    if (!session) {
+      console.log("No session found");
+      return;
+    }
+    const response = await fetch("https://4ig6rd4axaer54xv3auyvgajq40edups.lambda-url.ca-central-1.on.aws/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        accessToken: JSON.stringify(session.token.accessToken),
+      },
+      body: JSON.stringify({
+        itemID: itemID,
+      }),
+    });
+
+    if (response.status !== 200) {
+      const errorMessage =
+        "Failed to send email confirmation. Status code: " + response.status;
+      console.error(errorMessage);
+      return errorMessage;
+    }
+    return { status: "success" };
+  } catch (error) {
+    const errorMessage = `Error sending email confirmation: ${error}`;
+    console.error(errorMessage);
+    return errorMessage;
+  }
+};
