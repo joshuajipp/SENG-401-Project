@@ -84,4 +84,4 @@ def test_handler_with_unsuccessful_http_request(items_table, monkeypatch):
         "body": '{"itemID": "1", "borrowerID": "JX152"}'
     }
     response = handler(event, None)
-    assert response['statusCode'] == 401
+    assert response['statusCode'] == 404
