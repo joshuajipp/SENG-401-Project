@@ -658,3 +658,36 @@ export const sendBorrowedItemEmail = async (itemID: string) => {
     return errorMessage;
   }
 };
+
+export const sendSESVerification = async (email: string) => {
+  try {
+    const session: SuperSession | null = await getServerSession(authOptions);
+    if (!session) {
+      console.log("No session found");
+      return;
+    }
+    const response = await fetch(
+      "https://ow3k3zfho3gimmvkpyzxylqiqa0gipek.lambda-url.ca-central-1.on.aws/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accessToken: JSON.stringify(session.token.accessToken),
+        },
+        body: JSON.stringify({
+          email: session.user?.email
+        }),
+      }
+    );
+    if (!response.ok) {
+      const errorMessage =
+        "Failed to verify user email. Status code: " + response.status;
+      console.error(errorMessage);
+      return errorMessage;
+    }
+    return "SES Verification sent successfully.";
+  } catch (error) {
+    console.error("Error declining request:", error);
+    return `Error declining request: ${error}`;
+  }
+};

@@ -1,6 +1,6 @@
 "use client";
 import { toast } from "react-toastify";
-import { borrowItem } from "../actions";
+import { borrowItem, sendBorrowedItemEmail } from "../actions";
 
 export default function AcceptRequestButton({
   itemID,
@@ -14,6 +14,7 @@ export default function AcceptRequestButton({
       pending: "Request is being accepted...",
       success: {
         render() {
+          sendBorrowedItemEmail(itemID);
           return "Request has been accepted";
         },
       },
