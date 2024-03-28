@@ -95,6 +95,7 @@ export const updateAccountLocation = async (newLocation: LocationInfo) => {
     console.error(errorMessage);
     return Promise.reject(new Error(errorMessage));
   }
+  revalidatePath("/", "layout");
   return response.json();
 };
 
@@ -668,6 +669,7 @@ export const sendSESVerification = async (email: string) => {
       console.log("No session found");
       return;
     }
+
     const response = await fetch(SEND_SES_VERIFICATION, {
       method: "POST",
       headers: {
@@ -678,6 +680,7 @@ export const sendSESVerification = async (email: string) => {
         email: session.user?.email,
       }),
     });
+
     if (!response.ok) {
       const errorMessage =
         "Failed to verify user email. Status code: " + response.status;
