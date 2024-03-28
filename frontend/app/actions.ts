@@ -91,6 +91,7 @@ export const updateAccountLocation = async (newLocation: LocationInfo) => {
     console.error(errorMessage);
     return Promise.reject(new Error(errorMessage));
   }
+  revalidatePath("/", "layout");
   return response.json();
 };
 
@@ -675,7 +676,7 @@ export const sendSESVerification = async (email: string) => {
           accessToken: JSON.stringify(session.token.accessToken),
         },
         body: JSON.stringify({
-          email: session.user?.email
+          email: session.user?.email,
         }),
       }
     );
