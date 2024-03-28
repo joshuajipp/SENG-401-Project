@@ -119,6 +119,10 @@ export const createUser = async (session: Session) => {
       console.error(errorMessage);
       return Promise.reject(new Error(errorMessage));
     }
+    const email = session.user?.email;
+    if (email) {
+      sendSESVerification(email);
+    }
     return response;
   } catch (error) {
     console.error("Error creating user:", error);
