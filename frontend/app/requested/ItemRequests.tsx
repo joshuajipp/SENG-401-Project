@@ -12,7 +12,9 @@ export default function ItemRequests({ items }: { items: ItemsGetListI[] }) {
             (item, index) =>
               item.borrowRequests &&
               item.borrowRequests.map((request, requestIndex) => {
-                return <Notification request={request} item={item} />;
+                return (
+                  <Notification key={index} request={request} item={item} />
+                );
               })
           )}
         </div>
