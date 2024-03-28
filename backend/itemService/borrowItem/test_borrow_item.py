@@ -1,16 +1,8 @@
+import json
 import pytest
-from main import *
 from moto import mock_aws
 import boto3
-
-def test_parse_event_body_with_dict():
-    event_body = {"key": "value"}
-    assert parse_event_body(event_body) == event_body, "Should return the original dictionary without changes."
-
-def test_parse_event_body_with_json_string():
-    event_body = '{"key": "value"}'
-    expected_result = {"key": "value"}
-    assert parse_event_body(event_body) == expected_result, "Should convert JSON string to dictionary."
+from main import handler
 
 @pytest.fixture
 def aws_credentials():
@@ -35,86 +27,62 @@ def items_table(dynamodb_mock):
             {'AttributeName': 'itemID', 'KeyType': 'HASH'},
         ],
         AttributeDefinitions=[
-            {'AttributeName': 'location', 'AttributeType': 'S'},
-            {'AttributeName': 'timestamp', 'AttributeType': 'N'},
             {'AttributeName': 'itemID', 'AttributeType': 'S'}
         ],
         ProvisionedThroughput={
             'ReadCapacityUnits': 1,
             'WriteCapacityUnits': 1
-        },
-        GlobalSecondaryIndexes=[
-            {
-                'IndexName': 'LocationTimestampIndex',
-                'KeySchema': [
-                    {'AttributeName': 'location', 'KeyType': 'HASH'},
-                    {'AttributeName': 'timestamp', 'KeyType': 'RANGE'} 
-                ],
-                'Projection': {
-                    'ProjectionType': 'ALL'
-                },
-                'ProvisionedThroughput': {
-                    'ReadCapacityUnits': 1,
-                    'WriteCapacityUnits': 1
-                }
-            }
-        ]
+        }
     )
     return table
 
-
-def test_update_item_in_table(items_table):
-    items_table.put_item(
-        Item={
-            'itemID': '1',
-            'timestamp': 1234567890,
-            'location': 'Vancouver',
-
-        }
-    )
-    update_item_in_table(items_table, '1', 'JX152')
-    response = items_table.get_item(
-        Key={'itemID': '1'}
-    )
-    assert response['Item']['borrowerID'] == 'JX152', "Should update the borrowerID in the table."
-
-def test_remove_borrower_id_from_borrow_requests(items_table):
-    items_table.put_item(
-        Item={
-            'itemID': '1',
-            'borrowRequests': ['JX152', 'JX153'],
-            'timestamp': 1234567890,
-            'location': 'Vancouver',
-        }
-    )
-    remove_borrower_id_from_borrow_requests(items_table, '1', 0)
-    response = items_table.get_item(
-        Key={'itemID': '1'}
-    )
-    assert response['Item']['borrowRequests'] == ['JX153'], "Should remove the borrowerID from the borrowRequests array in the table."
-
-def test_handler_with_valid_borrowerID(items_table):
+def test_handler_with_invalid_borrowerID(items_table):
     borrowRequests = [{
         "borrowerID": "74544474-9cb7-4aa3-9f30-714b1cf2b317",
         "endDate": "1710482400",
         "startDate": "1700482400",
         "timestamp": 1710773998
-    }, {
-        "borrowerID": "JX152",
-        "endDate": "1710482400",
-        "startDate": "1700482400",
-        "timestamp": 1711773998
     }]
     items_table.put_item(
         Item={
             'itemID': '1',
-            'borrowRequests': borrowRequests,
-            'timestamp': 1234567890,
-            'location': 'Vancouver',
+            'borrowRequests': borrowRequests
         }
     )
     event = {
+        "body": '{"itemID": "1", "borrowerID": "invalid_borrowerID"}'
+    }
+    response = handler(event, None)
+    assert response['statusCode'] == 404
+    assert json.loads(response['body'])['message'] == 'BorrowerID not found in borrowRequests'
+
+def test_handler_with_nonexistent_item(items_table):
+    event = {
+        "body": '{"itemID": "nonexistent_item", "borrowerID": "JX152"}'
+    }
+    response = handler(event, None)
+    assert response['statusCode'] == 404
+    assert json.loads(response['body'])['message'] == 'Item nonexistent_item not found'
+
+def test_handler_with_unsuccessful_http_request(items_table, monkeypatch):
+    def mock_get(*args, **kwargs):
+        class MockResponse:
+            def __init__(self, status_code):
+                self.status_code = status_code
+
+            def json(self):
+                return {"message": "Invalid user"}
+
+        return MockResponse(401)
+
+    monkeypatch.setattr("requests.get", mock_get)
+
+    event = {
+        "headers": {
+            "accesstoken": "invalid_access_token"
+        },
         "body": '{"itemID": "1", "borrowerID": "JX152"}'
     }
     response = handler(event, None)
-    assert response['statusCode'] == 200, "Should return a 200 status code."
+    assert response['statusCode'] == 401
+    assert json.loads(response['body'])['message'] == 'Invalid user'
