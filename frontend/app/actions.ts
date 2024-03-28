@@ -23,6 +23,10 @@ const UPDATE_ACCOUNT_LOCATION_URL = process.env
 const UPDATE_LISTING_URL = process.env.UPDATE_LISTING_URL as string;
 const UPDATE_ACCOUNT_URL = process.env.UPDATE_ACCOUNT_URL as string;
 const UPDATE_RATING_URL = process.env.UPDATE_RATING_URL as string;
+const CANCEL_REQUEST_URL = process.env.CANCEL_REQUEST_URL as string;
+const SEND_BORROWED_ITEM_EMAIL = process.env.SEND_BORROWED_ITEM_EMAIL as string;
+const SEND_SES_VERIFICATION = process.env.SEND_SES_VERIFICATION as string;
+
 export const createListing = async (formData: FormData) => {
   try {
     const session: SuperSession | null = await getServerSession(authOptions);
@@ -355,20 +359,17 @@ export const cancelRequest = async (itemID: string, borrowerID: string) => {
       console.log("No session found");
       return;
     }
-    const response = await fetch(
-      "https://kwvu2ae5lllfz77k5znkrvnrii0brzuf.lambda-url.ca-central-1.on.aws/",
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          accessToken: JSON.stringify(session.token.accessToken),
-        },
-        body: JSON.stringify({
-          itemID: itemID,
-          borrowerID: borrowerID,
-        }),
-      }
-    );
+    const response = await fetch(CANCEL_REQUEST_URL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        accessToken: JSON.stringify(session.token.accessToken),
+      },
+      body: JSON.stringify({
+        itemID: itemID,
+        borrowerID: borrowerID,
+      }),
+    });
 
     if (!response.ok) {
       const errorMessage =
@@ -635,19 +636,16 @@ export const sendBorrowedItemEmail = async (itemID: string) => {
       console.log("No session found");
       return;
     }
-    const response = await fetch(
-      "https://4ig6rd4axaer54xv3auyvgajq40edups.lambda-url.ca-central-1.on.aws/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          accessToken: JSON.stringify(session.token.accessToken),
-        },
-        body: JSON.stringify({
-          itemID: itemID,
-        }),
-      }
-    );
+    const response = await fetch(SEND_BORROWED_ITEM_EMAIL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        accessToken: JSON.stringify(session.token.accessToken),
+      },
+      body: JSON.stringify({
+        itemID: itemID,
+      }),
+    });
 
     if (response.status !== 200) {
       const errorMessage =
@@ -670,19 +668,16 @@ export const sendSESVerification = async (email: string) => {
       console.log("No session found");
       return;
     }
-    const response = await fetch(
-      "https://ow3k3zfho3gimmvkpyzxylqiqa0gipek.lambda-url.ca-central-1.on.aws/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          accessToken: JSON.stringify(session.token.accessToken),
-        },
-        body: JSON.stringify({
-          email: session.user?.email
-        }),
-      }
-    );
+    const response = await fetch(SEND_SES_VERIFICATION, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        accessToken: JSON.stringify(session.token.accessToken),
+      },
+      body: JSON.stringify({
+        email: session.user?.email,
+      }),
+    });
     if (!response.ok) {
       const errorMessage =
         "Failed to verify user email. Status code: " + response.status;
