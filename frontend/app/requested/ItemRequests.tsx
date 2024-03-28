@@ -5,7 +5,7 @@ export default function ItemRequests({ items }: { items: ItemsGetListI[] }) {
   return (
     <>
       {items.length === 0 ? (
-        <p>No items available</p>
+        <p>You have 0 item requests!</p>
       ) : (
         <div>
           {items.map(
