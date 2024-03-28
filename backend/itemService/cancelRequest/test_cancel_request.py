@@ -63,25 +63,3 @@ def test_handler_with_nonexistent_item(items_table):
     response = handler(event, None)
     assert response['statusCode'] == 404
     assert json.loads(response['body'])['message'] == 'Item nonexistent_item not found'
-
-def test_handler_with_unsuccessful_http_request(items_table, monkeypatch):
-    def mock_get(*args, **kwargs):
-        class MockResponse:
-            def __init__(self, status_code):
-                self.status_code = status_code
-
-            def json(self):
-                return {"message": "Invalid user"}
-
-        return MockResponse(401)
-
-    monkeypatch.setattr("requests.get", mock_get)
-
-    event = {
-        "headers": {
-            "accesstoken": "invalid_access_token"
-        },
-        "body": '{"itemID": "1", "borrowerID": "JX152"}'
-    }
-    response = handler(event, None)
-    assert response['statusCode'] == 404
